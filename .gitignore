@@ -1,0 +1,5 @@
+# Text editor data
+.vscode/
+
+# The dependencies
+**/node_modules/

@@ -1,0 +1,39 @@
+{
+  "name": "fluentctx",
+  "version": "1.0.0",
+  "description": "A React module that is a far more intuitive and fluid alternative to context menus for mobile devices.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "cd test && react-scripts start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/exoRift/fluentctx.git"
+  },
+  "keywords": [
+    "react",
+    "node",
+    "nodejs",
+    "js",
+    "javascript",
+    "context",
+    "menu"
+  ],
+  "author": "exoRift",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/exoRift/fluentctx/issues"
+  },
+  "homepage": "https://github.com/exoRift/fluentctx#readme",
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.14.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-config-standard": "^17.0.0",
+    "rollup": "^2.70.2"
+  }
+}
