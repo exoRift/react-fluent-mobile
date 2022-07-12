@@ -13,6 +13,7 @@
         "tabWidth": 2,
         "ignoreComments": true
       }
-    ]
+    ],
+    "quote-props": "warn"
   }
 }

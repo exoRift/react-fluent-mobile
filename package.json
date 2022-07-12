@@ -1,39 +1,60 @@
 {
   "name": "fluentctx",
   "version": "1.0.0",
-  "description": "A React module that is a far more intuitive and fluid alternative to context menus for mobile devices.",
+  "description": "A React module that is a far more intuitive and fluid alternative to context menus for mobile devices",
   "main": "src/index.js",
-  "type": "module",
+  "module": "lib/index.esm.js",
   "scripts": {
-    "dev": "cd test && react-scripts start"
+    "build": "rollup -c",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/exoRift/fluentctx.git"
   },
-  "keywords": [
-    "react",
-    "node",
-    "nodejs",
-    "js",
-    "javascript",
-    "context",
-    "menu"
-  ],
   "author": "exoRift",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/exoRift/fluentctx/issues"
   },
   "homepage": "https://github.com/exoRift/fluentctx#readme",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "keywords": [],
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "eslint": "^8.14.0",
+    "@babel/core": "^7.18.6",
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@storybook/addon-actions": "^6.5.9",
+    "@storybook/addon-essentials": "^6.5.9",
+    "@storybook/addon-interactions": "^6.5.9",
+    "@storybook/addon-links": "^6.5.9",
+    "@storybook/builder-webpack4": "^6.5.9",
+    "@storybook/manager-webpack4": "^6.5.9",
+    "@storybook/react": "^6.5.9",
+    "@storybook/testing-library": "^0.0.13",
+    "babel-loader": "^8.2.5",
+    "eslint": "^8.19.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-config-standard": "^17.0.0",
-    "rollup": "^2.70.2"
+    "postcss": "^8.4.14",
+    "rollup": "^2.76.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.2"
   }
 }

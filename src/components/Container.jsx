@@ -1,6 +1,6 @@
 import React from 'react'
 
-class Main extends React.Component {
+class Container extends React.Component {
   render () {
     return (
       <>
@@ -9,4 +9,4 @@ class Main extends React.Component {
   }
 }
 
-export default Main
+export default Container
