@@ -1,0 +1,66 @@
+.fluent {
+  position: fixed;
+
+  --select-indicator-color: #1ea7fd;
+  --menu-indicator-color: #f39c12;
+  --cancel-indicator-color: #7f8c8d;
+}
+
+@property --p {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.fluent#fluentprogress.inactive {
+  --color: var(--cancel-indicator-color);
+  --p: 360deg;
+
+  animation-name: counter-progress;
+  pointer-events: none;
+}
+.fluent#fluentprogress.active {
+  transition-delay: var(--transitionDelay);
+  opacity: 0.5;
+  animation-name: progress;
+}
+.fluent#fluentprogress[style*='visibility: hidden'] {
+  transition: none;
+}
+.fluent#fluentprogress {
+  transition: opacity 0.8s;
+  max-width: min(30vw, 30vh);
+  max-height: min(30vw, 30vh);
+  min-width: 50px;
+  min-height: 50px;
+  border-radius: 50%;
+  background: conic-gradient(var(--color) var(--p), transparent var(--p));
+  mask: radial-gradient(transparent 59%, black 60%);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  animation-fill-mode: forwards;
+  pointer-events: all;
+}
+.fluent#fluentprogress.select {
+  --color: var(--select-indicator-color);
+}
+.fluent#fluentprogress.menu {
+  --color: var(--menu-indicator-color);
+}
+
+
+@keyframes progress {
+  from {
+    --p: 0deg;
+  } to {
+    --p: 360deg;
+  }
+}
+
+@keyframes counter-progress {
+  from {
+    --p: 360deg;
+  } to {
+    --p: 0deg;
+  }
+}

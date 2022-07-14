@@ -14,6 +14,10 @@
         "ignoreComments": true
       }
     ],
-    "quote-props": "warn"
+    "quote-props": "warn",
+    "import/no-anonymous-default-export": [
+      "error", {
+        "allowObject": true
+    }]
   }
 }
