@@ -1,10 +1,12 @@
 import React from 'react'
 
-import FluentMixin from '../components/Mixin.jsx'
+import {
+  FluentContextMixin
+} from '../'
 
 export default {
-  title: 'FluentMixin',
-  component: FluentMixin,
+  title: 'FluentContextMixin',
+  component: FluentContextMixin,
   argTypes: {
     holdDelay: {
       control: {
@@ -22,7 +24,7 @@ export default {
 export const Default = (args) => (
   <div>
     <span id='span1'>This is some sample text!</span>
-    <FluentMixin {...args}/>
+    <FluentContextMixin {...args}/>
 
     <span id='span2'>This is past the mixin</span>
 

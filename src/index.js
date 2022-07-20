@@ -1,7 +1,9 @@
-import Mixin from './components/Container.jsx'
+import ContextMixin from './components/ContextMixin.jsx'
+import SelectionMixin from './components/SelectionMixin.jsx'
 
-import 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0'
+import './styles/index.css'
 
 export {
-  Mixin as FluentMixin
+  ContextMixin as FluentContextMixin,
+  SelectionMixin as FluentSelectionMixin
 }

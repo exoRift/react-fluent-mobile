@@ -1,23 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import '../styles/index.css'
 import '../styles/Selection.css'
-import '../styles/Context.css'
+
 // NOTE: PREPARE TO SET ORIGINTOUCH TO NULL AT SOME POINT
-class Mixin extends React.Component {
+class SelectionMixin extends React.Component {
   static propTypes = {
-    holdDelay: PropTypes.number,
-    holdTime: PropTypes.number
+    collapseSwipeDistance: PropTypes.number,
+    collapseSwipeDuration: PropTypes.number
   }
 
   static defaultProps = {
-    holdDelay: 100,
-    holdTime: 1000
+    collapseSwipeDistance: 100,
+    collapseSwipeDuration: 300
   }
-
-  static collapseSwipeDistance = 100
-  static collapseSwipeDuration = 300
 
   isTouchScreen = false
   originRange = null
@@ -26,36 +22,26 @@ class Mixin extends React.Component {
   manipulating = false
 
   state = {
-    holding: false,
     selecting: false
   }
 
   constructor (props) {
     super(props)
 
-    this.cancelEvent = this.cancelEvent.bind(this)
     this.touchstart = this.touchstart.bind(this)
-    this.stopTimer = this.stopTimer.bind(this)
     this.launchSelectionManipulator = this.launchSelectionManipulator.bind(this)
-    this.launchContextMenu = this.launchContextMenu.bind(this)
     this.copySelection = this.copySelection.bind(this)
     this.collapseSelection = this.collapseSelection.bind(this)
   }
 
   componentDidMount () {
     document.addEventListener('touchstart', this.touchstart)
-    document.addEventListener('touchend', this.stopTimer)
-    document.addEventListener('touchmove', this.stopTimer)
     document.addEventListener('selectionchange', this.launchSelectionManipulator)
-    // document.addEventListener('contextmenu', this.cancelEvent)
   }
 
   componentWillUnmount () {
     document.removeEventListener('touchstart', this.touchstart)
-    document.removeEventListener('touchend', this.stopTimer)
-    document.removeEventListener('touchmove', this.stopTimer)
     document.removeEventListener('selectionchange', this.launchSelectionManipulator)
-    // document.removeEventListener('contextmenu', this.cancelEvent)
   }
 
   render () {
@@ -76,8 +62,6 @@ class Mixin extends React.Component {
 
   touchstart (e) {
     this.isTouchScreen = true
-
-    if (!this.state.holding && (e.target instanceof HTMLImageElement || e.target.getAttribute('href'))) this.startTimer()
   }
 
   rangeToPoints (range, startX, startY, endX, endY) {
@@ -119,29 +103,6 @@ class Mixin extends React.Component {
     }
   }
 
-  cancelEvent (e) {
-    e.preventDefault()
-    e.stopPropagation()
-
-    return false
-  }
-
-  startTimer () {
-    this.setState({
-      holding: true
-    })
-
-    this.timeout = setTimeout(this.launchContextMenu, this.props.holdTime)
-  }
-
-  stopTimer () {
-    this.setState({
-      holding: false
-    })
-
-    this.timeout = clearTimeout(this.timeout)
-  }
-
   launchSelectionManipulator (e) {
     if (this.isTouchScreen) {
       const selecting = !window.getSelection().isCollapsed || this.manipulating
@@ -156,10 +117,6 @@ class Mixin extends React.Component {
         this.selectRange = null
       }
     }
-  }
-
-  launchContextMenu (e) {
-    navigator.vibrate(1)
   }
 
   manipulateSelection (first, e) {
@@ -215,10 +172,10 @@ class Mixin extends React.Component {
     this.manipulating = false
 
     if (
-      e.changedTouches[0].clientY - this.originTouchEvent.touches[0].clientY >= Mixin.collapseSwipeDistance &&
-      e.timeStamp - this.originTouchEvent.timeStamp <= Mixin.collapseSwipeDuration
+      e.changedTouches[0].clientY - this.originTouchEvent.touches[0].clientY >= this.props.collapseSwipeDistance &&
+      e.timeStamp - this.originTouchEvent.timeStamp <= this.props.collapseSwipeDuration
     ) window.getSelection().removeAllRanges()
   }
 }
 
-export default Mixin
+export default SelectionMixin
