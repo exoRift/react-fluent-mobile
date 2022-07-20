@@ -1,52 +1,61 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import '../styles/index.css'
+import '../styles/Selection.css'
 import '../styles/Context.css'
-
+// NOTE: PREPARE TO SET ORIGINTOUCH TO NULL AT SOME POINT
 class Mixin extends React.Component {
   static propTypes = {
     holdDelay: PropTypes.number,
-    selectHoldTime: PropTypes.number,
-    menuHoldTime: PropTypes.number
+    holdTime: PropTypes.number
   }
 
   static defaultProps = {
     holdDelay: 100,
-    selectHoldTime: 500,
-    menuHoldTime: 1000
+    holdTime: 1000
   }
 
+  static collapseSwipeDistance = 100
+  static collapseSwipeDuration = 300
+
+  isTouchScreen = false
+  originRange = null
+  selectRange = null
+  originTouchEvent = null
+  manipulating = false
+
   state = {
-    holdIndex: 0,
-    selecting: false,
-    originEvent: null
+    holding: false,
+    selecting: false
   }
 
   constructor (props) {
     super(props)
 
-    this.selectRange = document.createRange()
-
     this.cancelEvent = this.cancelEvent.bind(this)
     this.touchstart = this.touchstart.bind(this)
-    this.touchend = this.touchend.bind(this)
-    this.touchmove = this.touchmove.bind(this)
-    this.advanceHoldIndex = this.advanceHoldIndex.bind(this)
+    this.stopTimer = this.stopTimer.bind(this)
+    this.launchSelectionManipulator = this.launchSelectionManipulator.bind(this)
+    this.launchContextMenu = this.launchContextMenu.bind(this)
+    this.copySelection = this.copySelection.bind(this)
+    this.collapseSelection = this.collapseSelection.bind(this)
   }
 
   componentDidMount () {
     document.addEventListener('touchstart', this.touchstart)
-    document.addEventListener('touchend', this.touchend)
-    document.addEventListener('touchmove', this.touchmove)
-    document.addEventListener('contextmenu', this.cancelEvent)
-    document.addEventListener('dragstart', this.cancelEvent)
+    document.addEventListener('touchend', this.stopTimer)
+    document.addEventListener('touchmove', this.stopTimer)
+    document.addEventListener('selectionchange', this.launchSelectionManipulator)
+    // document.addEventListener('contextmenu', this.cancelEvent)
   }
 
   componentWillUnmount () {
     document.removeEventListener('touchstart', this.touchstart)
-    document.removeEventListener('touchend', this.touchend)
-    document.removeEventListener('touchmove', this.touchmove)
-    document.removeEventListener('contextmenu', this.cancelEvent)
+    document.removeEventListener('touchend', this.stopTimer)
+    document.removeEventListener('touchmove', this.stopTimer)
+    document.removeEventListener('selectionchange', this.launchSelectionManipulator)
+    // document.removeEventListener('contextmenu', this.cancelEvent)
   }
 
   render () {
@@ -55,82 +64,31 @@ class Mixin extends React.Component {
         {this.props.children}
 
         <div
-          className={
-            `fluent ${['', 'select', 'menu'][this.state.holdIndex]} ${this.state.holdIndex ? 'active' : 'inactive'}`
-            }
-          id='fluentprogress'
-          style={{
-            top: this.state.originEvent?.touches?.[0]?.clientY,
-            left: this.state.originEvent?.touches?.[0]?.clientX,
-            width: (Math.max(this.state.originEvent?.touches?.[0]?.radiusX, this.state.originEvent?.touches?.[0]?.radiusY) * 150) + 'px',
-            height: (Math.max(this.state.originEvent?.touches?.[0]?.radiusX, this.state.originEvent?.touches?.[0]?.radiusY) * 150) + 'px',
-            animationDelay: this.props.holdDelay + 'ms',
-            '--transitionDelay': this.props.holdDelay + 'ms',
-            animationDuration: ([this.props.selectHoldTime, this.props.menuHoldTime][this.state.holdIndex - 1] - this.props.holdDelay) + 'ms',
-            visibility: this.state.selecting ? 'hidden' : 'visible'
-          }}
+          className={`fluent ${this.state.selecting ? 'active' : 'inactive'}`} id='fluentselectionmanipulator'
+          onTouchStart={this.manipulateSelection.bind(this, true)}
+          onTouchMove={this.manipulateSelection.bind(this, false)}
+          onTouchEnd={this.collapseSelection}
+          onClick={this.copySelection}
         />
       </>
     )
   }
 
-  cancelEvent (e) {
-    if (this.state.holdIndex || this.state.selecting) {
-      e.preventDefault()
-      e.stopPropagation()
-
-      return false
-    }
-  }
-
   touchstart (e) {
-    this.setState({
-      originEvent: e
-    })
+    this.isTouchScreen = true
 
-    if (!this.state.holdIndex) this.startTimer()
+    if (!this.state.holding && (e.target instanceof HTMLImageElement || e.target.getAttribute('href'))) this.startTimer()
   }
 
-  touchend (e) {
-    this.setState({
-      selecting: false
-    })
-    document.body.style.touchAction = 'auto'
-
-    this.stopTimer()
-  }
-
-  touchmove (e) {
-    const selection = window.getSelection()
-
-    if (this.state.selecting) {
-      this.rangeToPoints(this.selectRange, e.touches[1] || this.state.originEvent.touches[0], e.touches[0]) // versatile 2nd touch
-    } else {
-      this.stopTimer()
-
-      if (this.state.holdIndex === 2) {
-        this.setState({
-          selecting: true
-        })
-        document.body.style.touchAction = 'none'
-
-        this.rangeToPoints(this.selectRange, this.state.originEvent.touches[0], e.touches[0])
-
-        selection.removeAllRanges()
-        selection.addRange(this.selectRange)
-      }
-    }
-  }
-
-  rangeToPoints (range, first, second) {
-    const firstBound = this.getCaretPosition(first.clientX, first.clientY)
-    const secondBound = this.getCaretPosition(second.clientX, second.clientY)
+  rangeToPoints (range, startX, startY, endX, endY) {
+    const firstBound = this.getCaretPosition(startX, startY)
+    const secondBound = this.getCaretPosition(endX, endY)
 
     if (firstBound && secondBound) {
       range.setStart(...firstBound)
       range.setEnd(...secondBound)
 
-      if (range.collapsed && (firstBound[0] !== secondBound[0] || firstBound[1] !== secondBound[1])) this.rangeToPoints(range, second, first)
+      if (range.collapsed && (firstBound[0] !== secondBound[0] || firstBound[1] !== secondBound[1])) this.rangeToPoints(range, endX, endY, startX, startY)
 
       if (range.commonAncestorContainer.nodeType === Node.TEXT_NODE) range.commonAncestorContainer.parentElement.focus()
       else range.commonAncestorContainer.focus()
@@ -161,33 +119,102 @@ class Mixin extends React.Component {
     }
   }
 
+  cancelEvent (e) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    return false
+  }
+
   startTimer () {
     this.setState({
-      holdIndex: 1
+      holding: true
     })
 
-    this.timeout = setTimeout(this.advanceHoldIndex, this.props.selectHoldTime)
+    this.timeout = setTimeout(this.launchContextMenu, this.props.holdTime)
   }
 
   stopTimer () {
     this.setState({
-      holdIndex: 0
+      holding: false
     })
 
     this.timeout = clearTimeout(this.timeout)
   }
 
-  advanceHoldIndex (e) {
-    const progress = document.getElementById('fluentprogress')
-    progress.style.animationName = 'none'
-    void progress.offsetWidth /* eslint-disable-line */
-    progress.style.animationName = ''
+  launchSelectionManipulator (e) {
+    if (this.isTouchScreen) {
+      const selecting = !window.getSelection().isCollapsed || this.manipulating
 
-    this.setState({
-      holdIndex: 2
-    })
+      this.setState({
+        selecting
+      })
 
+      if (!selecting) {
+        this.originTouchEvent = null
+        this.originRange = null
+        this.selectRange = null
+      }
+    }
+  }
+
+  launchContextMenu (e) {
     navigator.vibrate(1)
+  }
+
+  manipulateSelection (first, e) {
+    const selection = window.getSelection()
+
+    if (first) {
+      this.originTouchEvent = e
+      this.manipulating = true
+
+      this.originRange = selection.getRangeAt(0)
+      this.selectRange = this.originRange.cloneRange()
+      selection.removeAllRanges()
+      selection.addRange(this.selectRange)
+    } else {
+      const rects = this.originRange.getClientRects()
+      const rect = [
+        rects[0].left,
+        rects[0].top,
+        rects[rects.length - 1].right,
+        rects[rects.length - 1].bottom
+      ]
+
+      const shifts = [
+        e.touches[1] ? e.touches[1].clientX - this.originTouchEvent.touches[1].clientX : 0, // Start X
+        e.touches[1] ? e.touches[1].clientY - this.originTouchEvent.touches[1].clientY : 0, // Start Y
+        e.touches[0].clientX - this.originTouchEvent.touches[0].clientX, // End X
+        e.touches[0].clientY - this.originTouchEvent.touches[0].clientY // End Y
+      ]
+
+      const positions = []
+      for (let d = 0; d < rect.length; d++) positions.push(Math.max(0, rect[d] + shifts[d]))
+
+      this.rangeToPoints(
+        this.selectRange,
+        ...positions
+      )
+    }
+  }
+
+  copySelection (e) {
+    const selection = window.getSelection()
+
+    selection.removeAllRanges()
+    selection.addRange(this.selectRange)
+
+    return navigator.clipboard.writeText(selection.toString())
+  }
+
+  collapseSelection (e) {
+    this.manipulating = false
+
+    if (
+      e.changedTouches[0].clientY - this.originTouchEvent.touches[0].clientY >= Mixin.collapseSwipeDistance &&
+      e.timeStamp - this.originTouchEvent.timeStamp <= Mixin.collapseSwipeDuration
+    ) window.getSelection().removeAllRanges()
   }
 }
 

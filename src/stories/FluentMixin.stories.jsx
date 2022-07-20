@@ -11,12 +11,7 @@ export default {
         type: 'number'
       }
     },
-    selectHoldTime: {
-      control: {
-        type: 'number'
-      }
-    },
-    menuHoldTime: {
+    holdTime: {
       control: {
         type: 'number'
       }
@@ -29,11 +24,14 @@ export const Default = (args) => (
     <span id='span1'>This is some sample text!</span>
     <FluentMixin {...args}/>
 
-    <span id='span2'>This is outside of the container</span>
+    <span id='span2'>This is past the mixin</span>
+
+    <a href='/'>This is clickable</a>
+    <br/><br/><br/><br/><br/><br/>
+    <input id='test'/>
   </div>
 )
 Default.args = {
   holdDelay: 100,
-  selectHoldTime: 500,
-  menuHoldTime: 1000
+  holdTime: 500
 }

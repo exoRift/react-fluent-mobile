@@ -1,0 +1,30 @@
+.fluent#fluentselectionmanipulator {
+  transition: 0.2s;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 40vh;
+  max-height: 200vw;
+  background-color: #080808;
+  background-image:
+    radial-gradient(#212121 20%, transparent 20%),
+    radial-gradient(black 20%, transparent 20%);
+  background-position: 0 0, 5vw 5vw;
+  background-size: 2vw 2vw;
+  mask-image: linear-gradient(to top, rgba(255, 255, 255, 0.9), transparent);
+  touch-action: none;
+  user-select: none;
+}
+.fluent#fluentselectionmanipulator.inactive {
+  opacity: 0;
+  pointer-events: none;
+}
+.fluent#fluentselectionmanipulator.active {
+  opacity: 1;
+}
+.fluent#fluentselectionmanipulator.active:active {
+  background-color: #1ea7fd;
+  background-image:
+    radial-gradient(#41b6ff 20%, transparent 20%),
+    radial-gradient(#0c89d6 20%, transparent 20%);
+}
