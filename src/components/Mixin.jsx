@@ -202,6 +202,9 @@ class Mixin extends React.Component {
   copySelection (e) {
     const selection = window.getSelection()
 
+    e.target.classList.add('refresh')
+    setTimeout(() => e.target.classList.remove('refresh')) // Negligible delay for DOM rerender
+
     selection.removeAllRanges()
     selection.addRange(this.selectRange)
 
