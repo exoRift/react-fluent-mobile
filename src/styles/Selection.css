@@ -48,6 +48,21 @@
   display: none;
 }
 
+/* DEBUG */
+.fluent.debug {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+}
+.fluent.debug#fluentdebugstart {
+  background: red;
+}
+.fluent.debug#fluentdebugend {
+  background: blue;
+}
+/* DEBUG */
+
 @keyframes copy {
   from {
     transform: none;

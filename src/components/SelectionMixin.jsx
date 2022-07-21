@@ -7,12 +7,14 @@ import '../styles/Selection.css'
 class SelectionMixin extends React.Component {
   static propTypes = {
     collapseSwipeDistance: PropTypes.number,
-    collapseSwipeDuration: PropTypes.number
+    collapseSwipeDuration: PropTypes.number,
+    debug: PropTypes.bool
   }
 
   static defaultProps = {
     collapseSwipeDistance: 100,
-    collapseSwipeDuration: 300
+    collapseSwipeDuration: 300,
+    debug: false
   }
 
   isTouchScreen = false
@@ -56,6 +58,15 @@ class SelectionMixin extends React.Component {
           onTouchEnd={this.collapseSelection}
           onClick={this.copySelection}
         />
+
+        {this.props.debug
+          ? (
+            <>
+              <div className='fluent debug' id='fluentdebugstart'/>
+              <div className='fluent debug' id='fluentdebugend'/>
+            </>
+            )
+          : null}
       </>
     )
   }
@@ -130,7 +141,20 @@ class SelectionMixin extends React.Component {
       this.selectRange = this.originRange.cloneRange()
       selection.removeAllRanges()
       selection.addRange(this.selectRange)
-    } else {
+    } else if (this.manipulating) {
+      if (this.props.debug) {
+        const start = document.getElementById('fluentdebugstart')
+        const end = document.getElementById('fluentdebugend')
+
+        start.style.left = e.touches[0].clientX + 'px'
+        start.style.top = e.touches[0].clientY + 'px'
+        end.style.left = (e.touches[1]?.clientX || 0) + 'px'
+        end.style.top = (e.touches[1]?.clientY || 0) + 'px'
+      }
+
+      const oldStartOffset = this.selectRange.startOffset
+      const oldEndOffset = this.selectRange.endOffset
+
       const rects = this.originRange.getClientRects()
       const rect = [
         rects[0].left,
@@ -140,8 +164,8 @@ class SelectionMixin extends React.Component {
       ]
 
       const shifts = [
-        e.touches[1] ? e.touches[1].clientX - this.originTouchEvent.touches[1].clientX : 0, // Start X
-        e.touches[1] ? e.touches[1].clientY - this.originTouchEvent.touches[1].clientY : 0, // Start Y
+        e.touches[1] && this.originTouchEvent.touches[1] ? e.touches[1].clientX - this.originTouchEvent.touches[1].clientX : 0, // Start X
+        e.touches[1] && this.originTouchEvent.touches[1] ? e.touches[1].clientY - this.originTouchEvent.touches[1].clientY : 0, // Start Y
         e.touches[0].clientX - this.originTouchEvent.touches[0].clientX, // End X
         e.touches[0].clientY - this.originTouchEvent.touches[0].clientY // End Y
       ]
@@ -153,6 +177,8 @@ class SelectionMixin extends React.Component {
         this.selectRange,
         ...positions
       )
+
+      if (this.selectRange.startOffset !== oldStartOffset || this.selectRange.endOffset !== oldEndOffset) navigator?.vibrate?.(1)
     }
   }
 
@@ -162,19 +188,22 @@ class SelectionMixin extends React.Component {
     e.target.classList.add('refresh')
     setTimeout(() => e.target.classList.remove('refresh')) // Negligible delay for DOM rerender
 
+    navigator?.vibrate?.([50, 0, 50])
+
     selection.removeAllRanges()
     selection.addRange(this.selectRange)
 
-    return navigator.clipboard.writeText(selection.toString())
+    return navigator.clipboard?.writeText?.(selection.toString())
   }
 
   collapseSelection (e) {
-    this.manipulating = false
-
     if (
       e.changedTouches[0].clientY - this.originTouchEvent.touches[0].clientY >= this.props.collapseSwipeDistance &&
       e.timeStamp - this.originTouchEvent.timeStamp <= this.props.collapseSwipeDuration
     ) window.getSelection().removeAllRanges()
+
+    if (e.targetTouches.length) this.manipulateSelection(true, e) // If a finger is lifted while two are on, don't cancel manipulation
+    else this.manipulating = false
   }
 }
 

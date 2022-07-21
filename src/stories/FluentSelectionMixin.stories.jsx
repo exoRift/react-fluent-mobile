@@ -17,6 +17,11 @@ export default {
       control: {
         type: 'number'
       }
+    },
+    debug: {
+      control: {
+        type: 'boolean'
+      }
     }
   }
 }
@@ -35,5 +40,6 @@ export const Default = (args) => (
 )
 Default.args = {
   collapseSwipeDistance: 100,
-  collapseSwipeDuration: 300
+  collapseSwipeDuration: 300,
+  debug: false
 }
