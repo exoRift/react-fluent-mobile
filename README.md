@@ -4,3 +4,5 @@ Mobile web browsers are an adaptation of the PC browsing experience for your mob
 ## Introducing a new meaning to fluency!
 
 `react-fluent-mobile` allows you to take your mobile browser's native features and augment them, improving gloss and agility without compromising on ability.
+
+## *Snappy, fluid, purposeful interactions*

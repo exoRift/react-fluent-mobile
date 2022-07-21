@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 
 import '../styles/Selection.css'
 
-// NOTE: PREPARE TO SET ORIGINTOUCH TO NULL AT SOME POINT
 class SelectionMixin extends React.Component {
   static propTypes = {
     collapseSwipeDistance: PropTypes.number,
@@ -16,6 +15,8 @@ class SelectionMixin extends React.Component {
     collapseSwipeDuration: 300,
     debug: false
   }
+
+  static iosRegex = /iphone|ipod|ipad|mac/i
 
   isTouchScreen = false
   originRange = null
@@ -84,14 +85,11 @@ class SelectionMixin extends React.Component {
       range.setEnd(...secondBound)
 
       if (range.collapsed && (firstBound[0] !== secondBound[0] || firstBound[1] !== secondBound[1])) this.rangeToPoints(range, endX, endY, startX, startY)
-
-      if (range.commonAncestorContainer.nodeType === Node.TEXT_NODE) range.commonAncestorContainer.parentElement.focus()
-      else range.commonAncestorContainer.focus()
     }
   }
 
   getCaretPosition (x, y) {
-    const useExperimental = navigator.userAgent.indexOf('Firefox') !== -1
+    const useExperimental = 'getCaretPositionFromPoint' in document
 
     if (useExperimental) {
       const position = document.getCaretPositionFromPoint(x, y)
@@ -178,6 +176,11 @@ class SelectionMixin extends React.Component {
         ...positions
       )
 
+      if (SelectionMixin.iosRegex.test(navigator.userAgent)) { // Safari selection behavior
+        selection.removeAllRanges()
+        selection.addRange(this.selectRange)
+      }
+
       if (this.selectRange.startOffset !== oldStartOffset || this.selectRange.endOffset !== oldEndOffset) navigator?.vibrate?.(1)
     }
   }
@@ -200,7 +203,7 @@ class SelectionMixin extends React.Component {
     if (
       e.changedTouches[0].clientY - this.originTouchEvent.touches[0].clientY >= this.props.collapseSwipeDistance &&
       e.timeStamp - this.originTouchEvent.timeStamp <= this.props.collapseSwipeDuration
-    ) window.getSelection().removeAllRanges()
+    ) window.getSelection().removeAllRanges() // Swipedown collapse gesture
 
     if (e.targetTouches.length) this.manipulateSelection(true, e) // If a finger is lifted while two are on, don't cancel manipulation
     else this.manipulating = false

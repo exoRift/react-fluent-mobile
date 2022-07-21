@@ -36,6 +36,7 @@ export const Default = (args) => (
     <a href='/'>This is clickable</a>
     <br/><br/><br/><br/><br/><br/>
     <input id='test'/>
+    {navigator.userAgent}
   </div>
 )
 Default.args = {

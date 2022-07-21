@@ -13,7 +13,6 @@
   background-size: 2vw 2vw;
   mask-image: linear-gradient(to top, rgba(255, 255, 255, 0.9), transparent);
   touch-action: none;
-  user-select: none;
 }
 
 .fluent#fluentselectionmanipulator.inactive {
@@ -56,10 +55,10 @@
   transform: translate(-50%, -50%);
 }
 .fluent.debug#fluentdebugstart {
-  background: red;
+  background-color: red;
 }
 .fluent.debug#fluentdebugend {
-  background: blue;
+  background-color: blue;
 }
 /* DEBUG */
 

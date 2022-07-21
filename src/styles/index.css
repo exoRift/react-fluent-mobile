@@ -2,5 +2,6 @@
 
 .fluent {
   position: fixed;
+  user-select: none;
   z-index: 100;
 }
