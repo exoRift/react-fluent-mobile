@@ -1,9 +1,9 @@
 {
-  "name": "fluentctx",
+  "name": "react-fluent-mobile",
   "version": "1.0.0",
-  "description": "A React module that is a far more intuitive and fluid alternative to context menus for mobile devices",
+  "description": "A React mixin module that augments the mobile user experience",
   "main": "src/index.js",
-  "module": "lib/index.esm.js",
+  "module": "src/index.esm.js",
   "scripts": {
     "build": "rollup -c",
     "storybook": "start-storybook -p 6006",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/exoRift/fluentctx.git"
+    "url": "git+https://github.com/exoRift/react-fluent-mobile.git"
   },
   "author": "exoRift",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/exoRift/fluentctx/issues"
+    "url": "https://github.com/exoRift/react-fluent-mobile/issues"
   },
-  "homepage": "https://github.com/exoRift/fluentctx#readme",
+  "homepage": "https://github.com/exoRift/react-fluent-mobile#readme",
   "browserslist": {
     "production": [
       ">0.2%",
