@@ -31,7 +31,17 @@
       "last 1 safari version"
     ]
   },
-  "keywords": [],
+  "keywords": [
+    "react",
+    "nodejs",
+    "javascript",
+    "node",
+    "mobile",
+    "js",
+    "context",
+    "menu",
+    "selection"
+  ],
   "peerDependencies": {
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
