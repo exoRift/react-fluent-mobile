@@ -77,7 +77,7 @@ class ContextMixin extends React.Component {
   }
 
   launchContextMenu (e) {
-    navigator.vibrate(1)
+    navigator?.vibrate?.(1)
   }
 }
 
