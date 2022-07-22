@@ -165,7 +165,7 @@ class SelectionMixin extends React.Component {
 
       this.positionHandles(e.touches, ...positions) // Live handle positioning
 
-      if (this.selectRange.startOffset !== oldStartOffset || this.selectRange.endOffset !== oldEndOffset) navigator?.vibrate?.(1)
+      if (this.selectRange.startOffset !== oldStartOffset || this.selectRange.endOffset !== oldEndOffset) navigator.vibrate?.(1)
     }
   }
 
@@ -174,13 +174,17 @@ class SelectionMixin extends React.Component {
 
     for (let i = 0; i < handles.length; i++) {
       const handle = handles[i]
+      const heightNode = [
+        this.selectRange.startContainer,
+        this.selectRange.endContainer
+      ][this.selectRange.reversed ? handles.length - 1 - i : i]
+      const heightRange = document.createRange()
+      heightRange.setStart(heightNode, 0)
+      heightRange.setEnd(heightNode, 1)
 
       handle.style.left = positions[i * 2] + 'px'
       handle.style.top = positions[(i * 2) + 1] + 'px'
-      handle.style.height = window.getComputedStyle([
-        this.selectRange.startContainer.parentElement,
-        this.selectRange.endContainer.parentElement
-      ][this.selectRange.reversed ? handles.length - 1 - i : i]).fontSize
+      handle.style.height = heightRange.getBoundingClientRect().height + 'px'
 
       if (touches[handles.length - 1 - i]) handle.classList.add('manipulating')
       else handle.classList.remove('manipulating')
@@ -256,7 +260,7 @@ class SelectionMixin extends React.Component {
     e.target.classList.add('refresh')
     setTimeout(() => e.target.classList.remove('refresh')) // Negligible delay for DOM rerender
 
-    navigator?.vibrate?.([50, 0, 50])
+    navigator.vibrate?.([50, 0, 50])
 
     selection.removeAllRanges()
     selection.addRange(this.selectRange)
