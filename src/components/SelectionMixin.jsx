@@ -25,7 +25,8 @@ class SelectionMixin extends React.Component {
   manipulating = false
 
   state = {
-    selecting: false
+    selecting: false,
+    manipulating: false
   }
 
   constructor (props) {
@@ -40,6 +41,10 @@ class SelectionMixin extends React.Component {
   componentDidMount () {
     document.addEventListener('touchstart', this.touchstart)
     document.addEventListener('selectionchange', this.launchSelectionManipulator)
+
+    const inputs = document.querySelectorAll('input, textarea')
+
+    for (const input of inputs) input.addEventListener('select', this.launchSelectionManipulator)
   }
 
   componentWillUnmount () {
@@ -60,7 +65,10 @@ class SelectionMixin extends React.Component {
           onClick={this.copySelection}
         />
 
-        {this.props.debug
+        <div className={`fluent handle ${this.state.manipulating ? 'active' : 'inactive'}`} id='fluentselectionhandlestart'/>
+        <div className={`fluent handle ${this.state.manipulating ? 'active' : 'inactive'}`} id='fluentselectionhandleend'/>
+
+        {this.props.debug && this.state.selecting
           ? (
             <>
               <div className='fluent debug' id='fluentdebugstart'/>
@@ -89,10 +97,10 @@ class SelectionMixin extends React.Component {
   }
 
   getCaretPosition (x, y) {
-    const useExperimental = 'getCaretPositionFromPoint' in document
+    const useExperimental = 'caretPositionFromPoint' in document
 
     if (useExperimental) {
-      const position = document.getCaretPositionFromPoint(x, y)
+      const position = document.caretPositionFromPoint(x, y)
 
       return position
         ? [
@@ -101,7 +109,7 @@ class SelectionMixin extends React.Component {
           ]
         : null
     } else {
-      const range = document.caretRangeFromPoint(x, y)
+      const range = document.caretRangeFromPoint(x, y + 1 /* Prevent selection of above text */)
 
       return range
         ? [
@@ -114,7 +122,7 @@ class SelectionMixin extends React.Component {
 
   launchSelectionManipulator (e) {
     if (this.isTouchScreen) {
-      const selecting = !window.getSelection().isCollapsed || this.manipulating
+      const selecting = !window.getSelection().isCollapsed || this.state.manipulating
 
       this.setState({
         selecting
@@ -133,13 +141,16 @@ class SelectionMixin extends React.Component {
 
     if (first) {
       this.originTouchEvent = e
-      this.manipulating = true
+
+      this.setState({
+        manipulating: true
+      })
 
       this.originRange = selection.getRangeAt(0)
       this.selectRange = this.originRange.cloneRange()
       selection.removeAllRanges()
       selection.addRange(this.selectRange)
-    } else if (this.manipulating) {
+    } else if (this.state.manipulating) {
       if (this.props.debug) {
         const start = document.getElementById('fluentdebugstart')
         const end = document.getElementById('fluentdebugend')
@@ -155,10 +166,10 @@ class SelectionMixin extends React.Component {
 
       const rects = this.originRange.getClientRects()
       const rect = [
-        rects[0].left,
-        rects[0].top,
-        rects[rects.length - 1].right,
-        rects[rects.length - 1].bottom
+        rects[0]?.left,
+        rects[0]?.top,
+        rects[rects.length - 1]?.right,
+        rects[rects.length - 1]?.bottom
       ]
 
       const shifts = [
@@ -181,7 +192,27 @@ class SelectionMixin extends React.Component {
         selection.addRange(this.selectRange)
       }
 
+      this.positionHandles(e.touches, ...positions) // Live handle positioning
+
       if (this.selectRange.startOffset !== oldStartOffset || this.selectRange.endOffset !== oldEndOffset) navigator?.vibrate?.(1)
+    }
+  }
+
+  positionHandles (touches, ...positions) {
+    const handles = document.getElementsByClassName('fluent handle')
+
+    for (let i = 0; i < handles.length; i++) {
+      const handle = handles[i]
+
+      handle.style.left = positions[i * 2] + 'px'
+      handle.style.top = positions[(i * 2) + 1] + 'px'
+      handle.style.height = window.getComputedStyle([
+        this.selectRange.endContainer.parentElement,
+        this.selectRange.startContainer.parentElement
+      ][i]).fontSize
+
+      if (touches[handles.length - 1 - i]) handle.classList.add('manipulating')
+      else handle.classList.remove('manipulating')
     }
   }
 
@@ -206,7 +237,21 @@ class SelectionMixin extends React.Component {
     ) window.getSelection().removeAllRanges() // Swipedown collapse gesture
 
     if (e.targetTouches.length) this.manipulateSelection(true, e) // If a finger is lifted while two are on, don't cancel manipulation
-    else this.manipulating = false
+    else {
+      this.setState({
+        manipulating: false
+      })
+
+      const rects = this.selectRange.getClientRects()
+
+      this.positionHandles(
+        e.targetTouches,
+        rects[0]?.left,
+        rects[0]?.top,
+        rects[rects.length - 1]?.right,
+        rects[rects.length - 1]?.bottom
+      ) // Touch lift handle correction
+    }
   }
 }
 
