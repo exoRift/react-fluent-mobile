@@ -37,6 +37,7 @@ export const Default = (args) => (
     <br/><br/><br/><br/><br/><br/>
     <input id='test'/>
     {navigator.userAgent}
+    <h1>this is a header</h1>
   </div>
 )
 Default.args = {

@@ -17,6 +17,7 @@ class SelectionMixin extends React.Component {
   }
 
   static iosRegex = /iphone|ipod|ipad|mac/i
+  static mobileRegex = /^(?:(?!windows).)*mobile(?:(?!windows).)*$/i
 
   isTouchScreen = false
   originRange = null
@@ -33,23 +34,26 @@ class SelectionMixin extends React.Component {
     super(props)
 
     this.touchstart = this.touchstart.bind(this)
-    this.launchSelectionManipulator = this.launchSelectionManipulator.bind(this)
     this.copySelection = this.copySelection.bind(this)
-    this.collapseSelection = this.collapseSelection.bind(this)
+    this.stopManipulation = this.stopManipulation.bind(this)
   }
 
   componentDidMount () {
     document.addEventListener('touchstart', this.touchstart)
-    document.addEventListener('selectionchange', this.launchSelectionManipulator)
+    document.addEventListener('selectionchange', this.launchDocumentManipulator)
 
     const inputs = document.querySelectorAll('input, textarea')
 
-    for (const input of inputs) input.addEventListener('select', this.launchSelectionManipulator)
+    for (const input of inputs) {
+      if (SelectionMixin.mobileRegex.test(navigator.userAgent)) input.addEventListener('touchcancel', this.launchInputManipulator)
+      else input.addEventListener('touchend', this.launchInputManipulator)
+      input.addEventListener('select', (e) => console.log(e))
+    }
   }
 
   componentWillUnmount () {
     document.removeEventListener('touchstart', this.touchstart)
-    document.removeEventListener('selectionchange', this.launchSelectionManipulator)
+    document.removeEventListener('selectionchange', this.launchDocumentManipulator)
   }
 
   render () {
@@ -61,7 +65,7 @@ class SelectionMixin extends React.Component {
           className={`fluent ${this.state.selecting ? 'active' : 'inactive'}`} id='fluentselectionmanipulator'
           onTouchStart={this.manipulateSelection.bind(this, true)}
           onTouchMove={this.manipulateSelection.bind(this, false)}
-          onTouchEnd={this.collapseSelection}
+          onTouchEnd={this.stopManipulation}
           onClick={this.copySelection}
         />
 
@@ -71,8 +75,8 @@ class SelectionMixin extends React.Component {
         {this.props.debug && this.state.selecting
           ? (
             <>
-              <div className='fluent debug' id='fluentdebugstart'/>
-              <div className='fluent debug' id='fluentdebugend'/>
+              <div className='fluent debug' id='fluentdebugfirst'/>
+              <div className='fluent debug' id='fluentdebugsecond'/>
             </>
             )
           : null}
@@ -80,49 +84,13 @@ class SelectionMixin extends React.Component {
     )
   }
 
-  touchstart (e) {
+  touchstart () {
     this.isTouchScreen = true
   }
 
-  rangeToPoints (range, startX, startY, endX, endY) {
-    const firstBound = this.getCaretPosition(startX, startY)
-    const secondBound = this.getCaretPosition(endX, endY)
-
-    if (firstBound && secondBound) {
-      range.setStart(...firstBound)
-      range.setEnd(...secondBound)
-
-      if (range.collapsed && (firstBound[0] !== secondBound[0] || firstBound[1] !== secondBound[1])) this.rangeToPoints(range, endX, endY, startX, startY)
-    }
-  }
-
-  getCaretPosition (x, y) {
-    const useExperimental = 'caretPositionFromPoint' in document
-
-    if (useExperimental) {
-      const position = document.caretPositionFromPoint(x, y)
-
-      return position
-        ? [
-            position.offsetNode,
-            position.offset
-          ]
-        : null
-    } else {
-      const range = document.caretRangeFromPoint(x, y + 1 /* Prevent selection of above text */)
-
-      return range
-        ? [
-            range.endContainer,
-            range.endOffset
-          ]
-        : null
-    }
-  }
-
-  launchSelectionManipulator (e) {
+  launchManipulator (type, e) {
     if (this.isTouchScreen) {
-      const selecting = !window.getSelection().isCollapsed || this.state.manipulating
+      const selecting = !window.getSelection().isCollapsed || e.target.selectionEnd !== e.target.selectionStart || this.state.manipulating
 
       this.setState({
         selecting
@@ -136,10 +104,13 @@ class SelectionMixin extends React.Component {
     }
   }
 
+  launchDocumentManipulator = this.launchManipulator.bind(this, 'document')
+  launchInputManipulator = this.launchManipulator.bind(this, 'input')
+
   manipulateSelection (first, e) {
     const selection = window.getSelection()
 
-    if (first) {
+    if (first && selection.rangeCount) {
       this.originTouchEvent = e
 
       this.setState({
@@ -152,13 +123,13 @@ class SelectionMixin extends React.Component {
       selection.addRange(this.selectRange)
     } else if (this.state.manipulating) {
       if (this.props.debug) {
-        const start = document.getElementById('fluentdebugstart')
-        const end = document.getElementById('fluentdebugend')
+        const first = document.getElementById('fluentdebugfirst')
+        const second = document.getElementById('fluentdebugsecond')
 
-        start.style.left = e.touches[0].clientX + 'px'
-        start.style.top = e.touches[0].clientY + 'px'
-        end.style.left = (e.touches[1]?.clientX || 0) + 'px'
-        end.style.top = (e.touches[1]?.clientY || 0) + 'px'
+        first.style.left = e.touches[0].clientX + 'px'
+        first.style.top = e.touches[0].clientY + 'px'
+        second.style.left = (e.touches[1]?.clientX || 0) + 'px'
+        second.style.top = (e.touches[1]?.clientY || 0) + 'px'
       }
 
       const oldStartOffset = this.selectRange.startOffset
@@ -187,7 +158,7 @@ class SelectionMixin extends React.Component {
         ...positions
       )
 
-      if (SelectionMixin.iosRegex.test(navigator.userAgent)) { // Safari selection behavior
+      if (SelectionMixin.iosRegex.test(navigator.userAgent) || selection.isCollapsed) { // Safari selection behavior and Android tap selection behavior
         selection.removeAllRanges()
         selection.addRange(this.selectRange)
       }
@@ -207,30 +178,16 @@ class SelectionMixin extends React.Component {
       handle.style.left = positions[i * 2] + 'px'
       handle.style.top = positions[(i * 2) + 1] + 'px'
       handle.style.height = window.getComputedStyle([
-        this.selectRange.endContainer.parentElement,
-        this.selectRange.startContainer.parentElement
-      ][i]).fontSize
+        this.selectRange.startContainer.parentElement,
+        this.selectRange.endContainer.parentElement
+      ][this.selectRange.reversed ? handles.length - 1 - i : i]).fontSize
 
       if (touches[handles.length - 1 - i]) handle.classList.add('manipulating')
       else handle.classList.remove('manipulating')
     }
   }
 
-  copySelection (e) {
-    const selection = window.getSelection()
-
-    e.target.classList.add('refresh')
-    setTimeout(() => e.target.classList.remove('refresh')) // Negligible delay for DOM rerender
-
-    navigator?.vibrate?.([50, 0, 50])
-
-    selection.removeAllRanges()
-    selection.addRange(this.selectRange)
-
-    return navigator.clipboard?.writeText?.(selection.toString())
-  }
-
-  collapseSelection (e) {
+  stopManipulation (e) {
     if (
       e.changedTouches[0].clientY - this.originTouchEvent.touches[0].clientY >= this.props.collapseSwipeDistance &&
       e.timeStamp - this.originTouchEvent.timeStamp <= this.props.collapseSwipeDuration
@@ -252,6 +209,59 @@ class SelectionMixin extends React.Component {
         rects[rects.length - 1]?.bottom
       ) // Touch lift handle correction
     }
+  }
+
+  rangeToPoints (range, startX, startY, endX, endY) {
+    const firstBound = this.getCaretPosition(startX, startY)
+    const secondBound = this.getCaretPosition(endX, endY)
+
+    if (firstBound && secondBound) {
+      range.setStart(...firstBound)
+      range.setEnd(...secondBound)
+
+      if (range.collapsed && (firstBound[0] !== secondBound[0] || firstBound[1] !== secondBound[1])) {
+        this.rangeToPoints(range, endX, endY, startX, startY)
+        range.reversed = true
+      } else range.reversed = false
+    }
+  }
+
+  getCaretPosition (x, y, first) {
+    const useExperimental = 'caretPositionFromPoint' in document
+
+    if (useExperimental) {
+      const position = document.caretPositionFromPoint(x, y)
+
+      return position
+        ? [
+            position.offsetNode,
+            position.offset
+          ]
+        : null
+    } else {
+      const range = document.caretRangeFromPoint(x, y + 1 /* Prevent selection of above text */)
+
+      return range
+        ? [
+            range.endContainer,
+            range.endOffset
+          ]
+        : null
+    }
+  }
+
+  copySelection (e) {
+    const selection = window.getSelection()
+
+    e.target.classList.add('refresh')
+    setTimeout(() => e.target.classList.remove('refresh')) // Negligible delay for DOM rerender
+
+    navigator?.vibrate?.([50, 0, 50])
+
+    selection.removeAllRanges()
+    selection.addRange(this.selectRange)
+
+    return navigator.clipboard?.writeText?.(selection.toString())
   }
 }
 

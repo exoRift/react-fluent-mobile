@@ -12,6 +12,7 @@
   background-position: 0 0, 5vw 5vw;
   background-size: 2vw 2vw;
   mask-image: linear-gradient(to top, rgba(255, 255, 255, 0.9), transparent);
+  backface-visibility: hidden; /* Needed because copy icon causes weird top border on pad upon transformation */
   touch-action: none;
 }
 
@@ -58,7 +59,7 @@
   opacity: 1;
 }
 .fluent.handle.active.manipulating {
-  transition: none;
+  transition: all 0s, height 0.2s;
   transform: scale(1.3);
 }
 .fluent.handle#fluentselectionhandleend {
