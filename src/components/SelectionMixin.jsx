@@ -19,6 +19,8 @@ class SelectionMixin extends React.Component {
   static iosRegex = /iphone|ipod|ipad|mac/i
   static mobileRegex = /^(?:(?!windows).)*mobile(?:(?!windows).)*$/i
 
+  static defaultHandleHeight = 18
+
   isTouchScreen = false
   originRange = null
   selectRange = null
@@ -106,7 +108,7 @@ class SelectionMixin extends React.Component {
 
   launchDocumentManipulator = this.launchManipulator.bind(this, 'document')
   launchInputManipulator = this.launchManipulator.bind(this, 'input')
-
+  // TODO: HIDE PAD WHEN HANDLE IS OVER, SCROLLING, USE e.changedTouches and iterate and base off of identifier
   manipulateSelection (first, e) {
     const selection = window.getSelection()
 
@@ -191,13 +193,13 @@ class SelectionMixin extends React.Component {
   }
 
   stopManipulation (e) {
-    if (
-      e.changedTouches[0].clientY - this.originTouchEvent.touches[0].clientY >= this.props.collapseSwipeDistance &&
-      e.timeStamp - this.originTouchEvent.timeStamp <= this.props.collapseSwipeDuration
-    ) window.getSelection().removeAllRanges() // Swipedown collapse gesture
-
     if (e.targetTouches.length) this.manipulateSelection(true, e) // If a finger is lifted while two are on, don't cancel manipulation
     else {
+      if (
+        e.changedTouches[0].clientY - this.originTouchEvent.touches[0].clientY >= this.props.collapseSwipeDistance &&
+        e.timeStamp - this.originTouchEvent.timeStamp <= this.props.collapseSwipeDuration
+      ) window.getSelection().removeAllRanges() // Swipedown collapse gesture
+
       this.setState({
         manipulating: false
       })
@@ -255,10 +257,13 @@ class SelectionMixin extends React.Component {
 
   getLineHeight (node) {
     const range = document.createRange()
-    range.setStart(node, 0)
-    range.setEnd(node, 1)
 
-    return range.getBoundingClientRect().height
+    if (node && node instanceof Text) {
+      range.setStart(node, 0)
+      range.setEnd(node, 1)
+    }
+
+    return range.getBoundingClientRect().height || SelectionMixin.defaultHandleHeight
   }
 
   copySelection (e) {
