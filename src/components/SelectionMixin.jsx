@@ -155,15 +155,17 @@ class SelectionMixin extends React.Component {
 
       this.rangeToPoints(
         this.selectRange,
-        ...positions
-      )
-
+        positions[0],
+        positions[1] + (this.getLineHeight(this.originRange.startContainer) / 2),
+        positions[2],
+        positions[3] - (this.getLineHeight(this.originRange.endContainer) / 2)
+      ) // Position selection
       if (SelectionMixin.iosRegex.test(navigator.userAgent) || selection.isCollapsed) { // Safari selection behavior and Android tap selection behavior
         selection.removeAllRanges()
         selection.addRange(this.selectRange)
       }
 
-      this.positionHandles(e.touches, ...positions) // Live handle positioning
+      this.positionHandles(e.touches, ...positions) // Position handles
 
       if (this.selectRange.startOffset !== oldStartOffset || this.selectRange.endOffset !== oldEndOffset) navigator.vibrate?.(1)
     }
@@ -178,16 +180,13 @@ class SelectionMixin extends React.Component {
         this.selectRange.startContainer,
         this.selectRange.endContainer
       ][this.selectRange.reversed ? handles.length - 1 - i : i]
-      const heightRange = document.createRange()
-      heightRange.setStart(heightNode, 0)
-      heightRange.setEnd(heightNode, 1)
-
-      handle.style.left = positions[i * 2] + 'px'
-      handle.style.top = positions[(i * 2) + 1] + 'px'
-      handle.style.height = heightRange.getBoundingClientRect().height + 'px'
 
       if (touches[handles.length - 1 - i]) handle.classList.add('manipulating')
       else handle.classList.remove('manipulating')
+
+      handle.style.left = positions[i * 2] + 'px'
+      handle.style.top = positions[(i * 2) + 1] + 'px'
+      handle.style.height = this.getLineHeight(heightNode) + 'px'
     }
   }
 
@@ -211,7 +210,7 @@ class SelectionMixin extends React.Component {
         rects[0]?.top,
         rects[rects.length - 1]?.right,
         rects[rects.length - 1]?.bottom
-      ) // Touch lift handle correction
+      ) // Correct handle positions on touch-lift
     }
   }
 
@@ -243,7 +242,7 @@ class SelectionMixin extends React.Component {
           ]
         : null
     } else {
-      const range = document.caretRangeFromPoint(x, y + 1 /* Prevent selection of above text */)
+      const range = document.caretRangeFromPoint(x, y)
 
       return range
         ? [
@@ -252,6 +251,14 @@ class SelectionMixin extends React.Component {
           ]
         : null
     }
+  }
+
+  getLineHeight (node) {
+    const range = document.createRange()
+    range.setStart(node, 0)
+    range.setEnd(node, 1)
+
+    return range.getBoundingClientRect().height
   }
 
   copySelection (e) {
