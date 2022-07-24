@@ -8,14 +8,41 @@ import {
 } from './FluentSelectionMixin.stories.jsx'
 
 export default {
-  title: 'Coalescence'
+  title: 'Coalescence',
+  argTypes: {
+    holdDelay: {
+      control: {
+        type: 'number'
+      }
+    },
+    holdTime: {
+      control: {
+        type: 'number'
+      }
+    },
+    collapseSwipeDistance: {
+      control: {
+        type: 'number'
+      }
+    },
+    collapseSwipeDuration: {
+      control: {
+        type: 'number'
+      }
+    },
+    debug: {
+      control: {
+        type: 'boolean'
+      }
+    }
+  }
 }
 
 export const Default = (args) => (
   <div>
     <span id='span1'>This is some sample text!</span>
-    <FluentContextMixin {...FluentContextMixin.args}/>
-    <FluentSelectionMixin {...FluentSelectionMixin.args}/>
+    <FluentContextMixin {...args}/>
+    <FluentSelectionMixin {...args}/>
 
     <span id='span2'>This is past the mixin</span>
 

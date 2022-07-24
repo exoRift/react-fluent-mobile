@@ -1,0 +1,15 @@
+.fluent.debug {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+  user-select: none;
+  pointer-events: none;
+  z-index: 200;
+}
+.fluent.debug#fluentdebugfirst {
+  background-color: red;
+}
+.fluent.debug#fluentdebugsecond {
+  background-color: blue;
+}

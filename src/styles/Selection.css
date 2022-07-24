@@ -69,21 +69,6 @@
   transform: translateY(-100%) scale(1.3);
 }
 
-/* DEBUG */
-.fluent.debug {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  transform: translate(-50%, -50%);
-}
-.fluent.debug#fluentdebugstart {
-  background-color: red;
-}
-.fluent.debug#fluentdebugend {
-  background-color: blue;
-}
-/* DEBUG */
-
 @keyframes copy {
   from {
     transform: none;

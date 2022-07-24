@@ -6,14 +6,12 @@ import '../styles/Selection.css'
 class SelectionMixin extends React.Component {
   static propTypes = {
     collapseSwipeDistance: PropTypes.number,
-    collapseSwipeDuration: PropTypes.number,
-    debug: PropTypes.bool
+    collapseSwipeDuration: PropTypes.number
   }
 
   static defaultProps = {
     collapseSwipeDistance: 100,
-    collapseSwipeDuration: 300,
-    debug: false
+    collapseSwipeDuration: 300
   }
 
   static iosRegex = /iphone|ipod|ipad|mac/i
@@ -73,15 +71,6 @@ class SelectionMixin extends React.Component {
 
         <div className={`fluent handle ${this.state.manipulating ? 'active' : 'inactive'}`} id='fluentselectionhandlestart'/>
         <div className={`fluent handle ${this.state.manipulating ? 'active' : 'inactive'}`} id='fluentselectionhandleend'/>
-
-        {this.props.debug && this.state.selecting
-          ? (
-            <>
-              <div className='fluent debug' id='fluentdebugfirst'/>
-              <div className='fluent debug' id='fluentdebugsecond'/>
-            </>
-            )
-          : null}
       </>
     )
   }
@@ -124,16 +113,6 @@ class SelectionMixin extends React.Component {
       selection.removeAllRanges()
       selection.addRange(this.selectRange)
     } else if (this.state.manipulating) {
-      if (this.props.debug) {
-        const first = document.getElementById('fluentdebugfirst')
-        const second = document.getElementById('fluentdebugsecond')
-
-        first.style.left = e.touches[0].clientX + 'px'
-        first.style.top = e.touches[0].clientY + 'px'
-        second.style.left = (e.touches[1]?.clientX || 0) + 'px'
-        second.style.top = (e.touches[1]?.clientY || 0) + 'px'
-      }
-
       const oldStartOffset = this.selectRange.startOffset
       const oldEndOffset = this.selectRange.endOffset
 
