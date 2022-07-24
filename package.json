@@ -4,6 +4,9 @@
   "description": "A React mixin module that augments the mobile user experience",
   "main": "build/index.js",
   "module": "build/index.esm.js",
+  "files": [
+    "build/"
+  ],
   "scripts": {
     "build": "rollup -c",
     "storybook": "start-storybook -p 6006",
