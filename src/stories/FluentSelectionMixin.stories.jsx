@@ -53,6 +53,12 @@ export default {
         type: 'number'
       }
     },
+    theme: {
+      options: ['dark', 'light'],
+      control: {
+        type: 'radio'
+      }
+    },
     debug: {
       control: {
         type: 'boolean'
@@ -75,7 +81,10 @@ export const Default = (args) => {
       document.removeEventListener('touchmove', positionDebugTouches)
       document.removeEventListener('touchmove', boundPositionDebugRange.current)
     }
-  }, [args.debug])
+
+    if (args.theme === 'dark') document.body.style.backgroundColor = 'white'
+    else document.body.style.backgroundColor = '#202124'
+  }, [args.debug, args.theme])
 
   return (
     <div>
@@ -107,5 +116,6 @@ export const Default = (args) => {
 Default.args = {
   collapseSwipeDistance: 100,
   collapseSwipeDuration: 300,
+  theme: 'dark',
   debug: false
 }

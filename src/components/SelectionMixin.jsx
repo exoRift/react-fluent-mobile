@@ -8,12 +8,14 @@ import '../styles/Selection.css'
 class SelectionMixin extends React.Component {
   static propTypes = {
     collapseSwipeDistance: PropTypes.number,
-    collapseSwipeDuration: PropTypes.number
+    collapseSwipeDuration: PropTypes.number,
+    theme: PropTypes.string
   }
 
   static defaultProps = {
     collapseSwipeDistance: 100,
-    collapseSwipeDuration: 300
+    collapseSwipeDuration: 300,
+    theme: 'dark'
   }
 
   static iosRegex = /iphone|ipod|ipad|mac/i
@@ -66,7 +68,7 @@ class SelectionMixin extends React.Component {
         {this.props.children}
 
         <div
-          className={`fluent ${this.state.selecting ? 'active' : 'inactive'}`} id='fluentselectionmanipulator'
+          className={`fluent ${this.props.theme} ${this.state.selecting ? 'active' : 'inactive'}`} id='fluentselectionmanipulator'
           onTouchStart={this.manipulateSelection.bind(this, true)}
           onTouchMove={this.manipulateSelection.bind(this, false)}
           onTouchEnd={this.stopManipulation}

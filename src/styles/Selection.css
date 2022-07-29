@@ -5,15 +5,24 @@
   width: 100vw;
   height: 40vh;
   max-height: 200vw;
-  background-color: #080808;
-  background-image:
-    radial-gradient(#212121 20%, transparent 20%),
-    radial-gradient(black 20%, transparent 20%);
   background-position: 0 0, 5vw 5vw;
   background-size: 2vw 2vw;
   mask-image: linear-gradient(to top, rgba(255, 255, 255, 0.9), transparent);
   backface-visibility: hidden; /* Needed because copy icon causes weird top border on pad upon transformation */
   touch-action: none;
+}
+
+.fluent.dark#fluentselectionmanipulator {
+  background-color: #080808;
+  background-image:
+    radial-gradient(#212121 20%, transparent 20%),
+    radial-gradient(black 20%, transparent 20%);
+}
+.fluent.light#fluentselectionmanipulator {
+  background-color: #f7f7f7;
+  background-image:
+    radial-gradient(#dedede 20%, transparent 20%),
+    radial-gradient(white 20%, transparent 20%);
 }
 
 .fluent#fluentselectionmanipulator.inactive {
@@ -25,10 +34,10 @@
 }
 
 .fluent#fluentselectionmanipulator.active:active {
-  background-color: #1ea7fd;
+  background-color: #49b9ff;
   background-image:
-    radial-gradient(#41b6ff 20%, transparent 20%),
-    radial-gradient(#0c89d6 20%, transparent 20%);
+    radial-gradient(#6bb8e7 20%, transparent 20%),
+    radial-gradient(#5a8cac 20%, transparent 20%);
 }
 
 .fluent#fluentselectionmanipulator::before {
@@ -40,9 +49,14 @@
   align-items: center;
   font-family: 'Material Symbols Outlined';
   font-size: 20vw;
-  color: white;
   animation: copy 1s normal forwards;
   pointer-events: none;
+}
+.fluent.dark#fluentselectionmanipulator::before {
+  color: white;
+}
+.fluent.light#fluentselectionmanipulator::before {
+  color: black;
 }
 .fluent#fluentselectionmanipulator.refresh::before {
   display: none;
