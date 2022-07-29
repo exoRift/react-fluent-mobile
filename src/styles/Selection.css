@@ -19,7 +19,7 @@
     radial-gradient(black 20%, transparent 20%);
 }
 .fluent.light#fluentselectionmanipulator {
-  background-color: #f7f7f7;
+  background-color: #fafafa;
   background-image:
     radial-gradient(#dedede 20%, transparent 20%),
     radial-gradient(white 20%, transparent 20%);

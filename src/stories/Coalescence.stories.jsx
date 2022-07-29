@@ -1,11 +1,9 @@
 import React from 'react'
 
 import {
-  Default as FluentContextMixin
-} from './FluentContextMixin.stories.jsx'
-import {
-  Default as FluentSelectionMixin
-} from './FluentSelectionMixin.stories.jsx'
+  FluentContextMixin,
+  FluentSelectionMixin
+} from '../'
 
 export default {
   title: 'Coalescence',
@@ -30,9 +28,10 @@ export default {
         type: 'number'
       }
     },
-    debug: {
+    theme: {
       control: {
-        type: 'boolean'
+        options: ['dark', 'light'],
+        type: 'radio'
       }
     }
   }
