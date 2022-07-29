@@ -25,6 +25,7 @@ class SelectionMixin extends React.Component {
   originTouches = []
   originRange = null
   selectRange = null
+  manipulatorRef = React.createRef()
 
   state = {
     selecting: false,
@@ -70,6 +71,7 @@ class SelectionMixin extends React.Component {
           onTouchMove={this.manipulateSelection.bind(this, false)}
           onTouchEnd={this.stopManipulation}
           onClick={this.copySelection}
+          ref={this.manipulatorRef}
         />
 
         <div className={`fluent handle ${this.state.manipulating ? 'active' : 'inactive'}`} id='fluentselectionhandlestart'/>
@@ -110,7 +112,7 @@ class SelectionMixin extends React.Component {
 
   launchDocumentManipulator = this.launchManipulator.bind(this, 'document')
   launchInputManipulator = this.launchManipulator.bind(this, 'input')
-  // TODO: HIDE PAD WHEN HANDLE IS OVER
+
   manipulateSelection (start, e) {
     const selection = window.getSelection()
 
@@ -154,6 +156,10 @@ class SelectionMixin extends React.Component {
 
     const positions = []
     for (let d = 0; d < rect.length; d++) positions.push(Math.max(0, rect[d] + shifts[d]))
+
+    const manipulatorTop = this.manipulatorRef.current.getBoundingClientRect().top
+    if (positions[1] > manipulatorTop || positions[3] > manipulatorTop) this.manipulatorRef.current.style.visibility = 'hidden'
+    else this.manipulatorRef.current.style.visibility = 'visible'
 
     // Range sizing
     this.selectRange.setStart(...this.getCaretPosition(positions[0], positions[1] + (this.originRange.startCoords.height / 2)))
