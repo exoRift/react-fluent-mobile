@@ -62,12 +62,6 @@
   transition: all 0s, height 0.2s;
   transform: scale(1.3);
 }
-.fluent.handle#fluentselectionhandleend {
-  transform: translateY(-100%);
-}
-.fluent.handle.active.manipulating#fluentselectionhandleend {
-  transform: translateY(-100%) scale(1.3);
-}
 
 @keyframes copy {
   from {
