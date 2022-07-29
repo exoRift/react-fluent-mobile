@@ -1,5 +1,4 @@
-.fluent.debug {
-  position: fixed;
+.fluent.debug.touch {
   width: 10px;
   height: 10px;
   transform: translate(-50%, -50%);
@@ -7,9 +6,15 @@
   pointer-events: none;
   z-index: 200;
 }
-.fluent.debug#fluentdebugfirst {
+
+.fluent.debug.range {
+  width: 2px;
+  height: 12px;
+}
+
+.fluent.debug.first {
   background-color: red;
 }
-.fluent.debug#fluentdebugsecond {
+.fluent.debug.second {
   background-color: blue;
 }
