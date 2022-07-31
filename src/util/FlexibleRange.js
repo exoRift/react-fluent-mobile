@@ -14,6 +14,8 @@ class FlexibleRange extends Range {
   }
 
   setStart (node, offset) {
+    if (!node) return
+
     this._registeredStart = [node, offset]
 
     if (this.reversed) super.setEnd(node, offset)
@@ -37,6 +39,8 @@ class FlexibleRange extends Range {
   }
 
   setEnd (node, offset) {
+    if (!node) return
+
     this._registeredEnd = [node, offset]
 
     if (this.reversed) super.setStart(node, offset)
