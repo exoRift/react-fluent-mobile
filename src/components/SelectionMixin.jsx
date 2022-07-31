@@ -84,8 +84,8 @@ class SelectionMixin extends React.Component {
           onTouchStart={this.manipulateSelection.bind(this, true)}
           onTouchMove={this.manipulateSelection.bind(this, false)}
           onTouchEnd={this.stopManipulation}
-          onClick={this.copySelection}
           onTouchEndCapture={this.isIOS ? this.reselectForIOS : null}
+          onDoubleClick={this.copySelection}
           ref={this.manipulator}
         />
 
