@@ -1,0 +1,28 @@
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.body.dark {
+  color: black;
+}
+.body.light {
+  color: white;
+}
+
+.suggestion {
+  display: flex;
+  align-items: flex-end;
+  border: 1px solid black;
+  border-radius: 15px;
+}
+.suggestion img {
+  width: 25rem;
+  margin-right: 1rem;
+  border-radius: 15px;
+}
+
+@media (pointer: coarse) {
+  .suggestion {
+    display: none;
+  }
+}

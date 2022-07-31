@@ -5,6 +5,8 @@ import {
   FluentSelectionMixin
 } from '../'
 
+import './styles/index.css'
+
 export default {
   title: 'Coalescence',
   argTypes: {

@@ -1,9 +1,20 @@
+import {
+  addDecorator
+} from '@storybook/react'
+import {
+  withConsole
+} from '@storybook/addon-console'
+
 export const parameters = {
-  actions: { argTypesRegex: "^on[A-Z].*" },
+  actions: {
+    argTypesRegex: '^on[A-Z].*'
+  },
   controls: {
     matchers: {
       color: /(background|color)$/i,
       date: /Date$/,
-    },
-  },
+    }
+  }
 }
+
+addDecorator((storyFn, context) => withConsole()(storyFn)(context))

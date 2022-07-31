@@ -4,6 +4,8 @@ import {
   FluentContextMixin
 } from '../'
 
+import './styles/index.css'
+
 export default {
   title: 'FluentContextMixin',
   component: FluentContextMixin,

@@ -1,5 +1,6 @@
 import {
   React,
+  useRef,
   useEffect
 } from 'react'
 
@@ -7,8 +8,10 @@ import {
   FlexibleRange
 } from '../'
 
+import './styles/index.css'
+
 export default {
-  title: 'FlexibleRangeTest',
+  title: 'FlexibleRange',
   component: FlexibleRange,
   argTypes: {
     startOffset: {
@@ -24,26 +27,27 @@ export default {
   }
 }
 
-const range = new FlexibleRange()
-export const Default = (args) => {
+export const Sandbox = (args) => {
+  const range = useRef(new FlexibleRange())
+
   useEffect(() => {
     const selection = window.getSelection()
     const node = document.createNodeIterator(document.getElementById('text'), NodeFilter.SHOW_TEXT).nextNode()
 
     selection.removeAllRanges()
-    selection.addRange(range)
+    selection.addRange(range.current)
 
-    range.setStart(node, Math.max(0, args.startOffset))
-    range.setEnd(node, Math.min(node.textContent.length, args.endOffset))
+    range.current.setStart(node, Math.min(Math.max(0, args.startOffset), node.textContent.length))
+    range.current.setEnd(node, Math.min(Math.max(0, args.endOffset), node.textContent.length))
   })
 
   return (
-    <div>
-      <h1 id='text'>This is the text to test the range on</h1>
-    </div>
+    <>
+      <h2 id='text'>A flexible range allows you to set bounds of a selection regardless of whether the end comes before the start</h2>
+    </>
   )
 }
-Default.args = {
+Sandbox.args = {
   startOffset: 0,
   endOffset: 5
 }
