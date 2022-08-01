@@ -33,11 +33,17 @@
   opacity: 1;
 }
 
-.fluent#fluentselectionmanipulator.active:active {
+.fluent#fluentselectionmanipulator.dark.active:active {
   background-color: #49b9ff;
   background-image:
     radial-gradient(#6bb8e7 20%, transparent 20%),
     radial-gradient(#5a8cac 20%, transparent 20%);
+}
+.fluent#fluentselectionmanipulator.light.active:active {
+  background-color: #73c9ff;
+  background-image:
+    radial-gradient(#8dd3ff 20%, transparent 20%),
+    radial-gradient(#49a3da 20%, transparent 20%);
 }
 
 .fluent#fluentselectionmanipulator::before {
