@@ -181,15 +181,11 @@ class SelectionMixin extends React.Component {
     const positions = []
     for (let d = 0; d < rect.length; d++) positions.push(Math.max(0, rect[d] + shifts[d]))
 
-    // Hide manipulation pad when handle is over it
-    const manipulatorTop = this.manipulator.current.getBoundingClientRect().top -
-      Math.max(this.originRange.startCoords.height, this.originRange.endCoords.height)
-    if (positions[1] > manipulatorTop || positions[3] > manipulatorTop) this.manipulator.current.style.visibility = 'hidden'
-    else this.manipulator.current.style.visibility = 'visible'
-
     // Range sizing
-    this.selectRange.setStart(...this.getCaretPosition(positions[0], positions[1] + (this.originRange.startCoords.height / 2)))
-    this.selectRange.setEnd(...this.getCaretPosition(positions[2], positions[3] + (this.originRange.endCoords.height / 2)))
+    this.manipulator.current.style.pointerEvents = 'none' // Allow range passthrough of manipulation pad
+    if (touches[1]) this.selectRange.setStart(...this.getCaretPosition(positions[0], positions[1] + (this.originRange.startCoords.height / 2)))
+    if (touches[0]) this.selectRange.setEnd(...this.getCaretPosition(positions[2], positions[3] + (this.originRange.endCoords.height / 2)))
+    this.manipulator.current.style.pointerEvents = 'auto'
 
     // Safari selection behavior and Android tap selection behavior
     if (this.isIOS || selection.isCollapsed) {
@@ -206,8 +202,8 @@ class SelectionMixin extends React.Component {
     for (const touch of e.changedTouches) {
       const identifier = this.isIOS ? this.touchOrder.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier
 
-      if (identifier) this.originRange.setStart(...this.selectRange._registeredStart)
-      else this.originRange.setEnd(...this.selectRange._registeredEnd)
+      if (identifier === 1) this.originRange.setStart(...this.selectRange._registeredStart)
+      else if (!identifier) this.originRange.setEnd(...this.selectRange._registeredEnd)
     }
 
     if (e.targetTouches.length) this.manipulateSelection(true, e) // If a finger is still on, don't cancel manipulation and position inactive handle
@@ -226,8 +222,6 @@ class SelectionMixin extends React.Component {
 
       if (this.originRange.reversed) this.originRange.reverse()
       this.manipulateSelection(false, e) // Correct handle positions to stick to range
-
-      this.manipulator.current.style.visibility = 'visible'
     }
   }
 

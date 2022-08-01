@@ -10,7 +10,7 @@ import {
   FluentSelectionMixin
 } from '../'
 
-import deviceToolbar from './assets/Device Toolbar.webp'
+import deviceToolbar from './assets/device_toolbar.webp'
 
 import './styles/index.css'
 import './styles/FluentSelectionMixin.css'
