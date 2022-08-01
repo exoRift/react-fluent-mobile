@@ -12,13 +12,13 @@
   touch-action: none;
 }
 
-.fluent.dark#fluentselectionmanipulator {
+.fluent#fluentselectionmanipulator.dark {
   background-color: #080808;
   background-image:
     radial-gradient(#212121 20%, transparent 20%),
     radial-gradient(black 20%, transparent 20%);
 }
-.fluent.light#fluentselectionmanipulator {
+.fluent#fluentselectionmanipulator.light {
   background-color: #fafafa;
   background-image:
     radial-gradient(#dedede 20%, transparent 20%),
@@ -55,17 +55,18 @@
   align-items: center;
   font-family: 'Material Symbols Outlined';
   font-size: 20vw;
-  animation: copy 1s normal forwards;
   pointer-events: none;
-}
-.fluent.dark#fluentselectionmanipulator::before {
-  color: white;
-}
-.fluent.light#fluentselectionmanipulator::before {
-  color: black;
+  animation: copy 1s normal forwards;
 }
 .fluent#fluentselectionmanipulator.refresh::before {
   display: none;
+}
+
+.fluent#fluentselectionmanipulator.dark::before {
+  color: white;
+}
+.fluent#fluentselectionmanipulator.light::before {
+  color: black;
 }
 
 .fluent.handle {
