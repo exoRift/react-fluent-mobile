@@ -38,12 +38,12 @@ class SelectionMixin extends React.Component {
     super(props)
 
     this.isIOS = SelectionMixin.iosRegex.test(navigator.userAgent)
-    if (this.isIOS) this.touchOrder = []
 
     this.initializeComponent = this.initializeComponent.bind(this)
-    this.copySelection = this.copySelection.bind(this)
+    this.registerTouch = this.registerTouch.bind(this)
+    this.manipulateSelection = this.manipulateSelection.bind(this)
     this.stopManipulation = this.stopManipulation.bind(this)
-    this.registerTouchForIOS = this.registerTouchForIOS.bind(this)
+    this.copySelection = this.copySelection.bind(this)
     this.unregisterTouchForIOS = this.unregisterTouchForIOS.bind(this)
     this.reselectForIOS = this.reselectForIOS.bind(this)
   }
@@ -56,12 +56,10 @@ class SelectionMixin extends React.Component {
 
   componentWillUnmount () {
     if (this.initialized) {
+      document.removeEventListener('touchstart', this.registerTouch)
       document.removeEventListener('selectionchange', this.launchDocumentManipulator)
 
-      if (this.isIOS) {
-        document.removeEventListener('touchstart', this.registerTouchForIOS)
-        document.removeEventListener('touchend', this.unregisterTouchForIOS)
-      }
+      if (this.isIOS) document.removeEventListener('touchend', this.unregisterTouchForIOS)
 
       // NOTE: INPUT STUFF
       const inputs = document.querySelectorAll('input, textarea')
@@ -81,8 +79,8 @@ class SelectionMixin extends React.Component {
 
         <div
           className={`fluent ${this.props.theme} ${this.state.selecting ? 'active' : 'inactive'}`} id='fluentselectionmanipulator'
-          onTouchStart={this.manipulateSelection.bind(this, true)}
-          onTouchMove={this.manipulateSelection.bind(this, false)}
+          onTouchStart={this.manipulateSelection}
+          onTouchMove={this.manipulateSelection}
           onTouchEnd={this.stopManipulation}
           onTouchEndCapture={this.isIOS ? this.reselectForIOS : null}
           onDoubleClick={this.copySelection}
@@ -99,14 +97,12 @@ class SelectionMixin extends React.Component {
     if (!this.initialized) {
       this.initialized = true
 
+      document.addEventListener('touchstart', this.registerTouch, {
+        capture: true
+      })
       document.addEventListener('selectionchange', this.launchDocumentManipulator)
 
-      if (this.isIOS) {
-        document.addEventListener('touchstart', this.registerTouchForIOS, {
-          capture: true
-        })
-        document.addEventListener('touchend', this.unregisterTouchForIOS)
-      }
+      if (this.isIOS) document.addEventListener('touchend', this.unregisterTouchForIOS)
 
       // NOTE: INPUT STUFF
       const inputs = document.querySelectorAll('input, textarea')
@@ -118,6 +114,18 @@ class SelectionMixin extends React.Component {
         input.addEventListener('select', (e) => console.log(e))
       }
     }
+  }
+
+  registerTouch (e) {
+    const [touch] = e.changedTouches
+    touch.timeStamp = e.timeStamp
+
+    if (this.isIOS) {
+      const firstNull = this.originTouches.indexOf(null)
+
+      if (firstNull !== -1) this.originTouches[firstNull] = touch
+      else this.originTouches[this.originTouches.length] = touch
+    } else this.originTouches[touch.identifier] = touch
   }
 
   launchManipulator (type, e) {
@@ -137,30 +145,23 @@ class SelectionMixin extends React.Component {
   launchDocumentManipulator = this.launchManipulator.bind(this, 'document')
   launchInputManipulator = this.launchManipulator.bind(this, 'input') // NOTE: INPUT STUFF
 
-  manipulateSelection (start, e) {
+  manipulateSelection (e) {
     const selection = window.getSelection()
 
     if (!selection.rangeCount) return
 
-    const firstTouch = !this.state.manipulating
     const touches = this.formatTouches(e.targetTouches)
 
-    if (start) {
-      const [touch] = e.changedTouches
-      touch.timeStamp = e.timeStamp
-      this.originTouches[this.isIOS ? this.touchOrder.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier] = touch
-
+    if (!this.state.manipulating) { // First touch
       this.setState({
         manipulating: true
       })
 
-      if (firstTouch) {
-        this.originRange = new FlexibleRange(selection.getRangeAt(0))
-        this.selectRange = new FlexibleRange(selection.getRangeAt(0))
+      this.originRange = new FlexibleRange(selection.getRangeAt(0))
+      this.selectRange = new FlexibleRange(selection.getRangeAt(0))
 
-        selection.removeAllRanges()
-        selection.addRange(this.selectRange)
-      }
+      selection.removeAllRanges()
+      selection.addRange(this.selectRange)
     }
 
     const oldStartOffset = this.selectRange.startOffset
@@ -188,10 +189,7 @@ class SelectionMixin extends React.Component {
     this.manipulator.current.style.pointerEvents = 'auto'
 
     // Safari selection behavior and Android tap selection behavior
-    if (this.isIOS || selection.isCollapsed) {
-      selection.removeAllRanges()
-      selection.addRange(this.selectRange)
-    }
+    if (this.isIOS || selection.isCollapsed) this.reselectForIOS()
 
     this.positionHandles(touches, this.selectRange.reversed, ...positions) // Position handles
 
@@ -200,16 +198,15 @@ class SelectionMixin extends React.Component {
 
   stopManipulation (e) {
     for (const touch of e.changedTouches) {
-      const identifier = this.isIOS ? this.touchOrder.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier
+      const identifier = this.isIOS ? this.originTouches.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier
 
       if (identifier === 1) this.originRange.setStart(...this.selectRange._registeredStart)
       else if (!identifier) this.originRange.setEnd(...this.selectRange._registeredEnd)
     }
 
-    if (e.targetTouches.length) this.manipulateSelection(true, e) // If a finger is still on, don't cancel manipulation and position inactive handle
-    else {
+    if (!e.targetTouches.length) {
       const [touch] = e.changedTouches
-      const identifier = this.isIOS ? this.touchOrder.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier
+      const identifier = this.isIOS ? this.originTouches.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier
 
       if (
         touch.clientY - this.originTouches[identifier].clientY >= this.props.collapseSwipeDistance &&
@@ -221,8 +218,9 @@ class SelectionMixin extends React.Component {
       })
 
       if (this.originRange.reversed) this.originRange.reverse()
-      this.manipulateSelection(false, e) // Correct handle positions to stick to range
     }
+
+    this.manipulateSelection(e) // Correct handle positions to stick to range
   }
 
   positionHandles (touches, reversed, ...positions) {
@@ -268,7 +266,7 @@ class SelectionMixin extends React.Component {
     const touches = []
 
     for (const touch of list) {
-      const identifier = this.isIOS ? this.touchOrder.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier
+      const identifier = this.isIOS ? this.originTouches.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier
 
       touches[identifier] = touch
     }
@@ -288,6 +286,8 @@ class SelectionMixin extends React.Component {
   }
 
   copySelection (e) {
+    if (this.isIOS) this.reselectForIOS()
+
     const selection = window.getSelection()
 
     e.target.classList.add('refresh')
@@ -295,30 +295,16 @@ class SelectionMixin extends React.Component {
 
     navigator.vibrate?.([50, 0, 50])
 
-    if (this.isIOS) {
-      selection.removeAllRanges()
-      selection.addRange(this.selectRange)
-    }
-
     if (navigator.clipboard?.writeText) navigator.clipboard.writeText(selection.toString())
     else document.execCommand('copy')
-  }
-
-  registerTouchForIOS (e) {
-    const [touch] = e.changedTouches
-
-    const firstNull = this.touchOrder.indexOf(null)
-
-    if (firstNull !== -1) this.touchOrder[firstNull] = touch
-    else this.touchOrder[this.touchOrder.length] = touch
   }
 
   unregisterTouchForIOS (e) {
     setTimeout(() => {
       const [touch] = e.changedTouches
 
-      this.touchOrder[this.touchOrder.findIndex((t) => t?.identifier === touch.identifier)] = null
-    }) // Negligible delay
+      this.originTouches[this.originTouches.findIndex((t) => t?.identifier === touch.identifier)] = null
+    }) // Negligible delay for listener to run last
   }
 
   reselectForIOS () {
@@ -326,8 +312,6 @@ class SelectionMixin extends React.Component {
 
     selection.removeAllRanges()
     selection.addRange(this.selectRange)
-
-    this.selectRange.startContainer.parentElement.focus()
   }
 }
 
