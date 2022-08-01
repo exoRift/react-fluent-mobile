@@ -1,8 +1,9 @@
+![Banner](assets/banner.png)
+
 [![Maintainability](https://api.codeclimate.com/v1/badges/a6122e76dcb42d834772/maintainability)](https://codeclimate.com/github/exoRift/react-fluent-mobile/maintainability)
 
+[![Storybook](https://img.shields.io/badge/TRY%20IT%20OUT-STORYBOOK%20-ff69b4?style=for-the-badge&logo=storybook)](https://exorift.github.io/react-fluent-mobile?path=/story/fluentselectionmixin--tutorial)
 [![NPM](https://img.shields.io/npm/v/react-fluent-mobile?style=for-the-badge)](https://www.npmjs.com/package/react-fluent-mobile)
-
-[![Storybook](https://img.shields.io/badge/Try%20it%20out-STORYBOOK%20-ff69b4?style=for-the-badge&logo=storybook)](https://exorift.github.io/react-fluent-mobile?path=/story/fluentselectionmixin--tutorial)
 
 # *What's the problem with mobile browsers?*
 Mobile web browsers are an adaptation of the PC browsing experience for your mobile device. As a result, many features found on desktop browsers are sloppily implemented in ways that just aren't meant for phones, degrading your browsing experience.
@@ -17,7 +18,7 @@ Fluent takes selecting text on mobile to a whole new level by adding the *select
 - One finger shifts the end bound
 - If a second finger is present, the first continues shifting the end while the second shifts the beginning, allowing manipulation of both bounds at the same time
 - Double-tapping on the pad copies the contents of the selection to the clipboard
-> *NOTE: Copying to clipboard utilizes [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API) and therefore requires HTTPS* ([document.execCommand()](https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand) will also be attempted for HTTP)
+> *NOTE: Copying to clipboard utilizes [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API) and therefore requires HTTPS. ([document.execCommand()](https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand) will also be attempted for HTTP)*
 - Swiping down on the pad dismisses the pad and selection
 
 ### The selection pad allows the customization of
