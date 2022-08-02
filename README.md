@@ -6,11 +6,11 @@
 [![NPM](https://img.shields.io/npm/v/react-fluent-mobile?style=for-the-badge)](https://www.npmjs.com/package/react-fluent-mobile)
 
 # *What's the problem with mobile browsers?*
-Mobile web browsers are an adaptation of the PC browsing experience for your mobile device. As a result, many features found on desktop browsers are sloppily implemented in ways that just aren't meant for phones, degrading your browsing experience.
+### Mobile web browsers are an adaptation of the PC browsing experience for your mobile device. As a result, many features found on desktop browsers are sloppily implemented in ways that just aren't meant for phones, degrading your browsing experience.
 
-# Introducing a new meaning to fluency!
+# Introducing fluency!
 
-`react-fluent-mobile` allows you to take your mobile browser's native features and augment them, improving gloss and agility without compromising on ability.
+**react-fluent-mobile** allows you to take your mobile browser's native features and augment them, improving gloss and agility without compromising on ability.
 
 ## Selecting text
 Fluent takes selecting text on mobile to a whole new level by adding the *selection manipulation pad*. When text is selected by the user, whether selected through normal means, selected by the website, or tap-selected on Android, the *selection manipulation pad* appears. Users can touch and drag on the pad to shift the bounds of their selection in any direction they'd like, transforming their selection. Once the selection is fit to the user's liking, they can tap on the pad to instantly copy their selection to their clipboard.
@@ -29,8 +29,40 @@ Fluent takes selecting text on mobile to a whole new level by adding the *select
 ## Context menus
 *Coming soon*
 
+# Installation and Quickstart
+> `npm i react-fluent-mobile`
+
+```jsx
+import {
+  FluentContextMixin,
+  FluentSelectionMixin
+} from 'react-fluent-mobile'
+
+function Component (props) {
+  return (
+    <>
+      <FluentContextMixin/>
+      <FluentSelectionMixin/>
+
+      <div ...>
+        ...
+      </div>
+    </>
+  )
+}
+```
+
 ## *Snappy, fluid, purposeful interactions*
 *INSERT GIF*
 
-# Known bugs
+<br/>
+
+***
+## Known bugs
 - Tapping on the manipulation pad on Safari makes the selection invisible (this is an unavoidable quirk with Safari)
+## Developer notes
+- FM works on all browsers and platforms
+- Safari does not allow haptics
+- The custom FlexibleRange class used for the selection system is exposed in the exports. Feel free to use it
+- Try to keep the mixins at the root of the heirarchy
+- **You do not need to check for mobile devices before mounting the component. FM does that for you.**

@@ -5,3 +5,23 @@
   user-select: none;
   z-index: 100;
 }
+
+.storylink {
+  display: inline-block;
+  color: #189eec;
+  transform: translateX(-0.5rem);
+  cursor: pointer;
+}
+.storylink:hover {
+  color: #1579b3;
+}
+.storylink::before {
+  content: '\250f';
+  display: inline-block;
+  transform: translate(20%, -45%);
+}
+.storylink::after {
+  content: '\251b';
+  display: inline-block;
+  transform: translate(-15%, 40%);
+}

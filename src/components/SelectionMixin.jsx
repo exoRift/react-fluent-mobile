@@ -23,13 +23,13 @@ class SelectionMixin extends React.Component {
 
   static defaultHandleHeight = 18
 
-  initialized = false
   originTouches = []
   originRange = null
   selectRange = null
   manipulator = React.createRef()
 
   state = {
+    initialized: false,
     selecting: false,
     manipulating: false
   }
@@ -55,24 +55,26 @@ class SelectionMixin extends React.Component {
   }
 
   componentWillUnmount () {
-    if (this.initialized) {
+    if (this.state.initialized) {
       document.removeEventListener('touchstart', this.registerTouch)
       document.removeEventListener('selectionchange', this.launchDocumentManipulator)
 
       if (this.isIOS) document.removeEventListener('touchend', this.unregisterTouchForIOS)
 
       // NOTE: INPUT STUFF
-      const inputs = document.querySelectorAll('input, textarea')
+      // const inputs = document.querySelectorAll('input, textarea')
 
-      for (const input of inputs) {
-        input.removeEventListener('touchcancel', this.launchInputManipulator)
-        input.removeEventListener('touchend', this.launchInputManipulator)
-        input.removeEventListener('select', (e) => console.log(e))
-      }
-    }
+      // for (const input of inputs) {
+      //   input.removeEventListener('touchcancel', this.launchInputManipulator)
+      //   input.removeEventListener('touchend', this.launchInputManipulator)
+      //   input.removeEventListener('select', (e) => console.log(e))
+      // }
+    } else document.removeEventListener('touchstart', this.initializeComponent)
   }
 
   render () {
+    if (!this.state.initialized) return null
+
     return (
       <>
         {this.props.children}
@@ -94,8 +96,10 @@ class SelectionMixin extends React.Component {
   }
 
   initializeComponent () {
-    if (!this.initialized) {
-      this.initialized = true
+    if (!this.state.initialized) {
+      this.setState({
+        initialized: true
+      })
 
       document.addEventListener('touchstart', this.registerTouch, {
         capture: true
@@ -105,14 +109,14 @@ class SelectionMixin extends React.Component {
       if (this.isIOS) document.addEventListener('touchend', this.unregisterTouchForIOS)
 
       // NOTE: INPUT STUFF
-      const inputs = document.querySelectorAll('input, textarea')
+      // const inputs = document.querySelectorAll('input, textarea')
 
-      for (const input of inputs) {
-        if (SelectionMixin.mobileRegex.test(navigator.userAgent)) input.addEventListener('touchcancel', this.launchInputManipulator)
-        else input.addEventListener('touchend', this.launchInputManipulator)
+      // for (const input of inputs) {
+      //   if (SelectionMixin.mobileRegex.test(navigator.userAgent)) input.addEventListener('touchcancel', this.launchInputManipulator)
+      //   else input.addEventListener('touchend', this.launchInputManipulator)
 
-        input.addEventListener('select', (e) => console.log(e))
-      }
+      //   input.addEventListener('select', (e) => console.log(e))
+      // }
     }
   }
 
@@ -133,8 +137,8 @@ class SelectionMixin extends React.Component {
       const selection = window.getSelection()
 
       const selecting = (!selection.isCollapsed && selection.rangeCount) ||
-        (selection.rangeCount && selection.getRangeAt(0) === this.selectRange) ||
-        e.target.selectionEnd !== e.target.selectionStart // NOTE: INPUT STUFF
+        (selection.rangeCount && selection.getRangeAt(0) === this.selectRange) /* ||
+        e.target.selectionEnd !== e.target.selectionStart // NOTE: INPUT STUFF */
 
       this.setState({
         selecting
@@ -143,7 +147,7 @@ class SelectionMixin extends React.Component {
   }
 
   launchDocumentManipulator = this.launchManipulator.bind(this, 'document')
-  launchInputManipulator = this.launchManipulator.bind(this, 'input') // NOTE: INPUT STUFF
+  // launchInputManipulator = this.launchManipulator.bind(this, 'input') // NOTE: INPUT STUFF
 
   manipulateSelection (e) {
     const selection = window.getSelection()

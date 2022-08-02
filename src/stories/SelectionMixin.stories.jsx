@@ -5,10 +5,13 @@ import {
   useEffect,
   useState
 } from 'react'
+import {
+  linkTo
+} from '@storybook/addon-links'
 
 import {
   FluentSelectionMixin
-} from '../'
+} from '..'
 
 import deviceToolbar from './assets/device_toolbar.webp'
 
@@ -63,7 +66,6 @@ function displayCopied () {
 }
 
 export default {
-  title: 'FluentSelectionMixin',
   component: FluentSelectionMixin,
   argTypes: {
     collapseSwipeDistance: {
@@ -164,13 +166,15 @@ export const Tutorial = (args) => {
     }
 
     return () => {
+      const pad = document.getElementById('fluentselectionmanipulator')
+
       document.removeEventListener('copy', displayCopied)
 
       document.removeEventListener('selectionchange', selectStep)
-      pad.removeEventListener('touchmove', moveEndStep)
-      pad.removeEventListener('touchmove', moveStartStep)
-      pad.removeEventListener('dblclick', copyStep)
-      pad.removeEventListener('touchend', dismissStep)
+      pad?.removeEventListener?.('touchmove', moveEndStep)
+      pad?.removeEventListener?.('touchmove', moveStartStep)
+      pad?.removeEventListener?.('dblclick', copyStep)
+      pad?.removeEventListener?.('touchend', dismissStep)
     }
   }, [step])
 
@@ -286,6 +290,8 @@ export const Tutorial = (args) => {
               <p>
                 You have mastered using the selection manipulation pad
               </p>
+
+              <h4>Now try the <span className='storylink' onClick={linkTo('stories-contextmixin', 'tutorial')}>New Context Menu</span></h4>
             </div>
           </div>
 

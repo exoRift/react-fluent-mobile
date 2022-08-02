@@ -6,8 +6,8 @@ on:
       - created
 
 jobs:
-  playground:
-    name: Update Playground
+  storybook:
+    name: Update Storybook
 
     strategy:
       matrix:

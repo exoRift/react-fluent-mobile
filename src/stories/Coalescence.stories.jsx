@@ -8,7 +8,6 @@ import {
 import './styles/index.css'
 
 export default {
-  title: 'Coalescence',
   argTypes: {
     holdDelay: {
       control: {

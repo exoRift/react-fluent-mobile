@@ -2,12 +2,11 @@ import React from 'react'
 
 import {
   FluentContextMixin
-} from '../'
+} from '..'
 
 import './styles/index.css'
 
 export default {
-  title: 'FluentContextMixin',
   component: FluentContextMixin,
   argTypes: {
     holdDelay: {

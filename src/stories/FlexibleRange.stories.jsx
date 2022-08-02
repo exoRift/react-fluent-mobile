@@ -11,7 +11,6 @@ import {
 import './styles/index.css'
 
 export default {
-  title: 'FlexibleRange',
   component: FlexibleRange,
   argTypes: {
     startOffset: {
