@@ -4,7 +4,10 @@ import {
   FluentContextMixin
 } from '..'
 
+import banner from '../../assets/banner.png'
+
 import './styles/index.css'
+import './styles/ContextMixin.css'
 
 export default {
   component: FluentContextMixin,
@@ -22,19 +25,18 @@ export default {
   }
 }
 
-export const Default = (args) => (
+export const Playground = (args) => (
   <div>
-    <span id='span1'>This is some sample text!</span>
     <FluentContextMixin {...args}/>
 
-    <span id='span2'>This is past the mixin</span>
+    <span>This is some sample text</span>
 
     <a href='/'>This is clickable</a>
-    <br/><br/><br/><br/><br/><br/>
-    <input id='test'/>
+
+    <img className='banner' alt='banner' src={banner}/>
   </div>
 )
-Default.args = {
+Playground.args = {
   holdDelay: 100,
   holdTime: 500
 }

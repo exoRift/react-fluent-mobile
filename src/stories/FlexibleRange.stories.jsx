@@ -26,7 +26,7 @@ export default {
   }
 }
 
-export const Sandbox = (args) => {
+export const Playground = (args) => {
   const range = useRef(new FlexibleRange())
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export const Sandbox = (args) => {
     </>
   )
 }
-Sandbox.args = {
+Playground.args = {
   startOffset: 0,
   endOffset: 5
 }

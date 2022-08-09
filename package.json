@@ -1,7 +1,7 @@
 {
   "name": "react-fluent-mobile",
   "version": "0.1.0",
-  "description": "A React mixin module that augments the mobile user experience",
+  "description": "A series of React mixin modules that augment the mobile user experience",
   "main": "build/index.js",
   "module": "build/index.esm.js",
   "files": [

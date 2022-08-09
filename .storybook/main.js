@@ -8,5 +8,9 @@ module.exports = {
     '@storybook/addon-essentials',
     '@storybook/addon-console'
   ],
-  framework: '@storybook/react'
+  framework: '@storybook/react',
+  staticDirs: [
+    '../src/stories/assets',
+    '../assets'
+  ]
 }
