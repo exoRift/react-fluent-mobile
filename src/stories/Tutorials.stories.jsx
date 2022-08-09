@@ -17,12 +17,14 @@ import './styles/index.css'
 import './styles/SelectionMixin.css'
 
 function advanceStep (step, setStep) {
-  const list = document.getElementById('instructionlist')
+  if (document.getElementById('fluentselectionmanipulator')) {
+    const list = document.getElementById('instructionlist')
 
-  list.children.item(step).setAttribute('active', 'false')
-  list.children.item(step + 1).setAttribute('active', 'true')
+    list.children.item(step).setAttribute('active', 'false')
+    list.children.item(step + 1).setAttribute('active', 'true')
 
-  setStep(step + 1)
+    setStep(step + 1)
+  }
 }
 
 function displayCopied () {
@@ -35,7 +37,7 @@ export default {
   title: 'Tutorials'
 }
 
-export const Selection = (args) => {
+export const Selection = () => {
   const [step, setStep] = useState(0)
 
   useEffect(() => {
@@ -72,7 +74,7 @@ export const Selection = (args) => {
 
           advanceStep(step, setStep)
         }
-      }) // Negligible delay to allow pad's computation
+      }, 50) // Negligible delay to allow pad's computation
     }
 
     document.addEventListener('copy', displayCopied)
@@ -121,7 +123,6 @@ export const Selection = (args) => {
   return (
     <div className='body'>
       <FluentSelectionMixin/>
-
       <div className='suggestion'>
         <img src={deviceToolbar} alt='device toolbar'/>
 
@@ -163,6 +164,8 @@ export const Selection = (args) => {
               <p>
                 Hold down on the header or, if you're on Android, tap some of the body text
               </p>
+
+              <div className='gesture hold'/>
             </div>
 
             <div className='instruction'>
@@ -170,6 +173,8 @@ export const Selection = (args) => {
               <p>
                 Tap and drag on the manipulation pad to move the end of your selection
               </p>
+
+              <div className='gesture move'/>
             </div>
 
             <div className='instruction'>
@@ -177,6 +182,11 @@ export const Selection = (args) => {
               <p>
                 Drag with two fingers at the same time to move both sides of your selection
               </p>
+
+              <div className='gesture-series'>
+                <div className='gesture move start'/>
+                <div className='gesture move'/>
+              </div>
             </div>
 
             <div className='instruction'>
@@ -184,6 +194,8 @@ export const Selection = (args) => {
               <p>
                 Double-tap on the selection manipulation pad to copy your selected text
               </p>
+
+              <div className='gesture double tap'/>
             </div>
 
             <div className='instruction'>
@@ -191,6 +203,8 @@ export const Selection = (args) => {
               <p>
                 Swipe down on the selection manipulation pad to dismiss your selection
               </p>
+
+              <div className='gesture swipe down'/>
             </div>
 
             <div className='instruction'>
@@ -200,7 +214,7 @@ export const Selection = (args) => {
                 You have mastered using the selection manipulation pad
               </p>
 
-              <h4>Now try the <span className='storylink' onClick={linkTo('tutorials', 'contextmixin')}>New Context Menu</span></h4>
+              <h4>Now try the <span className='storylink' onClick={linkTo('tutorials', 'context')}>New Context Menu</span></h4>
             </div>
           </div>
 
@@ -215,5 +229,11 @@ export const Selection = (args) => {
         <span id='copied'/>
       </footer>
     </div>
+  )
+}
+
+export const Context = () => {
+  return (
+    <></>
   )
 }

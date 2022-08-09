@@ -42,6 +42,133 @@
   transform: translate(-15%, 40%);
 }
 
+.gesture-series {
+  display: flex;
+}
+
+.gesture {
+  --color-minor: rgba(103, 164, 255, 0.3);
+  --color-major: rgba(103, 164, 255, 0.5);
+  --color-outer-in: rgb(103, 164, 255);
+  --color-outer: rgba(103, 164, 255, 0.1);
+  --color-outer-out: rgb(40, 109, 173);
+  width: 2rem;
+  height: 2rem;
+  background-image: radial-gradient(at center, var(--color-minor), var(--color-major));
+  border: 2px solid;
+  border-radius: 50%;
+}
+
+.gesture.tap {
+  border-color: var(--color-outer);
+  animation: gesturetap 1s ease-out infinite normal forwards;
+}
+
+.gesture.hold {
+  animation: gesturehold 2s linear infinite normal forwards;
+}
+
+.gesture.swipe {
+  animation:
+    gesturehold 1.5s linear infinite normal forwards,
+    gestureswipe 1.5s linear infinite normal forwards;
+}
+.gesture.swipe.down {
+  --destination-y: 100%;
+}
+
+.gesture.move:not(.start) {
+  animation:
+    gesturehold 2s linear infinite normal forwards,
+    gesturemove 2s linear infinite normal forwards;
+}
+.gesture.move.start {
+  animation:
+    gesturehold 2s linear infinite normal forwards,
+    gesturemovestart 2s linear infinite normal forwards;
+}
+
+.gesture.tap.double::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(at center, var(--color-minor), var(--color-major), var(--color-minor));
+  border-radius: 50%;
+  animation: gesturetap 1s ease-out infinite normal forwards;
+}
+
+@keyframes gesturetap {
+  0% {
+    scale: 0.4;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    scale: 1.2;
+    opacity: 0;
+  }
+}
+
+@keyframes gesturehold {
+  0% {
+    opacity: 0;
+    border-color: var(--color-outer-in);
+    scale: 1.2;
+  }
+  10%, 50% {
+    opacity: 0.8;
+    border-color: var(--color-outer);
+    scale: 1;
+  }
+  60%, 100% {
+    opacity: 0;
+    border-color: var(--color-outer-out);
+    scale: 1.2;
+  }
+}
+
+@keyframes gestureswipe {
+  0%, 10% {
+    transform: translate(0%, 0%);
+  }
+  50%, 100% {
+    transform: translate(var(--destination-x, 0%), var(--destination-y, 0%));
+  }
+}
+
+@keyframes gesturemove {
+  0%, 10% {
+    transform: translateX(0%);
+  }
+  20%, 25% {
+    transform: translateX(50%);
+  }
+  35%, 40% {
+    transform: translateX(-50%);
+  }
+  50%, 100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes gesturemovestart {
+  0%, 10% {
+    transform: translateX(0%);
+  }
+  25%, 30% {
+    transform: translateX(-50%);
+  }
+  40%, 45%{
+    transform: translateX(10%);
+  }
+  60%, 100% {
+    transform: translateX(0%);
+  }
+}
+
 @media (pointer: coarse) {
   .suggestion {
     display: none;
