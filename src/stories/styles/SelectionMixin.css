@@ -11,6 +11,15 @@
 #demonstration #text {
   flex: 4 1;
 }
+
+#demonstration h1 {
+  text-align: center;
+}
+
+#demonstration p {
+  text-align: justify;
+}
+
 #demonstration #instructions {
   flex: 3 1;
   font-family: 'Roboto', sans-serif;
@@ -44,6 +53,11 @@
   color: white;
   text-align: center;
   animation: success 0.3s ease-in normal forwards;
+}
+
+#demonstration .instruction h4,
+#demonstration .instruction .storylink {
+  text-align: center;
 }
 
 #demonstration #instructions .progress-bar {

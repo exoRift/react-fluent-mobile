@@ -133,28 +133,9 @@ export const Selection = () => {
 
       <div id='demonstration'>
         <div id='text'>
-          <h1>Tales of development</h1>
+          <h1>The web development process</h1>
 
-          <p>Here I am, a mere fullstack developer working on a passion project when alas, a problem presents itself to me.</p>
-
-          <p>
-            I perilously work day and night trying to identify the source of my problems and rectify it, writing function after function,
-            rewriting method after method.
-          </p>
-
-          <p>
-            I eventually grow tired of rewrites and refactoring.
-            And after the fourth day and sixth time of trying to rewrite the system to flow a different way,
-          </p>
-
-          <p>
-            I realize I was reading the&nbsp;
-            {/* eslint-disable-next-line */}
-            <a href='https://github.com/exoRift/react-fluent-mobile/commit/8930ed1e89b24a6911ad217cbcf5fd1b5fce2518#diff-b651424a9c7cd3dd5db8531ce6e2a403e022951c4248d80c33019a22b45b8c70L124'>
-              incorrect property
-            </a>
-            &nbsp;of the selection's end's Y coordinate
-          </p>
+          <p>{'"Insanity is doing the same thing over and over and expecting different results." \u2014 Albert Einstein '.repeat(8)}</p>
         </div>
 
         <div id='instructions'>
