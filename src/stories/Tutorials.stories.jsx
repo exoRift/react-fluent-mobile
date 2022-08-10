@@ -195,7 +195,9 @@ export const Selection = () => {
                 You have mastered using the selection manipulation pad
               </p>
 
-              <h4>Now try the <span className='storylink' onClick={linkTo('tutorials', 'context')}>New Context Menu</span></h4>
+              <h4>Now try the</h4>
+
+              <div className='storylink' onClick={linkTo('tutorials', 'context')}>New Context Menu</div>
             </div>
           </div>
 

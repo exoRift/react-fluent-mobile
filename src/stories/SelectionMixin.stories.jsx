@@ -20,8 +20,10 @@ function positionDebugTouches (e) {
   const touchPixels = document.getElementsByClassName('fluent debug touch')
 
   for (let p = 0; p < touchPixels.length; p++) {
-    touchPixels[p].style.left = (touches[p]?.clientX || 0) + 'px'
-    touchPixels[p].style.top = (touches[p]?.clientY || 0) + 'px'
+    if (touches[p]) {
+      touchPixels[p].style.left = touches[p].clientX + 'px'
+      touchPixels[p].style.top = touches[p].clientY + 'px'
+    }
   }
 }
 
@@ -63,6 +65,11 @@ export default {
         type: 'number'
       }
     },
+    nativeManipulationInactivityDuration: {
+      control: {
+        type: 'number'
+      }
+    },
     theme: {
       options: ['dark', 'light'],
       control: {
@@ -89,19 +96,31 @@ export const Playground = (args) => {
   }, [])
 
   useEffect(() => {
-    const pad = document.getElementById('fluentselectionmanipulator')
-
     if (args.theme === 'dark') document.body.style.backgroundColor = 'white'
     else document.body.style.backgroundColor = '#202124'
 
     if (args.debug) {
-      pad.addEventListener('touchstart', positionDebugTouches)
-      pad.addEventListener('touchmove', positionDebugTouches)
+      document.dispatchEvent(new TouchEvent('touchstart', {
+        changedTouches: [new Touch({
+          identifier: 0,
+          target: document
+        })]
+      }))
+
+      setTimeout(() => {
+        const pad = document.getElementById('fluentselectionmanipulator')
+
+        pad.addEventListener('touchstart', positionDebugTouches)
+        pad.addEventListener('touchmove', positionDebugTouches)
+      }) // Negligible delay to allow for DOM rerender
+
       document.addEventListener('touchend', positionDebugRangeCallback)
 
       return () => {
-        pad.removeEventListener('touchstart', positionDebugTouches)
-        pad.removeEventListener('touchmove', positionDebugTouches)
+        const pad = document.getElementById('fluentselectionmanipulator')
+
+        pad?.removeEventListener?.('touchstart', positionDebugTouches)
+        pad?.removeEventListener?.('touchmove', positionDebugTouches)
         document.removeEventListener('touchend', positionDebugRangeCallback)
       }
     }
@@ -123,11 +142,13 @@ export const Playground = (args) => {
 
       <FluentSelectionMixin {...args} ref={mixin}/>
 
-      standalone text
-      <p>p text</p>
-      <input/>
-      <span>this is a span</span>
-      <h2>header</h2>
+      <div>
+        standalone text
+        <p>p text. this denotes a paragraph which makes good selecting material</p>
+        <input defaultValue='this is an input'/>
+        <span>this is a span</span>
+        <h2>header</h2>
+      </div>
 
       <footer>
         <strong>Copied text: </strong>
@@ -141,6 +162,7 @@ export const Playground = (args) => {
 Playground.args = {
   collapseSwipeDistance: 100,
   collapseSwipeDuration: 300,
+  nativeManipulationInactivityDuration: 500,
   theme: 'dark',
   debug: false
 }

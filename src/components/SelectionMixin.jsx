@@ -7,14 +7,20 @@ import '../styles/Selection.css'
 
 class SelectionMixin extends React.Component {
   static propTypes = {
+    /** The minimum distance required to swipe down to dismiss the selection */
     collapseSwipeDistance: PropTypes.number,
+    /** The maximum duration of the swipe down to dismiss the selection */
     collapseSwipeDuration: PropTypes.number,
+    /** The interval the manipulation pad is inactive for when the selection is natively manipulated */
+    nativeManipulationInactivityDuration: PropTypes.number,
+    /** The theme of the pad (dark, light) */
     theme: PropTypes.string
   }
 
   static defaultProps = {
     collapseSwipeDistance: 100,
     collapseSwipeDuration: 300,
+    nativeManipulationInactivityDuration: 500,
     theme: 'dark'
   }
 
@@ -135,10 +141,18 @@ class SelectionMixin extends React.Component {
   launchManipulator (type, e) {
     if (!this.state.manipulating) {
       const selection = window.getSelection()
+      const selectionMatches = selection.getRangeAt(0) === this.selectRange
 
       const selecting = (!selection.isCollapsed && selection.rangeCount) ||
-        (selection.rangeCount && selection.getRangeAt(0) === this.selectRange) /* ||
+        (selection.rangeCount && selectionMatches) /* ||
         e.target.selectionEnd !== e.target.selectionStart // NOTE: INPUT STUFF */
+
+      if (this.state.selecting && selecting && !selectionMatches) { // Disable pad when selection is being manipulated natively
+        this.manipulator.current.classList.add('inactive')
+
+        clearTimeout(this.enableTouchTimeout)
+        this.enableTouchTimeout = setTimeout(() => this.manipulator.current.classList.remove('inactive'), this.props.nativeManipulationInactivityDuration)
+      }
 
       this.setState({
         selecting
@@ -217,14 +231,12 @@ class SelectionMixin extends React.Component {
         e.timeStamp - this.originTouches[identifier].timeStamp <= this.props.collapseSwipeDuration
       ) window.getSelection().removeAllRanges() // Swipedown collapse gesture
 
-      this.setState({
-        manipulating: false
-      })
-
       if (this.originRange.reversed) this.originRange.reverse()
     }
 
     this.manipulateSelection(e) // Correct handle positions to stick to range
+
+    if (!e.targetTouches.length) this.setState({ manipulating: false })
   }
 
   positionHandles (touches, reversed, ...positions) {
@@ -289,13 +301,13 @@ class SelectionMixin extends React.Component {
     return range.getBoundingClientRect().height || SelectionMixin.defaultHandleHeight
   }
 
-  copySelection (e) {
+  copySelection () {
     if (this.isIOS) this.reselectForIOS()
 
     const selection = window.getSelection()
 
-    e.target.classList.add('refresh')
-    setTimeout(() => e.target.classList.remove('refresh')) // Negligible delay for DOM rerender
+    this.manipulator.current.classList.add('refresh')
+    setTimeout(() => this.manipulator.current.classList.remove('refresh')) // Negligible delay for DOM rerender
 
     navigator.vibrate?.([50, 0, 50])
 

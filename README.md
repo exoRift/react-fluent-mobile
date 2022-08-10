@@ -14,6 +14,8 @@
 **react-fluent-mobile** allows you to take your mobile browser's native features and augment them, improving gloss and agility without compromising on ability.
 
 ## Selecting text
+*INSERT GIF*
+
 Fluent takes selecting text on mobile to a whole new level by adding the *selection manipulation pad*. When text is selected by the user, whether selected through normal means, selected by the website, or tap-selected on Android, the *selection manipulation pad* appears. Users can touch and drag on the pad to shift the bounds of their selection in any direction they'd like, transforming their selection. Once the selection is fit to the user's liking, they can tap on the pad to instantly copy their selection to their clipboard.
 
 - One finger shifts the end bound
@@ -22,12 +24,22 @@ Fluent takes selecting text on mobile to a whole new level by adding the *select
 > *NOTE: Copying to clipboard utilizes [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API) and therefore requires HTTPS. ([document.execCommand()](https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand) will also be attempted for HTTP)*
 - Swiping down on the pad dismisses the pad and selection
 
-### The selection pad allows the customization of
-- The distance required to swipe down to dismiss the selection
-- The maximum duration of the swipe down to dismiss the selection
-- The theme of the pad (dark, light)
+### Component Properties
+Name|Description
+-|-
+collapseSwipeDistance|The minimum distance required to swipe down to dismiss the selection
+collapseSwipeDuration|The maximum duration of the swipe down to dismiss the selection
+nativeManipulationInactivityDuration|The interval the manipulation pad is inactive for when the selection is natively manipulated
+theme|The theme of the pad (dark, light)
 
 ## Context menus
+*INSERT GIF*
+
+*Coming soon*
+
+## Media control
+*INSERT GIF*
+
 *Coming soon*
 
 # Installation and Quickstart

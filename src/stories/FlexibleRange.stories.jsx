@@ -11,7 +11,6 @@ import {
 import './styles/index.css'
 
 export default {
-  component: FlexibleRange,
   argTypes: {
     startOffset: {
       control: {

@@ -8,15 +8,14 @@
   position: relative;
   display: flex;
 }
+
 #demonstration #text {
   flex: 4 1;
 }
-
-#demonstration h1 {
+#demonstration #text h1 {
   text-align: center;
 }
-
-#demonstration p {
+#demonstration #text p {
   text-align: justify;
 }
 
