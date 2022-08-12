@@ -1,0 +1,23 @@
+.fluent.debug {
+  user-select: none;
+  pointer-events: none;
+  z-index: 101;
+}
+
+.fluent.debug.first {
+  background-color: red;
+}
+.fluent.debug.second {
+  background-color: blue;
+}
+
+.fluent.debug.touch {
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+}
+
+.fluent.debug.range {
+  width: 2px;
+  height: 12px;
+}

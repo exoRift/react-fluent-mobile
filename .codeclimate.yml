@@ -1,0 +1,28 @@
+version: '2'
+checks:
+  method-complexity:
+    config:
+      threshold: 25
+  method-lines:
+    config:
+      threshold: 30
+plugins:
+  eslint:
+    enabled: true
+    channel: 'eslint-7'
+    config:
+      ignore_warnings: true
+  stylelint:
+    enabled: true
+  nodesecurity:
+    enabled: true
+  shellcheck:
+    enabled: true
+  editorconfig:
+    enabled: true
+  fixme:
+    enabled: true
+exclude_patterns:
+  - '**/node_modules/'
+  - '**/*.test.js'
+  - '**/test/'

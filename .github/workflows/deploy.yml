@@ -1,0 +1,101 @@
+name: Publish Update
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  storybook:
+    name: Update Storybook
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [16]
+
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Cache Dependencies
+        id: dep-cache
+        uses: actions/cache@v3
+        env:
+          cache-name: dep-cache
+        with:
+          path: |
+            **/node_modules/
+            ~/.npm/
+          key: ${{ matrix.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install Dependencies
+        run: npm ci
+        if: steps.dep-cache.outputs.cache-hit != 'true'
+      - name: Setup Pages
+        uses: actions/configure-pages@v1
+      - name: Build Resources
+        run: npm run build-storybook
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: './storybook/'
+      - name: Deploy Storybook to Github Pages
+        uses: actions/deploy-pages@main
+
+
+  publish:
+    name: Publish to NPM
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [16]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Cache Dependencies
+        id: dep-cache
+        uses: actions/cache@v3
+        env:
+          cache-name: dep-cache
+        with:
+          path: |
+            **/node_modules/
+            ~/.npm/
+          key: ${{ matrix.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install Dependencies
+        run: npm ci
+        if: steps.dep-cache.outputs.cache-hit != 'true'
+      - name: Build Resources
+        run: npm run build
+      - name: Publish to NPM
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}

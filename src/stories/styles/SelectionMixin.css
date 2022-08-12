@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+:root {
+  --success: #18bc9c;
+}
+
+#demonstration {
+  position: relative;
+  display: flex;
+}
+
+#demonstration #text {
+  flex: 4 1;
+}
+#demonstration #text h1 {
+  text-align: center;
+}
+#demonstration #text p {
+  text-align: justify;
+}
+
+#demonstration #instructions {
+  flex: 3 1;
+  font-family: 'Roboto', sans-serif;
+  user-select: none;
+}
+#demonstration #instructions #instructionlist {
+  display: flex;
+  height: 100%;
+  flex-flow: column;
+  justify-content: center;
+}
+
+#demonstration .instruction {
+  display: none;
+  position: absolute;
+  padding: 0 1rem;
+  animation: hide 1s ease-out normal forwards;
+  z-index: 2;
+}
+#demonstration .instruction[active] {
+  display: block;
+}
+#demonstration .instruction[active='true'] {
+  animation: reveal 1s ease-out normal forwards;
+}
+
+#demonstration .instruction .check {
+  margin: 0 auto;
+  padding: 0.5rem;
+  background-color: var(--success);
+  color: white;
+  text-align: center;
+  animation: success 0.3s ease-in normal forwards;
+}
+
+#demonstration .instruction h4,
+#demonstration .instruction .storylink {
+  text-align: center;
+}
+
+#demonstration #instructions .progress-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0.3rem;
+  height: 100%;
+  background-color: lightgray;
+  border-radius: 5px;
+  z-index: 1;
+}
+#demonstration #instructions .progress-bar .progress {
+  transition: 1s ease-out;
+  background-color: dodgerblue;
+  border-radius: 5px;
+}
+#demonstration #instructions .progress-bar .progress[style*='height: 100%'] {
+  background-color: var(--success);
+}
+
+#demonstration #instructions .gesture {
+  margin: 0 auto;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  } to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hide {
+  from {
+    opacity: 1;
+    transform: none;
+  } to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes success {
+  from {
+    width: 0rem;
+    height: 0rem;
+    font-size: 0rem;
+    border-radius: 0%;
+  } to {
+    width: 4rem;
+    height: 4rem;
+    font-size: 3rem;
+    border-radius: 50%;
+  }
+}

@@ -1,0 +1,74 @@
+name: Quality Assurance
+
+on: 
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - '*'
+      - '!gh-pages'
+
+jobs:
+  lint:
+    name: Linting
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [16]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Cache Dependencies
+        id: dep-cache
+        uses: actions/cache@v3
+        env:
+          cache-name: dep-cache
+        with:
+          path: |
+            **/node_modules/
+            ~/.npm/
+          key: ${{ matrix.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install Dependencies
+        run: npm ci
+        if: steps.dep-cache.outputs.cache-hit != 'true'
+      - name: Lint Code
+        run: npm run lint
+  analyze:
+    name: Security Analysis
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [16]
+        language: [ 'javascript' ]
+
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2

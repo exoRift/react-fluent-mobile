@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="175.219 133.056 74.573 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath clipPathUnits="userSpaceOnUse" id="clipPath3261">
+      <path d="m 441.259,215.638 72.729,0 0,14.33 -72.729,0 0,-14.33 z" id="path3263"/>
+    </clipPath>
+  </defs>
+  <g id="layer1" transform="matrix(2.278904, 0, 0, 2.278904, -682.601929, -440.570343)" style="">
+    <g id="g3253" transform="matrix(13.738299,0,0,-13.738299,1313.747,381.45905)"/>
+    <g transform="matrix(13.738299,0,0,-13.738299,-5685.9026,3410.9395)" id="g3257">
+      <g id="g3259" clip-path="url(#clipPath3261)">
+        <g id="g3265" transform="translate(510.979,220.5136)"/>
+        <g id="g3269" transform="translate(476.2125,216.3977)"/>
+        <g id="g3273" transform="translate(445.0498,221.9251)"/>
+        <g id="g3277" transform="translate(451.2764,221.9251)"/>
+        <g id="g3281" transform="translate(464.1791,221.9251)"/>
+        <g id="g3285" transform="translate(449.5655,222.7948)"/>
+        <g id="g3289" transform="translate(458.5419,222.7948)"/>
+        <g id="g3293" transform="translate(462.521,222.7948)"/>
+        <g id="g3297" transform="translate(470.6695,220.0177)"/>
+        <g id="g3301" transform="translate(476.2125,220.1554)"/>
+        <g id="g3305" transform="translate(496.277,217.0896)"/>
+        <g id="g3309" transform="translate(490.1657,221.8441)"/>
+        <g id="g3313" transform="translate(483.4965,219.5842)"/>
+        <g id="g3317" transform="translate(503.898,216.4876)"/>
+        <g id="g3321" transform="translate(505.0281,216.141)"/>
+        <g id="g3325" transform="translate(442.8737,227.2606)">
+          <path d="m 0,0 -1.475,0.195 c -0.044,0.006 -0.085,-0.026 -0.091,-0.07 -0.048,-0.412 -0.048,-0.828 -10e-4,-1.239 0.005,-0.044 0.046,-0.076 0.09,-0.07 l 1.476,0.192 c 0.043,0.006 0.074,0.045 0.069,0.089 -0.029,0.27 -0.029,0.543 0.001,0.814 C 0.074,-0.045 0.044,-0.006 0,0" style="fill-opacity: 1; fill-rule: nonzero; stroke: none;" id="path3327"/>
+        </g>
+        <g id="g3329" transform="translate(443.6224,229.0345)">
+          <path d="M 0,0 -1.181,0.906 C -1.216,0.934 -1.267,0.927 -1.294,0.891 -1.541,0.559 -1.75,0.199 -1.914,-0.181 -1.932,-0.222 -1.913,-0.27 -1.871,-0.287 l 1.374,-0.571 c 0.041,-0.017 0.086,0.002 0.104,0.042 0.11,0.249 0.247,0.485 0.408,0.705 C 0.041,-0.076 0.035,-0.027 0,0" style="fill-opacity: 1; fill-rule: nonzero; stroke: none;" id="path3331"/>
+        </g>
+        <g id="g3333" transform="translate(443.1127,225.3501)">
+          <path d="m 0,0 -1.375,-0.569 c -0.041,-0.017 -0.061,-0.064 -0.044,-0.105 0.165,-0.381 0.372,-0.742 0.619,-1.075 0.026,-0.035 0.077,-0.042 0.113,-0.015 L 0.495,-0.86 C 0.53,-0.833 0.536,-0.784 0.511,-0.748 0.35,-0.529 0.214,-0.292 0.104,-0.042 0.086,-0.002 0.04,0.017 0,0" style="fill-opacity: 1; fill-rule: nonzero; stroke: none;" id="path3335"/>
+        </g>
+        <g id="g3337" transform="translate(454.114,225.7096)"/>
+        <g id="g3341" transform="translate(444.4952,224.418)"/>
+        <g id="g3345" transform="translate(458.6766,229.1038)"/>
+        <g id="g3349" transform="translate(462.9487,226.2645)"/>
+        <g id="g3353" transform="translate(462.2005,224.491)"/>
+        <g id="g3357" transform="translate(462.7099,228.1749)"/>
+      </g>
+    </g>
+  </g>
+</svg>

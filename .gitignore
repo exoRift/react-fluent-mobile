@@ -1,5 +1,12 @@
-# Text editor data
-.vscode/
+# Modules
+node_modules/
 
-# The dependencies
-**/node_modules/
+# IDE options
+.vscode
+
+# Env file
+.env
+
+# Build folder
+build/
+playground/
