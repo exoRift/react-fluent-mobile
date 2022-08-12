@@ -3,6 +3,7 @@
 [![NPM](https://img.shields.io/npm/v/react-fluent-mobile?style=for-the-badge)](https://www.npmjs.com/package/react-fluent-mobile)
 [![Storybook](https://img.shields.io/badge/TRY%20IT%20OUT-STORYBOOK-ff69b4?style=for-the-badge&logo=storybook)](https://exorift.github.io/react-fluent-mobile?path=/story/tutorials--selection&panel=false)
 [![Gitter](https://img.shields.io/badge/CHAT%20WITH%20US-GITTER-f68d42?style=for-the-badge&logo=gitter)](https://gitter.im/exoRift/react-fluent-mobile)
+[![Roadmap](https://img.shields.io/badge/ROADMAP-GITHUB%20PROJECT-2d85e3?style=for-the-badge&logo=trello)](https://github.com/users/exoRift/projects/2/views/4)
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/a6122e76dcb42d834772/maintainability)](https://codeclimate.com/github/exoRift/react-fluent-mobile/maintainability)
 

@@ -10,7 +10,7 @@
   "scripts": {
     "build": "rollup -c",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook -o playground",
+    "build-storybook": "build-storybook -o storybook",
     "lint": "eslint ./"
   },
   "repository": {
