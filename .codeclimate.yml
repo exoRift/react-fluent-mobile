@@ -2,17 +2,16 @@ version: '2'
 checks:
   method-complexity:
     config:
-      threshold: 30
-    config:
       threshold: 25
+  method-lines:
+    config:
+      threshold: 30
 plugins:
   eslint:
     enabled: true
     channel: 'eslint-7'
     config:
       ignore_warnings: true
-  csslint:
-    enabled: true
   stylelint:
     enabled: true
   nodesecurity:
@@ -23,10 +22,7 @@ plugins:
     enabled: true
   fixme:
     enabled: true
-  markdownlint:
-    enabled: true
 exclude_patterns:
   - '**/node_modules/'
   - '**/*.test.js'
   - '**/test/'
-  - '**/src/stories'
