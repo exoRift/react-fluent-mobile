@@ -17,6 +17,7 @@
 }
 #demonstration #text p {
   text-align: justify;
+  text-align-last: justify;
 }
 
 #demonstration #instructions {
