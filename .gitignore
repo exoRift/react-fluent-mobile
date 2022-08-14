@@ -8,5 +8,5 @@ node_modules/
 .env
 
 # Build folder
-build/
-playground/
+dist/
+storybook/

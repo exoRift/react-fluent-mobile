@@ -2,10 +2,10 @@
   "name": "react-fluent-mobile",
   "version": "0.1.0",
   "description": "A series of React mixin modules that augment the mobile user experience",
-  "main": "build/index.js",
-  "module": "build/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
   "files": [
-    "build/"
+    "dist/"
   ],
   "scripts": {
     "build": "rollup -c",
@@ -34,6 +34,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "engines" : {
+    "npm" : ">=7.0.0",
+    "node" : ">=16.0.0"
   },
   "keywords": [
     "react",
