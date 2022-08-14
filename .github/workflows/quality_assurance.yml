@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [12, 14, 16, latest]
+        node: [16, lts/*]
         packager: [npm]
 
     runs-on: ${{ matrix.os }}
