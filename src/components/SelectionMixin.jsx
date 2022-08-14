@@ -143,10 +143,10 @@ class SelectionMixin extends React.Component {
   launchManipulator (type, e) {
     if (!this.state.manipulating) {
       const selection = window.getSelection()
-      const selectionMatches = selection.getRangeAt(0) === this.selectRange
+      const selectionMatches = selection.rangeCount && selection.getRangeAt(0) === this.selectRange
 
       const selecting = (!selection.isCollapsed && selection.rangeCount) ||
-        (selection.rangeCount && selectionMatches) /* ||
+        selectionMatches /* ||
         e.target.selectionEnd !== e.target.selectionStart // NOTE: INPUT STUFF */
 
       if (this.state.selecting && selecting && !selectionMatches) { // Disable pad when selection is being manipulated natively
