@@ -4,15 +4,21 @@ on:
   release:
     types:
       - created
+  workflow_dispatch
 
 jobs:
   storybook:
     name: Update Storybook
 
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
     strategy:
       matrix:
         os: [ubuntu-latest]
         node: [16]
+        packager: [npm]
 
     runs-on: ${{ matrix.os }}
 
@@ -28,74 +34,58 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up Node
+        id: setup
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - name: Cache Dependencies
-        id: dep-cache
-        uses: actions/cache@v3
-        env:
-          cache-name: dep-cache
-        with:
-          path: |
-            **/node_modules/
-            ~/.npm/
-          key: ${{ matrix.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-      - name: Install Dependencies
-        run: npm ci
-        if: steps.dep-cache.outputs.cache-hit != 'true'
+          cache: ${{ matrix.packager }}
       - name: Setup Pages
         uses: actions/configure-pages@v1
+      - name: Install Dependencies
+        run: npm ci
+        if: steps.setup.outputs.cache-hit != true
       - name: Build Resources
         run: npm run build-storybook
-      - name: Upload Artifact
+      - name: Upload Static Artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: './storybook/'
       - name: Deploy Storybook to Github Pages
+        id: deploy
         uses: actions/deploy-pages@main
 
-
-  publish:
+  package:
     name: Publish to NPM
+
+    if: ${{ github.event_name == 'release' }}
 
     strategy:
       matrix:
         os: [ubuntu-latest]
         node: [16]
+        packager: [npm]
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
       - name: Set up Node
+        id: setup
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - name: Cache Dependencies
-        id: dep-cache
-        uses: actions/cache@v3
-        env:
-          cache-name: dep-cache
-        with:
-          path: |
-            **/node_modules/
-            ~/.npm/
-          key: ${{ matrix.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          cache: ${{ matrix.packager }}
       - name: Install Dependencies
         run: npm ci
-        if: steps.dep-cache.outputs.cache-hit != 'true'
+        if: steps.setup.outputs.cache-hit != true
       - name: Build Resources
         run: npm run build
       - name: Publish to NPM
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
+      - name: Upload Package Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: './dist/'
