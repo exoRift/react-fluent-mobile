@@ -206,7 +206,7 @@ class SelectionMixin extends React.Component {
     this.manipulator.current.style.pointerEvents = 'none' // Allow range passthrough of manipulation pad
     if (touches[1]) this.selectRange.setStart(...this.getCaretPosition(positions[0], positions[1] + (this.originRange.startCoords.height / 2)))
     if (touches[0]) this.selectRange.setEnd(...this.getCaretPosition(positions[2], positions[3] + (this.originRange.endCoords.height / 2)))
-    this.manipulator.current.style.pointerEvents = 'auto'
+    this.manipulator.current.style.pointerEvents = null
 
     // Safari selection behavior and Android tap selection behavior
     if (this.isIOS || selection.isCollapsed) this.reselectForIOS()

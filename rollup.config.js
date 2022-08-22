@@ -5,6 +5,7 @@ import {
 } from '@rollup/plugin-babel'
 import commonjs from '@rollup/plugin-commonjs'
 import postcss from 'rollup-plugin-postcss'
+import autoprefixer from 'autoprefixer'
 
 const packageJson = require('./package.json')
 
@@ -30,7 +31,10 @@ export default {
     }),
     commonjs(),
     postcss({
-      extensions: ['.css']
+      extract: true,
+      plugins: [
+        autoprefixer()
+      ]
     })
   ]
 }

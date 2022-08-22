@@ -28,7 +28,7 @@
 
 .fluent#fluentselectionmanipulator.inactive {
   opacity: 0;
-  pointer-events: none !important;
+  pointer-events: none;
 }
 .fluent#fluentselectionmanipulator.active:not(.inactive) {
   opacity: 1;

@@ -34,8 +34,8 @@ export default {
       }
     },
     theme: {
+      options: ['dark', 'light'],
       control: {
-        options: ['dark', 'light'],
         type: 'radio'
       }
     }
