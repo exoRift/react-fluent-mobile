@@ -32,7 +32,6 @@ jobs:
           cache: ${{ matrix.packager }}
       - name: Install Dependencies
         run: npm ci
-        if: steps.setup.outputs.cache-hit != true
       - name: Lint Code
         run: npm run lint
   analyze:
