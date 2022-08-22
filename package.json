@@ -63,6 +63,7 @@
     "@storybook/addon-console": "^1.2.3",
     "@storybook/addon-essentials": "^6.5.9",
     "@storybook/addon-links": "^6.5.9",
+    "@storybook/addon-postcss": "^2.0.0",
     "@storybook/react": "^6.5.9",
     "autoprefixer": "^10.4.8",
     "eslint": "^8.19.0",
@@ -71,8 +72,5 @@
     "rollup": "^2.76.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2"
-  },
-  "dependencies": {
-    "@storybook/addon-postcss": "^2.0.0"
   }
 }
