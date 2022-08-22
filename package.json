@@ -71,5 +71,8 @@
     "rollup": "^2.76.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2"
+  },
+  "dependencies": {
+    "@storybook/addon-postcss": "^2.0.0"
   }
 }
