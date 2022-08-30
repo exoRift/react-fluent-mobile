@@ -49,6 +49,7 @@ class SelectionMixin extends React.Component {
 
     this.initializeComponent = this.initializeComponent.bind(this)
     this.registerTouch = this.registerTouch.bind(this)
+    this.launchManipulator = this.launchManipulator.bind(this)
     this.manipulateSelection = this.manipulateSelection.bind(this)
     this.stopManipulation = this.stopManipulation.bind(this)
     this.copySelection = this.copySelection.bind(this)
@@ -65,18 +66,9 @@ class SelectionMixin extends React.Component {
   componentWillUnmount () {
     if (this.state.initialized) {
       document.removeEventListener('touchstart', this.registerTouch)
-      document.removeEventListener('selectionchange', this.launchDocumentManipulator)
+      document.removeEventListener('selectionchange', this.launchManipulator)
 
       if (this.isIOS) document.removeEventListener('touchend', this.unregisterTouchForIOS)
-
-      // NOTE: INPUT STUFF
-      // const inputs = document.querySelectorAll('input, textarea')
-
-      // for (const input of inputs) {
-      //   input.removeEventListener('touchcancel', this.launchInputManipulator)
-      //   input.removeEventListener('touchend', this.launchInputManipulator)
-      //   input.removeEventListener('select', (e) => console.log(e))
-      // }
     } else document.removeEventListener('touchstart', this.initializeComponent)
   }
 
@@ -112,19 +104,9 @@ class SelectionMixin extends React.Component {
       document.addEventListener('touchstart', this.registerTouch, {
         capture: true
       })
-      document.addEventListener('selectionchange', this.launchDocumentManipulator)
+      document.addEventListener('selectionchange', this.launchManipulator)
 
       if (this.isIOS) document.addEventListener('touchend', this.unregisterTouchForIOS)
-
-      // NOTE: INPUT STUFF
-      // const inputs = document.querySelectorAll('input, textarea')
-
-      // for (const input of inputs) {
-      //   if (SelectionMixin.mobileRegex.test(navigator.userAgent)) input.addEventListener('touchcancel', this.launchInputManipulator)
-      //   else input.addEventListener('touchend', this.launchInputManipulator)
-
-      //   input.addEventListener('select', (e) => console.log(e))
-      // }
     }
   }
 
@@ -145,9 +127,7 @@ class SelectionMixin extends React.Component {
       const selection = window.getSelection()
       const selectionMatches = selection.rangeCount && selection.getRangeAt(0) === this.selectRange
 
-      const selecting = (!selection.isCollapsed && selection.rangeCount) ||
-        selectionMatches /* ||
-        e.target.selectionEnd !== e.target.selectionStart // NOTE: INPUT STUFF */
+      const selecting = (!selection.isCollapsed && selection.rangeCount) || selectionMatches
 
       if (this.state.selecting && selecting && !selectionMatches) { // Disable pad when selection is being manipulated natively
         this.manipulator.current.classList.add('inactive')
@@ -161,9 +141,6 @@ class SelectionMixin extends React.Component {
       })
     }
   }
-
-  launchDocumentManipulator = this.launchManipulator.bind(this, 'document')
-  // launchInputManipulator = this.launchManipulator.bind(this, 'input') // NOTE: INPUT STUFF
 
   manipulateSelection (e) {
     const selection = window.getSelection()
