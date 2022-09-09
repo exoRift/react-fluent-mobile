@@ -1,12 +1,15 @@
-import ContextMixin from './components/ContextMixin.jsx'
-import SelectionMixin from './components/SelectionMixin.jsx'
-
-import { FlexibleRange } from './util/FlexibleRange.js'
-
 import './styles/index.css'
 
 export {
-  ContextMixin as FluentContextMixin,
-  SelectionMixin as FluentSelectionMixin,
+  default as FluentContextMixin
+} from './components/ContextMixin.jsx'
+export {
+  default as FluentSelectionMixin
+} from './components/SelectionMixin.jsx'
+export {
   FlexibleRange
-}
+} from './util/FlexibleRange.js'
+export {
+  options as contextMenuOptions,
+  optionsForTag as contextMenuOptionsForTag
+} from './util/menu-options.js'

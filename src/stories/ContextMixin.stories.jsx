@@ -21,6 +21,12 @@ export default {
       control: {
         type: 'number'
       }
+    },
+    theme: {
+      options: ['dark', 'light'],
+      control: {
+        type: 'radio'
+      }
     }
   }
 }
@@ -29,14 +35,19 @@ export const Playground = (args) => (
   <div>
     <FluentContextMixin {...args}/>
 
-    <span>This is some sample text</span>
+    <div className='anchors'>
+      <a href={window.location.href}>This is a leftward anchor</a>
 
-    <a href='/'>This is clickable</a>
+      <a href={window.location.href}>This is a rightward anchor</a>
+    </div>
+
+    <span>This is some sample text</span>
 
     <img className='banner' alt='banner' src={banner}/>
   </div>
 )
 Playground.args = {
   holdDelay: 100,
-  holdTime: 500
+  holdTime: 500,
+  theme: 'dark'
 }

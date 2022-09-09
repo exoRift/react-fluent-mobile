@@ -1,3 +1,9 @@
+.anchors {
+  display: flex;
+  justify-content: space-between;
+}
+
 .banner {
+  display: block;
   width: 20vw;
 }

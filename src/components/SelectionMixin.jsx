@@ -80,7 +80,7 @@ class SelectionMixin extends React.Component {
         {this.props.children}
 
         <div
-          className={`fluent ${this.props.theme} ${this.state.selecting ? 'active' : 'inactive'}`} id='fluentselectionmanipulator'
+          className={`fluent manipulator ${this.props.theme} ${this.state.selecting ? 'active' : 'inactive'}`} id='fluentselectionmanipulator'
           onTouchStart={this.manipulateSelection}
           onTouchMove={this.manipulateSelection}
           onTouchEnd={this.stopManipulation}
