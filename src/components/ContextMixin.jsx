@@ -29,7 +29,7 @@ class ContextMixin extends React.Component {
   }
 
   holdingElement = null
-  hoveringOptionIndex = 0
+  hoveringIndex = 0
 
   menu = React.createRef()
 
@@ -90,7 +90,7 @@ class ContextMixin extends React.Component {
     e.preventDefault()
 
     this.holdingElement = e.target
-    this.hoveringOptionIndex = 0
+    this.hoveringIndex = 0
     this.setState({
       holding: true,
       side: e.clientX >= (window.innerWidth / 2) ? 'right' : 'left'
@@ -119,10 +119,10 @@ class ContextMixin extends React.Component {
       const rect = option.getBoundingClientRect()
 
       if ((touch.clientY >= rect.top || !o)) {
-        if (o !== this.hoveringOptionIndex) {
-          this.menu.current.children[this.hoveringOptionIndex]?.classList?.remove?.('hovering')
+        if (o !== this.hoveringIndex) {
+          this.menu.current.children[this.hoveringIndex]?.classList?.remove?.('hovering')
 
-          this.hoveringOptionIndex = o
+          this.hoveringIndex = o
 
           option.classList.add('hovering')
 
@@ -136,7 +136,7 @@ class ContextMixin extends React.Component {
 
   closeContextMenu (e) {
     // Subtract 1 from index to accomodate the blank button added in
-    if (this.hoveringOptionIndex) optionsForTag[this.holdingElement?.tagName?.toLowerCase?.()][this.hoveringOptionIndex - 1]?.action?.(this.holdingElement)
+    if (this.hoveringIndex) optionsForTag[this.holdingElement.tagName.toLowerCase()][this.hoveringIndex - 1]?.action?.(this.holdingElement, this)
 
     document.removeEventListener('touchmove', this.switchHovering)
 

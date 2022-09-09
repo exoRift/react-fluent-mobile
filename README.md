@@ -76,7 +76,8 @@ function Component (props) {
 ## Known bugs
 - Tapping on the manipulation pad on Safari makes the selection invisible (this is an unavoidable quirk with Safari)
 ## Developer notes
-- FM works on all browsers and platforms
+- The share feature in the custom context menu doesn't work if the server is not HTTPS
+- Fluent Mobile works on all browsers and platforms
 - Safari does not allow haptics
 - The custom FlexibleRange class used for the selection system is exposed in the exports. Feel free to use it
 - Try to keep the mixins at the root of the heirarchy

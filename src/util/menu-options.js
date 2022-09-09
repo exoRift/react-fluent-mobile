@@ -37,7 +37,23 @@ const options = {
 
         <span className='tag'>Copy link address</span>
       </div>
-    )
+    ),
+    action: (element) => {
+      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(element.href)
+      else {
+        const selection = window.getSelection()
+
+        const tempElement = document.createElement('span')
+        tempElement.textContent = element.href
+        element.appendChild(tempElement)
+
+        selection.selectAllChildren(tempElement)
+        document.execCommand('copy')
+
+        selection.removeAllRanges()
+        tempElement.remove()
+      }
+    }
   },
   copyText: {
     Component: (
@@ -46,7 +62,18 @@ const options = {
 
         <span className='tag'>Copy link text</span>
       </div>
-    )
+    ),
+    action: (element) => {
+      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(element.textContent)
+      else {
+        const selection = window.getSelection()
+
+        selection.selectAllChildren(element)
+        document.execCommand('copy')
+
+        selection.removeAllRanges()
+      }
+    }
   },
   downloadLink: {
     Component: (
@@ -55,7 +82,14 @@ const options = {
 
         <span className='tag'>Download link file</span>
       </div>
-    )
+    ),
+    action: (element) => {
+      element.setAttribute('download', 'true')
+
+      element.click()
+
+      element.setAttribute('download', 'false')
+    }
   },
   share: {
     Component: (
@@ -64,16 +98,22 @@ const options = {
 
         <span className='tag'>Share...</span>
       </div>
-    )
+    ),
+    action: (element) => navigator?.share?.({
+      title: element.textContent,
+      text: element.href,
+      url: element.href
+    })
   },
   native: {
     Component: (
       <div className='fluent menuoption'>
         <div className='material-symbols-outlined icon'>menu_open</div>
 
-        <i className='tag'>Open native context menu</i>
+        <i className='tag'>Use native context menu</i>
       </div>
-    )
+    ),
+    action: (element, contextMixin) => document.removeEventListener('contextmenu', contextMixin.launchContextMenu)
   }
 }
 
