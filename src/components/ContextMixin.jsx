@@ -48,6 +48,22 @@ class ContextMixin extends React.Component {
     })
   }
 
+  componentDidUpdate () {
+    if (this.menu.current) {
+      const rect = this.menu.current.getBoundingClientRect()
+
+      if (rect.right > window.innerWidth) {
+        this.menu.current.style.left = `calc(${window.innerWidth - rect.width}px - 4em)`
+        this.menu.current.style.right = 'unset'
+      } else if (rect.left < 0) {
+        this.menu.current.style.right = `calc(${window.innerWidth - rect.width}px - 4em)`
+        this.menu.current.style.left = 'unset'
+      }
+
+      if (rect.bottom > window.innerHeight) this.menu.current.style.top = (window.innerHeight - rect.height) + 'px'
+    }
+  }
+
   componentWillUnmount () {
     if (this.state.initialized) {
       document.removeEventListener('contextmenu', this.launchContextMenu)
@@ -89,14 +105,29 @@ class ContextMixin extends React.Component {
   launchContextMenu (e) {
     e.preventDefault()
 
+    const rect = this.menu.current.getBoundingClientRect()
+    const side = e.clientX >= (window.innerWidth / 2) ? 'right' : 'left'
+
     this.holdingElement = e.target
     this.hoveringIndex = 0
     this.setState({
       holding: true,
-      side: e.clientX >= (window.innerWidth / 2) ? 'right' : 'left'
+      side
     })
 
-    this.menu.current.style.left = e.clientX + 'px'
+    switch (side) {
+      case 'left':
+        this.menu.current.style.left = e.clientX + 'px'
+        this.menu.current.style.right = 'unset'
+
+        break
+      case 'right':
+        this.menu.current.style.right = (window.innerWidth - e.clientX) + 'px'
+        this.menu.current.style.left = 'unset'
+
+        break
+      default: break
+    }
     this.menu.current.style.top = e.clientY + 'px'
 
     navigator?.vibrate?.(1)

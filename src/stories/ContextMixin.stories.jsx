@@ -12,16 +12,6 @@ import './styles/ContextMixin.css'
 export default {
   component: FluentContextMixin,
   argTypes: {
-    holdDelay: {
-      control: {
-        type: 'number'
-      }
-    },
-    holdTime: {
-      control: {
-        type: 'number'
-      }
-    },
     theme: {
       options: ['dark', 'light'],
       control: {
@@ -47,7 +37,5 @@ export const Playground = (args) => (
   </div>
 )
 Playground.args = {
-  holdDelay: 100,
-  holdTime: 500,
   theme: 'dark'
 }

@@ -19,7 +19,7 @@ const options = {
         <span className='tag'>Open link in new tab</span>
       </div>
     ),
-    action: (element) => window.open(element.href, '_blank', 'rel=noreferrer,popup=false').focus()
+    action: (element) => window.open(element.href).focus()
   },
   // incognitoTab: {
   //   Component: (

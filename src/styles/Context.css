@@ -3,6 +3,7 @@
     0.2s ease-out,
     top 0s,
     left 0s,
+    right 0s,
     transform 0s;
   display: flex;
   flex-direction: column;
@@ -16,7 +17,7 @@
 }
 .fluent.menu.right {
   align-items: flex-end;
-  transform: translateX(calc(-100% - 2em));
+  margin-right: 2em;
 }
 
 .fluent.menu.inactive {

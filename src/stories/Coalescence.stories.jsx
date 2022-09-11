@@ -13,16 +13,6 @@ import './styles/SelectionMixin.css'
 
 export default {
   argTypes: {
-    holdDelay: {
-      control: {
-        type: 'number'
-      }
-    },
-    holdTime: {
-      control: {
-        type: 'number'
-      }
-    },
     collapseSwipeDistance: {
       control: {
         type: 'number'
