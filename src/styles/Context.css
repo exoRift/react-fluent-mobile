@@ -1,34 +1,97 @@
+/* Base definition */
+.fluent.menu,
+.fluent.menu *,
+.fluent.menu *::before,
+.fluent.menu *::after {
+  transition: 0.2s ease-out;
+}
+
 .fluent.menu {
   transition:
     0.2s ease-out,
-    top 0s,
-    left 0s,
-    right 0s,
-    transform 0s;
+    0s padding;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.fluent.menu .menubody {
   display: flex;
   flex-direction: column;
+  width: fit-content;
+  min-width: 55vw;
   margin-top: -1em;
   white-space: nowrap;
 }
 
-.fluent.menu.left {
-  align-items: flex-start;
-  margin-left: 2em;
-}
-.fluent.menu.right {
-  align-items: flex-end;
-  margin-right: 2em;
+.fluent.menu .menubody .menuoption {
+  display: flex;
+  width: 100%;
+  margin: 0.1em 0;
 }
 
-.fluent.menu.inactive {
+.fluent.menu .menubody .menuoption * {
+  padding: 0.2em;
+  background: var(--background-color);
+  backdrop-filter: blur(2px);
+}
+
+.fluent.menu .menubody .menuoption .icon {
+  border-radius: 50%;
+}
+
+.fluent.menu .menubody .menuoption .tag {
+  display: flex;
+  align-items: center;
+  padding: 0.2em 0.5em;
+  overflow: hidden;
+}
+.fluent.menu.left .menubody .menuoption .tag {
+  justify-content: start;
+}
+.fluent.menu.right .menubody .menuoption .tag {
+  justify-content: end;
+}
+.fluent.menu .menubody .menuoption:nth-child(2) .tag {
+  border-radius: 1em 1em 0 0;
+}
+.fluent.menu .menubody .menuoption:last-child .tag {
+  border-radius: 0 0 1em 1em;
+}
+
+.fluent.menu .menubody .menuoption .tag::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 0%;
+  height: 100%;
+  background: var(--highlight-color);
   opacity: 0;
-  clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-}
-.fluent.menu.active:not(.inactive) {
-  opacity: 1;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  z-index: -1;
 }
 
+.fluent.menu .menubody .menudivider {
+  align-self: center;
+  width: 80%;
+  height: 1px;
+  margin: 0.2em 0;
+  background: lightgray;
+}
+
+.fluent.menu .disableoption {
+  position: fixed;
+  bottom: 0;
+  background: var(--background-color);
+  margin: 2%;
+  padding: 0.2em;
+  border-radius: 50%;
+}
+/* Base definition */
+
+/* Initial states */
 .fluent.menu.light {
   --background-color: rgba(220, 220, 220, 0.9);
   --highlight-color: rgba(91, 192, 255, 0.8);
@@ -39,90 +102,96 @@
   color: white;
 }
 
-.fluent.menu *,
-.fluent.menu *::before {
-  transition: 0.2s ease-out;
+.fluent.menu.left .menubody {
+  float: left;
+  align-items: flex-start;
+  margin-left: 2em;
+}
+.fluent.menu.right .menubody {
+  float: right;
+  align-items: flex-end;
+  margin-right: 2em;
 }
 
-.fluent.menu .fluent.menuoption {
-  display: flex;
-  width: 100%;
-  margin: 0.1em 0;
-}
-.fluent.menu.left .fluent.menuoption {
+.fluent.menu.left .menubody .menuoption {
   flex-direction: row;
 }
-.fluent.menu.right .fluent.menuoption {
+.fluent.menu.right .menubody .menuoption {
   flex-direction: row-reverse;
 }
 
-.fluent.menu .fluent.menuoption * {
-  padding: 0.2em;
-  background: var(--background-color);
-  backdrop-filter: blur(2px);
-}
-
-.fluent.menu .fluent.menuoption .icon {
-  border-radius: 50%;
-}
-
-.fluent.menu.active:not(.inactive) .menuoption .icon {
-  margin: 0 0.5em;
-}
-
-.fluent.menu .fluent.menuoption .tag {
-  display: flex;
-  align-items: center;
-  padding: 0.2em 0.5em;
-  overflow: hidden;
-}
-.fluent.menu.right .fluent.menuoption .tag {
-  justify-content: end;
-}
-.fluent.menu .fluent.menuoption:nth-child(2) .tag {
-  border-radius: 1em 1em 0 0;
-}
-.fluent.menu .fluent.menuoption:last-child .tag {
-  border-radius: 0 0 1em 1em;
-}
-.fluent.menu.inactive .fluent.menuoption .tag {
-  flex-grow: 0;
-  width: 0%;
-}
-.fluent.menu.active:not(.inactive) .fluent.menuoption .tag {
-  flex-grow: 1;
-  width: 100%;
-}
-
-.fluent.menu .fluent.menuoption.hovering .icon {
-  background: var(--highlight-color);
-}
-
-.fluent.menu .fluent.menuoption .tag::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 0%;
-  height: 100%;
-  background: var(--highlight-color);
-  opacity: 0;
-  z-index: -1;
-}
-.fluent.menu .fluent.menuoption.hovering .tag::before {
-  width: 100%;
-  opacity: 1;
-}
-.fluent.menu.right .fluent.menuoption .tag::before {
+.fluent.menu.right .menubody .menuoption .tag::before {
   right: 0;
 }
-.fluent.menu.left .fluent.menuoption .tag::before {
+.fluent.menu.left .menubody .menuoption .tag::before {
   left: 0;
 }
 
-.fluent.menu .fluent.menudivider {
-  align-self: center;
-  width: 80%;
-  height: 1px;
-  margin: 0.2em 0;
-  background: lightgray;
+.fluent.menu.left .disableoption {
+  left: 0;
+}
+.fluent.menu.right .disableoption {
+  right: 0;
+}
+/* Initial states */
+
+/* Working states */
+.fluent.menu.inactive {
+  backdrop-filter: blur(0px);
+}
+.fluent.menu.active:not(.inactive) {
+  backdrop-filter: blur(5px);
+}
+
+.fluent.menu.inactive .menubody {
+  opacity: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+}
+.fluent.menu.active:not(.inactive) .menubody {
+  opacity: 1;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+.fluent.menu.inactive .menubody .menuoption .tag {
+  flex-grow: 0;
+  width: 0%;
+}
+.fluent.menu.active:not(.inactive) .menubody .menuoption .icon {
+  margin: 0 0.5em;
+}
+
+.fluent.menu.active:not(.inactive) .menubody .menuoption .tag {
+  flex-grow: 1;
+  width: 100%;
+}
+.fluent.menu .menubody .menuoption.hovering .tag::before {
+  width: 100%;
+  opacity: 1;
+}
+
+.fluent.menu.inactive .disableoption {
+  opacity: 0;
+}
+.fluent.menu.active:not(.inactive) .disableoption {
+  opacity: 1;
+}
+/* Working states */
+
+/* Overflow prevention */
+.fluent.menu.left.stuckhorizontal .menubody {
+  position: fixed;
+  right: 0px;
+}
+.fluent.menu.right.stuckhorizontal .menubody {
+  position: fixed;
+  left: 0px;
+}
+.fluent.menu.left.stuckvertical .menubody {
+  position: fixed;
+  bottom: 0px;
+}
+/* Overflow prevention */
+
+.fluent.menu .menuoption.hovering .icon { /* TEMP */
+  background: var(--highlight-color);
 }

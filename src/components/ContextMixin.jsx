@@ -7,8 +7,6 @@ import {
 } from '../util/menu-options.js'
 
 import '../styles/Context.css'
-
-// TODO: Intersection Observer to prevent menu from going off screen
 class ContextMixin extends React.Component {
   static propTypes = {
     holdDelay: PropTypes.number,
@@ -49,18 +47,11 @@ class ContextMixin extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.menu.current) {
-      const rect = this.menu.current.getBoundingClientRect()
+    if (this.state.initialized) {
+      const rect = this.menu.current.getElementsByClassName('menubody')[0].getBoundingClientRect()
 
-      if (rect.right > window.innerWidth) {
-        this.menu.current.style.left = `calc(${window.innerWidth - rect.width}px - 4em)`
-        this.menu.current.style.right = 'unset'
-      } else if (rect.left < 0) {
-        this.menu.current.style.right = `calc(${window.innerWidth - rect.width}px - 4em)`
-        this.menu.current.style.left = 'unset'
-      }
-
-      if (rect.bottom > window.innerHeight) this.menu.current.style.top = (window.innerHeight - rect.height) + 'px'
+      this.menu.current.classList.toggle('stuckhorizontal', rect.right > window.innerWidth || rect.left < 0)
+      this.menu.current.classList.toggle('stuckvertical', rect.bottom > window.innerHeight)
     }
   }
 
@@ -83,10 +74,14 @@ class ContextMixin extends React.Component {
           className={`fluent menu ${this.props.theme} ${this.state.holding ? 'active' : 'inactive'} ${this.state.side}`}
           ref={this.menu}
         >
-          {menuOptions.empty.Component}
-          {optionsForTag[this.holdingElement?.tagName?.toLowerCase?.()]?.map?.((o, i) =>
-            <React.Fragment key={i}>{o.Component}</React.Fragment>
-          )}
+          <div className='fluent menubody'>
+            {menuOptions.empty.Component}
+            {optionsForTag[this.holdingElement?.tagName?.toLowerCase?.()]?.map?.((o, i) =>
+              <React.Fragment key={i}>{o.Component}</React.Fragment>
+            )}
+          </div>
+
+          <div className='material-symbols-outlined fluent disableoption'>menu_open</div>
         </div>
       </>
     )
@@ -105,7 +100,6 @@ class ContextMixin extends React.Component {
   launchContextMenu (e) {
     e.preventDefault()
 
-    const rect = this.menu.current.getBoundingClientRect()
     const side = e.clientX >= (window.innerWidth / 2) ? 'right' : 'left'
 
     this.holdingElement = e.target
@@ -117,18 +111,18 @@ class ContextMixin extends React.Component {
 
     switch (side) {
       case 'left':
-        this.menu.current.style.left = e.clientX + 'px'
-        this.menu.current.style.right = 'unset'
+        this.menu.current.style.paddingRight = 'unset'
+        this.menu.current.style.paddingLeft = e.clientX + 'px'
 
         break
       case 'right':
-        this.menu.current.style.right = (window.innerWidth - e.clientX) + 'px'
-        this.menu.current.style.left = 'unset'
+        this.menu.current.style.paddingRight = (window.innerWidth - e.clientX) + 'px'
+        this.menu.current.style.paddingLeft = 'unset'
 
         break
       default: break
     }
-    this.menu.current.style.top = e.clientY + 'px'
+    this.menu.current.style.paddingTop = e.clientY + 'px'
 
     navigator?.vibrate?.(1)
 
@@ -142,8 +136,10 @@ class ContextMixin extends React.Component {
   switchHovering (e) {
     const [touch] = e.touches
 
-    for (let o = this.menu.current.children.length - 1; o >= 0; o--) {
-      const option = this.menu.current.children[o]
+    const [body] = this.menu.current.getElementsByClassName('menubody')
+
+    for (let o = body.children.length - 1; o >= 0; o--) {
+      const option = body.children[o]
 
       if (!option.classList.contains('menuoption')) continue
 
@@ -151,7 +147,7 @@ class ContextMixin extends React.Component {
 
       if ((touch.clientY >= rect.top || !o)) {
         if (o !== this.hoveringIndex) {
-          this.menu.current.children[this.hoveringIndex]?.classList?.remove?.('hovering')
+          body.children[this.hoveringIndex]?.classList?.remove?.('hovering')
 
           this.hoveringIndex = o
 

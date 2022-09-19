@@ -1,3 +1,4 @@
+/* Base definition */
 .fluent.manipulator {
   transition: 0.2s;
   left: 0;
@@ -25,10 +26,17 @@
   pointer-events: none;
   animation: copy 1s normal forwards;
 }
-.fluent.manipulator.refresh::before {
-  display: none;
-}
 
+.fluent.handle {
+  transition: 0.2s, opacity 1s;
+  width: 3px;
+  background-color: #1ea7fd;
+  opacity: 0;
+  pointer-events: none;
+}
+/* Base definition */
+
+/* Initial states */
 .fluent.manipulator.inactive {
   opacity: 0;
   pointer-events: none;
@@ -69,13 +77,6 @@
     radial-gradient(#49a3da 20%, transparent 20%);
 }
 
-.fluent.handle {
-  transition: 0.2s, opacity 1s;
-  width: 3px;
-  background-color: #1ea7fd;
-  opacity: 0;
-  pointer-events: none;
-}
 .fluent.handle.active {
   opacity: 1;
 }
@@ -83,6 +84,13 @@
   transition: all 0s, height 0.2s;
   transform: scale(1.3);
 }
+/* Initial states */
+
+/* Working states */
+.fluent.manipulator.refresh::before {
+  display: none;
+}
+/* Working states */
 
 @keyframes copy {
   from {

@@ -19,7 +19,7 @@ const options = {
         <span className='tag'>Open link in new tab</span>
       </div>
     ),
-    action: (element) => window.open(element.href).focus()
+    action: (element) => window.open(element.href)?.focus?.()
   },
   // incognitoTab: {
   //   Component: (
@@ -104,16 +104,6 @@ const options = {
       text: element.href,
       url: element.href
     })
-  },
-  native: {
-    Component: (
-      <div className='fluent menuoption'>
-        <div className='material-symbols-outlined icon'>menu_open</div>
-
-        <i className='tag'>Use native context menu</i>
-      </div>
-    ),
-    action: (element, contextMixin) => document.removeEventListener('contextmenu', contextMixin.launchContextMenu)
   }
 }
 
@@ -125,9 +115,7 @@ const optionsForTag = {
     options.copyText,
     options.downloadLink,
     options.divider,
-    options.share,
-    options.divider,
-    options.native
+    options.share
   ]
 }
 
