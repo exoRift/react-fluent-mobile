@@ -7,6 +7,7 @@ import {
 } from '../util/menu-options.js'
 
 import '../styles/Context.css'
+import '../styles/notification.css'
 class ContextMixin extends React.Component {
   static propTypes = {
     holdDelay: PropTypes.number,
@@ -22,6 +23,7 @@ class ContextMixin extends React.Component {
 
   state = {
     initialized: false,
+    disabled: false,
     holding: false,
     side: 'right'
   }
@@ -38,6 +40,7 @@ class ContextMixin extends React.Component {
     this.launchContextMenu = this.launchContextMenu.bind(this)
     this.closeContextMenu = this.closeContextMenu.bind(this)
     this.switchHovering = this.switchHovering.bind(this)
+    this.disable = this.disable.bind(this)
   }
 
   componentDidMount () {
@@ -47,7 +50,7 @@ class ContextMixin extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.state.initialized) {
+    if (this.state.initialized && !this.state.disabled) {
       const rect = this.menu.current.getElementsByClassName('menubody')[0].getBoundingClientRect()
 
       this.menu.current.classList.toggle('stuckhorizontal', rect.right > window.innerWidth || rect.left < 0)
@@ -56,7 +59,7 @@ class ContextMixin extends React.Component {
   }
 
   componentWillUnmount () {
-    if (this.state.initialized) {
+    if (this.state.initialized && !this.state.disabled) {
       document.removeEventListener('contextmenu', this.launchContextMenu)
       document.removeEventListener('touchmove', this.switchHovering)
       document.removeEventListener('touchend', this.closeContextMenu)
@@ -65,6 +68,14 @@ class ContextMixin extends React.Component {
 
   render () {
     if (!this.state.initialized) return null
+
+    if (this.state.disabled) {
+      return (
+        <>
+          <i className={`fluent notification ${this.props.theme}`}>Now using the native context menu</i>
+        </>
+      )
+    }
 
     return (
       <>
@@ -81,7 +92,7 @@ class ContextMixin extends React.Component {
             )}
           </div>
 
-          <div className='material-symbols-outlined fluent disableoption'>menu_open</div>
+          {menuOptions.disable.Component}
         </div>
       </>
     )
@@ -136,22 +147,20 @@ class ContextMixin extends React.Component {
   switchHovering (e) {
     const [touch] = e.touches
 
-    const [body] = this.menu.current.getElementsByClassName('menubody')
+    const options = this.menu.current.querySelectorAll('.menuoption, .menudivider')
 
-    for (let o = body.children.length - 1; o >= 0; o--) {
-      const option = body.children[o]
+    for (let o = options.length - 1; o >= 0; o--) {
+      if (!options[o].classList.contains('menuoption')) continue
 
-      if (!option.classList.contains('menuoption')) continue
-
-      const rect = option.getBoundingClientRect()
+      const rect = options[o].getBoundingClientRect()
 
       if ((touch.clientY >= rect.top || !o)) {
         if (o !== this.hoveringIndex) {
-          body.children[this.hoveringIndex]?.classList?.remove?.('hovering')
+          options[this.hoveringIndex]?.classList?.remove?.('hovering')
 
           this.hoveringIndex = o
 
-          option.classList.add('hovering')
+          options[o].classList.add('hovering')
 
           navigator.vibrate?.(20)
         }
@@ -162,15 +171,27 @@ class ContextMixin extends React.Component {
   }
 
   closeContextMenu (e) {
-    // Subtract 1 from index to accomodate the blank button added in
-    if (this.hoveringIndex) optionsForTag[this.holdingElement.tagName.toLowerCase()][this.hoveringIndex - 1]?.action?.(this.holdingElement, this)
+    const tagOptions = optionsForTag[this.holdingElement.tagName.toLowerCase()]
 
     document.removeEventListener('touchmove', this.switchHovering)
 
     this.menu.current.getElementsByClassName('menuoption hovering')[0]?.classList?.remove?.('hovering')
 
+    // Disable button which is not a part of the options list (This can be > instead of >= since 1 is added to the index on account of the blank option)
+    if (this.hoveringIndex > tagOptions.length) menuOptions.disable.action(this.holdingElement, this)
+    // Subtract 1 from index to accomodate the blank button
+    else if (this.hoveringIndex) tagOptions[this.hoveringIndex - 1]?.action?.(this.holdingElement, this)
+
     this.setState({
       holding: false
+    })
+  }
+
+  disable () {
+    this.componentWillUnmount()
+
+    this.setState({
+      disabled: true
     })
   }
 }

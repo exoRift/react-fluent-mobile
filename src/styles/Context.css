@@ -30,7 +30,6 @@
 .fluent.menu .menubody .menuoption {
   display: flex;
   width: 100%;
-  margin: 0.1em 0;
 }
 
 .fluent.menu .menubody .menuoption * {
@@ -81,13 +80,17 @@
   background: lightgray;
 }
 
-.fluent.menu .disableoption {
+.fluent.menu .menuoption.disable {
   position: fixed;
   bottom: 0;
-  background: var(--background-color);
   margin: 2%;
+}
+
+.fluent.menu .menuoption.disable .icon {
+  background: var(--background-color);
   padding: 0.2em;
   border-radius: 50%;
+  font-size: 2em;
 }
 /* Base definition */
 
@@ -95,6 +98,7 @@
 .fluent.menu.light {
   --background-color: rgba(220, 220, 220, 0.9);
   --highlight-color: rgba(91, 192, 255, 0.8);
+  color: black;
 }
 .fluent.menu.dark {
   --background-color: rgba(80, 80, 80, 0.9);
@@ -127,10 +131,10 @@
   left: 0;
 }
 
-.fluent.menu.left .disableoption {
+.fluent.menu.left .menuoption.disable {
   left: 0;
 }
-.fluent.menu.right .disableoption {
+.fluent.menu.right .menuoption.disable {
   right: 0;
 }
 /* Initial states */
@@ -152,6 +156,13 @@
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
 }
 
+.fluent.menu.inactive .menubody .menuoption {
+  margin: 0;
+}
+.fluent.menu.active:not(.inactive) .menubody .menuoption {
+  margin: 0.1em 0;
+}
+
 .fluent.menu.inactive .menubody .menuoption .tag {
   flex-grow: 0;
   width: 0%;
@@ -169,10 +180,10 @@
   opacity: 1;
 }
 
-.fluent.menu.inactive .disableoption {
+.fluent.menu.inactive .menuoption.disable {
   opacity: 0;
 }
-.fluent.menu.active:not(.inactive) .disableoption {
+.fluent.menu.active:not(.inactive) .menuoption.disable {
   opacity: 1;
 }
 /* Working states */
@@ -180,15 +191,15 @@
 /* Overflow prevention */
 .fluent.menu.left.stuckhorizontal .menubody {
   position: fixed;
-  right: 0px;
+  right: 0;
 }
 .fluent.menu.right.stuckhorizontal .menubody {
   position: fixed;
-  left: 0px;
+  left: 0;
 }
 .fluent.menu.left.stuckvertical .menubody {
   position: fixed;
-  bottom: 0px;
+  bottom: 0;
 }
 /* Overflow prevention */
 

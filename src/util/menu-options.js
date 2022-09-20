@@ -84,11 +84,11 @@ const options = {
       </div>
     ),
     action: (element) => {
-      element.setAttribute('download', 'true')
+      element.setAttribute('download', '')
 
       element.click()
 
-      element.setAttribute('download', 'false')
+      element.removeAttribute('download')
     }
   },
   share: {
@@ -104,6 +104,14 @@ const options = {
       text: element.href,
       url: element.href
     })
+  },
+  disable: {
+    Component: (
+      <div className='fluent menuoption disable'>
+        <div className='material-symbols-outlined icon'>mobile_off</div>
+      </div>
+    ),
+    action: (element, contextMixin) => contextMixin.disable()
   }
 }
 
