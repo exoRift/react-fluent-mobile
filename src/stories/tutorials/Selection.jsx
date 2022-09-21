@@ -1,7 +1,8 @@
 import {
   React,
   useEffect,
-  useState
+  useState,
+  useRef
 } from 'react'
 import {
   linkTo
@@ -33,7 +34,35 @@ function displayCopied () {
   display.textContent = window.getSelection().toString()
 }
 
+function controlSelection (padRef, e) {
+  const instructionRect = document.getElementById('instructions').getBoundingClientRect()
+  const touches = padRef.formatTouches(e.targetTouches)
+
+  const comparator = new TouchEvent('touchmove', {
+    target: e.target,
+    targetTouches: touches.map((touch, i) => {
+      const originX = padRef.originRange[i ? 'startCoords' : 'endCoords'][0]
+      const x = originX + (touches[i].clientX - padRef.originTouches[i].clientX)
+
+      return new Touch({
+        identifier: touch.identifier,
+        clientX: x >= instructionRect.x ? padRef.originTouches[i].clientX + (instructionRect.x - originX - 1) : touch.clientX,
+        clientY: touch.clientY,
+        target: touch.target
+      })
+    })
+  })
+
+  if (touches.some((t, i) => t.clientX !== comparator.targetTouches[i].clientX)) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    padRef.manipulateSelection(comparator)
+  }
+}
+
 export const Selection = () => {
+  const padRef = useRef(null)
   const [step, setStep] = useState(0)
 
   useEffect(() => {
@@ -85,6 +114,8 @@ export const Selection = () => {
           once: true
         })
 
+        pad.addEventListener('touchmove', controlSelection.bind(this, padRef.current), true) // Prevent selection overflow into instructions
+
         break
       case 2:
         pad.addEventListener('touchmove', moveStartStep)
@@ -104,21 +135,15 @@ export const Selection = () => {
     }
 
     return () => {
-      const pad = document.getElementById('fluentselectionmanipulator')
-
       document.removeEventListener('copy', displayCopied)
 
       document.removeEventListener('selectionchange', selectStep)
-      pad?.removeEventListener?.('touchmove', moveEndStep)
-      pad?.removeEventListener?.('touchmove', moveStartStep)
-      pad?.removeEventListener?.('dblclick', copyStep)
-      pad?.removeEventListener?.('touchend', dismissStep)
     }
   }, [step])
 
   return (
     <div className='body'>
-      <FluentSelectionMixin/>
+      <FluentSelectionMixin ref={padRef}/>
       <div className='suggestion'>
         <img src={deviceToolbar} alt='device toolbar'/>
 
