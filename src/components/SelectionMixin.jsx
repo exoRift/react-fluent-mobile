@@ -7,6 +7,9 @@ import {
 
 import '../styles/Selection.css'
 
+/**
+ * This is a mixin that augments the text-selection experience on mobile with the introduction of a selection manipulation pad designed for mobile with the capabilities for mobile
+ */
 class SelectionMixin extends React.Component {
   static propTypes = {
     /** The minimum distance required to swipe down to dismiss the selection */
@@ -26,25 +29,65 @@ class SelectionMixin extends React.Component {
     theme: 'dark'
   }
 
+  // WARN: This can be a problem if Apple releases a new product line. The problem is that Chrome uses Apple Webkit
+  /** Regex for detecting if the user's navigator agent is iOS */
   static iosRegex = /iphone|ipod|ipad|mac/i
-  static mobileRegex = /^(?:(?!windows).)*mobile(?:(?!windows).)*$/i
 
+  /** The default height of a handle if it has no text range to base its height off of */
   static defaultHandleHeight = 18
 
+  /**
+   * Get the range/caret position from a page coordinate X Y (Intended for multi-browser support)
+   * @param   {Number}                       x The x coordinate
+   * @param   {Number}                       y The y coordinate
+   * @returns {[node: Node, offset: Number]}   The caret node and position
+   */
+  static getCaretPosition (x, y) {
+    const useExperimental = 'caretPositionFromPoint' in document
+
+    if (useExperimental) {
+      const position = document.caretPositionFromPoint(x, y)
+
+      return position
+        ? [
+            position.offsetNode,
+            position.offset
+          ]
+        : []
+    } else {
+      const range = document.caretRangeFromPoint(x, y)
+
+      return range
+        ? [
+            range.endContainer,
+            range.endOffset
+          ]
+        : []
+    }
+  }
+
+  /** The screen touches at their point of contact */
   originTouches = []
+  /** The selection range before the last resize was finalized */
   originRange = null
+  /** The current selection range (live) */
   selectRange = null
+  /** A ref to the manipulation pad */
   manipulator = React.createRef()
 
   state = {
+    /** Whether a touch has been detected and manipulator is mounted */
     initialized: false,
+    /** Whether there is an active selection and the manipulation pad should be visible or not */
     selecting: false,
+    /** Whether the user is pressing down and is actively manipulating the selection or not */
     manipulating: false
   }
 
   constructor (props) {
     super(props)
 
+    /** Whether the user device is running iOS or not */
     this.isIOS = SelectionMixin.iosRegex.test(navigator.userAgent)
 
     this.initializeComponent = this.initializeComponent.bind(this)
@@ -84,6 +127,7 @@ class SelectionMixin extends React.Component {
           onTouchStart={this.manipulateSelection}
           onTouchMove={this.manipulateSelection}
           onTouchEnd={this.stopManipulation}
+          onTouchCancel={this.stopManipulation}
           onTouchEndCapture={this.isIOS ? this.reselectForIOS : null}
           onDoubleClick={this.copySelection}
           ref={this.manipulator}
@@ -95,6 +139,10 @@ class SelectionMixin extends React.Component {
     )
   }
 
+  /**
+   * Mount the component and listen for touches thoroughly
+   * @fires document#touchstart
+   */
   initializeComponent () {
     if (!this.state.initialized) {
       this.setState({
@@ -110,6 +158,11 @@ class SelectionMixin extends React.Component {
     }
   }
 
+  /**
+   * Register a touchstart touch into the origin touches
+   * @param {TouchEvent} e The touch event
+   * @fires document#touchstart
+   */
   registerTouch (e) {
     const [touch] = e.changedTouches
     touch.timeStamp = e.timeStamp
@@ -122,7 +175,13 @@ class SelectionMixin extends React.Component {
     } else this.originTouches[touch.identifier] = touch
   }
 
-  launchManipulator (type, e) {
+  /**
+   * Display the manipulation pad
+   * @param {TouchEvent} e The touch event
+   * @fires document#selectionchange
+   */
+  // TODO: Support inputs and textareas
+  launchManipulator (e) {
     if (!this.state.manipulating) {
       const selection = window.getSelection()
       const selectionMatches = selection.rangeCount && selection.getRangeAt(0) === this.selectRange
@@ -142,6 +201,12 @@ class SelectionMixin extends React.Component {
     }
   }
 
+  /**
+   * Manipulate the selection based off of finger distance difference and move the indication handles
+   * @param {TouchEvent} e The touch event
+   * @fires fluentselectionmanipulator#touchstart
+   * @fires fluentselectionmanipulator#touchmove
+   */
   manipulateSelection (e) {
     const selection = window.getSelection()
 
@@ -181,8 +246,8 @@ class SelectionMixin extends React.Component {
 
     // Range sizing
     this.manipulator.current.style.pointerEvents = 'none' // Allow range passthrough of manipulation pad
-    if (touches[1]) this.selectRange.setStart(...this.getCaretPosition(positions[0], positions[1] + (this.originRange.startCoords.height / 2)))
-    if (touches[0]) this.selectRange.setEnd(...this.getCaretPosition(positions[2], positions[3] + (this.originRange.endCoords.height / 2)))
+    if (touches[1]) this.selectRange.setStart(...SelectionMixin.getCaretPosition(positions[0], positions[1] + (this.originRange.startCoords.height / 2)))
+    if (touches[0]) this.selectRange.setEnd(...SelectionMixin.getCaretPosition(positions[2], positions[3] + (this.originRange.endCoords.height / 2)))
     this.manipulator.current.style.pointerEvents = null
 
     // Safari selection behavior and Android tap selection behavior
@@ -193,6 +258,10 @@ class SelectionMixin extends React.Component {
     if (this.selectRange.startOffset !== oldStartOffset || this.selectRange.endOffset !== oldEndOffset) navigator.vibrate?.(1)
   }
 
+  /**
+   * Stop the manipulation of a side based on removed touches
+   * @param {TouchEvent} e The touch event
+   */
   stopManipulation (e) {
     for (const touch of e.changedTouches) {
       const identifier = this.isIOS ? this.originTouches.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier
@@ -218,6 +287,12 @@ class SelectionMixin extends React.Component {
     if (!e.targetTouches.length) this.setState({ manipulating: false })
   }
 
+  /**
+   * Position the selection indication handles
+   * @param {Touch[]}   touches   The current touches (used to determine actively manipulated handles)
+   * @param {Boolean}   reversed  Whether the current selection is reversed or not (used to determine actively manipulated handles)
+   * @param {...Number} positions The XY positions of the left handle followed by the XY positions of the right handle
+   */
   positionHandles (touches, reversed, ...positions) {
     const handles = document.getElementsByClassName('fluent handle')
 
@@ -233,30 +308,11 @@ class SelectionMixin extends React.Component {
     }
   }
 
-  getCaretPosition (x, y, first) {
-    const useExperimental = 'caretPositionFromPoint' in document
-
-    if (useExperimental) {
-      const position = document.caretPositionFromPoint(x, y)
-
-      return position
-        ? [
-            position.offsetNode,
-            position.offset
-          ]
-        : []
-    } else {
-      const range = document.caretRangeFromPoint(x, y)
-
-      return range
-        ? [
-            range.endContainer,
-            range.endOffset
-          ]
-        : []
-    }
-  }
-
+  /**
+   * Format a TouchList into an array where the index is determined by the comparison of identifiers
+   * @param   {TouchList} list The list of touches
+   * @returns {Touch[]}        The formatted touches
+   */
   formatTouches (list) {
     const touches = []
 
@@ -269,17 +325,10 @@ class SelectionMixin extends React.Component {
     return touches
   }
 
-  getLineHeight (node) {
-    const range = document.createRange()
-
-    if (node && node instanceof Text) {
-      range.setStart(node, 0)
-      range.setEnd(node, 1)
-    }
-
-    return range.getBoundingClientRect().height || SelectionMixin.defaultHandleHeight
-  }
-
+  /**
+   * Send the active selection to the clipboard
+   * @listens fluentselectionmanipulator#dblclick
+   */
   copySelection () {
     if (this.isIOS) this.reselectForIOS()
 
@@ -294,6 +343,12 @@ class SelectionMixin extends React.Component {
     else document.execCommand('copy')
   }
 
+  /**
+   * Remove a touch from the registry (needed for iOS)
+   * @param   {TouchEvent} e The touch event
+   * @listens document#touchend
+   * @listens document#touchcancel
+   */
   unregisterTouchForIOS (e) {
     setTimeout(() => {
       const [touch] = e.changedTouches
@@ -302,6 +357,9 @@ class SelectionMixin extends React.Component {
     }) // Negligible delay for listener to run last
   }
 
+  /**
+   * Re-add the selectRange to the selection
+   */
   reselectForIOS () {
     const selection = window.getSelection()
 
