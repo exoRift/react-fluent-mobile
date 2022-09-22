@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import {
   options as menuOptions,
   optionsForTag
-} from '../util/menu-options.js'
+} from '../util/menu-options.jsx'
 
 import '../styles/Context.css'
 import '../styles/notification.css'
@@ -109,6 +109,8 @@ class ContextMixin extends React.Component {
   }
 
   launchContextMenu (e) {
+    if (!(e.target.tagName.toLowerCase() in optionsForTag)) return
+
     e.preventDefault()
 
     const side = e.clientX >= (window.innerWidth / 2) ? 'right' : 'left'

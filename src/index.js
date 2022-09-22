@@ -12,4 +12,4 @@ export {
 export {
   options as contextMenuOptions,
   optionsForTag as contextMenuOptionsForTag
-} from './util/menu-options.js'
+} from './util/menu-options.jsx'
