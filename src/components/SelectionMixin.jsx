@@ -76,7 +76,7 @@ class SelectionMixin extends React.Component {
   manipulator = React.createRef()
 
   state = {
-    /** Whether a touch has been detected and manipulator is mounted */
+    /** Whether a touch has been detected and the manipulator is mounted */
     initialized: false,
     /** Whether there is an active selection and the manipulation pad should be visible or not */
     selecting: false,

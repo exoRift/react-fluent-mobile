@@ -8,29 +8,37 @@ import {
 
 import '../styles/Context.css'
 import '../styles/notification.css'
+
+/**
+ * This is a mixin that augments the the experience of opening context menu for mobile users in a way that reduces the lift-count for actions
+ */
 class ContextMixin extends React.Component {
   static propTypes = {
-    holdDelay: PropTypes.number,
-    holdTime: PropTypes.number,
+    /** The theme of the menus (dark, light) */
     theme: PropTypes.string
   }
 
   static defaultProps = {
-    holdDelay: 100,
-    holdTime: 500,
     theme: 'dark'
   }
 
   state = {
+    /** Whether a touch has been detected and the custom context menu is mounted */
     initialized: false,
+    /** Whether the custom context menu is disabled by the user or not */
     disabled: false,
+    /** If the context menu is active and being held */
     holding: false,
+    /** Which side of the screen the touch origin is on */
     side: 'right'
   }
 
+  /** The element the context menu is being emitted from */
   holdingElement = null
+  /** The index of the tag option the user is hovering over */
   hoveringIndex = 0
 
+  /** A ref to the context menu element */
   menu = React.createRef()
 
   constructor (props) {
@@ -98,6 +106,10 @@ class ContextMixin extends React.Component {
     )
   }
 
+  /**
+   * Mount the component and listen for context menu events
+   * @fires document#touchstart
+   */
   initializeComponent () {
     if (!this.state.initialized) {
       this.setState({
@@ -108,6 +120,11 @@ class ContextMixin extends React.Component {
     }
   }
 
+  /**
+   * Open the context menu
+   * @param {MouseEvent} e The contextmenu event
+   * @fires document#contextmenu
+   */
   launchContextMenu (e) {
     if (!(e.target.tagName.toLowerCase() in optionsForTag)) return
 
@@ -146,6 +163,10 @@ class ContextMixin extends React.Component {
     })
   }
 
+  /**
+   * Switch the index of the context menu option the user is hovering
+   * @param {TouchEvent} e The touch event
+   */
   switchHovering (e) {
     const [touch] = e.touches
 
@@ -172,7 +193,10 @@ class ContextMixin extends React.Component {
     }
   }
 
-  closeContextMenu (e) {
+  /**
+   * Close the context menu and execute the hovering option
+   */
+  closeContextMenu () {
     const tagOptions = optionsForTag[this.holdingElement.tagName.toLowerCase()]
 
     document.removeEventListener('touchmove', this.switchHovering)
@@ -189,6 +213,9 @@ class ContextMixin extends React.Component {
     })
   }
 
+  /**
+   * Disable the context menu
+   */
   disable () {
     this.componentWillUnmount()
 
