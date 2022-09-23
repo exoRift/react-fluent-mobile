@@ -92,7 +92,11 @@ export const Playground = (args) => {
   useEffect(() => {
     document.addEventListener('copy', displayCopied)
 
-    return () => document.removeEventListener('copy', displayCopied)
+    return () => {
+      document.removeEventListener('copy', displayCopied)
+
+      document.body.style.backgroundColor = ''
+    }
   }, [])
 
   useEffect(() => {

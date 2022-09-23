@@ -1,4 +1,7 @@
-import React from 'react'
+import {
+  React,
+  useEffect
+} from 'react'
 
 import {
   FluentContextMixin
@@ -21,21 +24,34 @@ export default {
   }
 }
 
-export const Playground = (args) => (
-  <div>
-    <FluentContextMixin {...args}/>
+export const Playground = (args) => {
+  useEffect(() => {
+    return () => {
+      document.body.style.backgroundColor = ''
+    }
+  })
 
-    <div className='anchors'>
-      <a href={window.location.href}>This is a leftward anchor</a>
+  useEffect(() => {
+    if (args.theme === 'dark') document.body.style.backgroundColor = 'white'
+    else document.body.style.backgroundColor = '#202124'
+  }, [args.theme])
 
-      <a href={window.location.href}>This is a rightward anchor</a>
+  return (
+    <div>
+      <FluentContextMixin {...args}/>
+
+      <div className='anchors'>
+        <a href={window.location.href}>This is a leftward anchor</a>
+
+        <a href={window.location.href}>This is a rightward anchor</a>
+      </div>
+
+      <span>This is some sample text</span>
+
+      <img className='banner' alt='banner' src={banner}/>
     </div>
-
-    <span>This is some sample text</span>
-
-    <img className='banner' alt='banner' src={banner}/>
-  </div>
-)
+  )
+}
 Playground.args = {
   theme: 'dark'
 }
