@@ -55,6 +55,11 @@ function displayCopied () {
 export default {
   component: FluentSelectionMixin,
   argTypes: {
+    STORYBOOK_BACKGROUND: {
+      control: {
+        type: 'color'
+      }
+    },
     collapseSwipeDistance: {
       control: {
         type: 'number'
@@ -100,8 +105,7 @@ export const Playground = (args) => {
   }, [])
 
   useEffect(() => {
-    if (args.theme === 'dark') document.body.style.backgroundColor = 'white'
-    else document.body.style.backgroundColor = '#202124'
+    document.body.style.backgroundColor = args.STORYBOOK_BACKGROUND
 
     if (args.debug) {
       document.dispatchEvent(new TouchEvent('touchstart', {
@@ -128,10 +132,10 @@ export const Playground = (args) => {
         document.removeEventListener('touchend', positionDebugRangeCallback)
       }
     }
-  }, [args.debug, args.theme, positionDebugRangeCallback])
+  }, [args.STORYBOOK_BACKGROUND, args.debug, positionDebugRangeCallback])
 
   return (
-    <div className={`body ${args.theme}`}>
+    <>
       {args.debug
         ? (
           <>
@@ -160,10 +164,11 @@ export const Playground = (args) => {
       </footer>
 
       {args.debug ? navigator.userAgent : null}
-    </div>
+    </>
   )
 }
 Playground.args = {
+  STORYBOOK_BACKGROUND: '#ffffff',
   collapseSwipeDistance: 100,
   collapseSwipeDuration: 300,
   nativeManipulationInactivityDuration: 500,

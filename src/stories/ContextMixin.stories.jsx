@@ -15,6 +15,11 @@ import './styles/ContextMixin.css'
 export default {
   component: FluentContextMixin,
   argTypes: {
+    STORYBOOK_BACKGROUND: {
+      control: {
+        type: 'color'
+      }
+    },
     theme: {
       options: ['dark', 'light'],
       control: {
@@ -32,12 +37,11 @@ export const Playground = (args) => {
   })
 
   useEffect(() => {
-    if (args.theme === 'dark') document.body.style.backgroundColor = 'white'
-    else document.body.style.backgroundColor = '#202124'
-  }, [args.theme])
+    document.body.style.backgroundColor = args.STORYBOOK_BACKGROUND
+  }, [args.STORYBOOK_BACKGROUND])
 
   return (
-    <div>
+    <>
       <FluentContextMixin {...args}/>
 
       <div className='anchors'>
@@ -49,9 +53,10 @@ export const Playground = (args) => {
       <span>This is some sample text</span>
 
       <img className='banner' alt='banner' src={banner}/>
-    </div>
+    </>
   )
 }
 Playground.args = {
+  STORYBOOK_BACKGROUND: '#ffffff',
   theme: 'dark'
 }

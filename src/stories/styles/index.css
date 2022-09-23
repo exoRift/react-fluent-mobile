@@ -2,13 +2,6 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.body.dark {
-  color: black;
-}
-.body.light {
-  color: white;
-}
-
 .suggestion {
   display: flex;
   align-items: flex-end;
