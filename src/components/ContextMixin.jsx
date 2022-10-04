@@ -12,7 +12,7 @@ import '../styles/notification.css'
 /**
  * This is a mixin that augments the the experience of opening context menu for mobile users in a way that reduces the lift-count for actions
  */
-class ContextMixin extends React.Component {
+class ContextMixin extends React.Component { // TODO: Test touchcancel
   static propTypes = {
     /** The theme of the menus (dark, light) */
     theme: PropTypes.string
@@ -91,6 +91,7 @@ class ContextMixin extends React.Component {
 
         <div
           className={`fluent menu ${this.props.theme} ${this.state.holding ? 'active' : 'inactive'} ${this.state.side}`}
+          id='fluentmenu'
           ref={this.menu}
         >
           <div className='fluent menubody'>

@@ -14,12 +14,9 @@ import {
 
 import deviceToolbar from '../assets/device_toolbar.webp'
 
-import '../styles/index.css'
-import '../styles/SelectionMixin.css'
-
 function advanceStep (step, setStep) {
   if (document.getElementById('fluentselectionmanipulator')) {
-    const list = document.getElementById('instructionlist')
+    const list = document.getElementById('instructions')
 
     list.children.item(step).setAttribute('active', 'false')
     list.children.item(step + 1).setAttribute('active', 'true')
@@ -144,6 +141,7 @@ export const Selection = () => {
   return (
     <div className='body'>
       <FluentSelectionMixin ref={padRef}/>
+
       <div className='suggestion'>
         <img src={deviceToolbar} alt='device toolbar'/>
 
@@ -152,74 +150,72 @@ export const Selection = () => {
         </h5>
       </div>
 
-      <div id='demonstration'>
-        <div id='text'>
+      <div className='demonstration'>
+        <div className='prototype selection'>
           <h1>The web development process</h1>
 
-          <p>{'"Insanity is doing the same thing over and over and expecting different results." \u2014 Albert Einstein '.repeat(8)}</p>
+          <p>{'"Insanity is doing the same thing over and over and expecting different results." \u2014 Albert Einstein '.repeat(6)}</p>
         </div>
 
         <div id='instructions'>
-          <div id='instructionlist'>
-            <div className='instruction' active={String(!step)}>
-              <h3>Try selecting some text!</h3>
-              <p>
-                Hold down on the header or, if you're on Android, tap some of the body text
-              </p>
+          <div className='instruction' active={String(!step)}>
+            <h3>Try selecting some text!</h3>
+            <p>
+              Hold down on the header or, if you're on Android, tap some of the body text
+            </p>
 
-              <div className='gesture hold'/>
+            <div className='gesture hold'/>
+          </div>
+
+          <div className='instruction'>
+            <h3>Move the end of your selection</h3>
+            <p>
+              Tap and drag on the manipulation pad to move the end of your selection
+            </p>
+
+            <div className='gesture move sideways'/>
+          </div>
+
+          <div className='instruction'>
+            <h3>Move the beginning of your selection</h3>
+            <p>
+              Drag with two fingers at the same time to move both sides of your selection
+            </p>
+
+            <div className='gesture-series'>
+              <div className='gesture move sideways start'/>
+              <div className='gesture move sideways'/>
             </div>
+          </div>
 
-            <div className='instruction'>
-              <h3>Move the end of your selection</h3>
-              <p>
-                Tap and drag on the manipulation pad to move the end of your selection
-              </p>
+          <div className='instruction'>
+            <h3>Copy the selected text</h3>
+            <p>
+              Double-tap on the selection manipulation pad to copy your selected text
+            </p>
 
-              <div className='gesture move'/>
-            </div>
+            <div className='gesture double tap'/>
+          </div>
 
-            <div className='instruction'>
-              <h3>Move the beginning of your selection</h3>
-              <p>
-                Drag with two fingers at the same time to move both sides of your selection
-              </p>
+          <div className='instruction'>
+            <h3>Close the selection pad</h3>
+            <p>
+              Swipe down on the selection manipulation pad to dismiss your selection
+            </p>
 
-              <div className='gesture-series'>
-                <div className='gesture move start'/>
-                <div className='gesture move'/>
-              </div>
-            </div>
+            <div className='gesture swipe down'/>
+          </div>
 
-            <div className='instruction'>
-              <h3>Copy the selected text</h3>
-              <p>
-                Double-tap on the selection manipulation pad to copy your selected text
-              </p>
+          <div className='instruction'>
+            <div className='check'>&#10003;</div>
+            <h3>Good job!</h3>
+            <p>
+              You have mastered using the selection manipulation pad
+            </p>
 
-              <div className='gesture double tap'/>
-            </div>
+            <h4>Now try the</h4>
 
-            <div className='instruction'>
-              <h3>Close the selection pad</h3>
-              <p>
-                Swipe down on the selection manipulation pad to dismiss your selection
-              </p>
-
-              <div className='gesture swipe down'/>
-            </div>
-
-            <div className='instruction'>
-              <div className='check'>&#10003;</div>
-              <h3>Good job!</h3>
-              <p>
-                You have mastered using the selection manipulation pad
-              </p>
-
-              <h4>Now try the</h4>
-
-              <div className='storylink' onClick={linkTo('tutorials', 'context')}>New Context Menu</div>
-            </div>
+            <div className='storylink' onClick={linkTo('tutorials', 'context')}>New Context Menu</div>
           </div>
 
           <div className='progress-bar'>

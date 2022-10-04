@@ -10,7 +10,6 @@ import {
 } from '..'
 
 import './styles/index.css'
-import './styles/SelectionMixin.css'
 import './styles/debug.css'
 
 function positionDebugTouches (e) {

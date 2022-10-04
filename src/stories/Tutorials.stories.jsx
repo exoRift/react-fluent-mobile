@@ -1,3 +1,6 @@
+import './styles/index.css'
+import './styles/Tutorials.css'
+
 export default {
   title: 'Tutorials'
 }

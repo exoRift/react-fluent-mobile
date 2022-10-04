@@ -24,7 +24,7 @@
   font-family: 'Material Symbols Outlined';
   font-size: 20vw;
   pointer-events: none;
-  animation: copy 1s normal forwards;
+  animation: copy 1s linear 1 normal forwards;
 }
 
 .fluent.handle {

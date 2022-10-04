@@ -9,7 +9,6 @@ import banner from '../../assets/banner.png'
 
 import './styles/index.css'
 import './styles/ContextMixin.css'
-import './styles/SelectionMixin.css'
 
 export default {
   argTypes: {
