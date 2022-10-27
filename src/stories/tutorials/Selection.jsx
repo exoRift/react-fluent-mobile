@@ -9,7 +9,8 @@ import {
 } from '@storybook/addon-links'
 
 import {
-  FluentSelectionMixin
+  FluentSelectionMixin,
+  TouchHandler
 } from '../../'
 
 import deviceToolbar from '../assets/device_toolbar.webp'
@@ -33,17 +34,17 @@ function displayCopied () {
 
 function controlSelection (padRef, e) {
   const instructionRect = document.getElementById('instructions').getBoundingClientRect()
-  const touches = padRef.formatTouches(e.targetTouches)
+  const touches = TouchHandler.formatTouches(e.targetTouches)
 
   const comparator = new TouchEvent('touchmove', {
     target: e.target,
     targetTouches: touches.map((touch, i) => {
       const originX = padRef.originRange[i ? 'startCoords' : 'endCoords'][0]
-      const x = originX + (touches[i].clientX - padRef.originTouches[i].clientX)
+      const x = originX + (touches[i].clientX - TouchHandler.originTouches[i].clientX)
 
       return new Touch({
         identifier: touch.identifier,
-        clientX: x >= instructionRect.x ? padRef.originTouches[i].clientX + (instructionRect.x - originX - 1) : touch.clientX,
+        clientX: x >= instructionRect.x ? TouchHandler.originTouches[i].clientX + (instructionRect.x - originX - 1) : touch.clientX,
         clientY: touch.clientY,
         target: touch.target
       })

@@ -18,7 +18,7 @@ function positionDebugTouches (e) {
 
   const touchPixels = document.getElementsByClassName('fluent debug touch')
 
-  for (let p = 0; p < touchPixels.length; p++) {
+  for (let p = 0; p < touchPixels.length; ++p) {
     if (touches[p]) {
       touchPixels[p].style.left = touches[p].clientX + 'px'
       touchPixels[p].style.top = touches[p].clientY + 'px'
@@ -38,7 +38,7 @@ function positionDebugRange (mixin) {
 
     const rangeHandles = document.getElementsByClassName('fluent debug range')
 
-    for (let r = 0; r < rangeHandles.length; r++) {
+    for (let r = 0; r < rangeHandles.length; ++r) {
       rangeHandles[r].style.left = rect[r * 2] + 'px'
       rangeHandles[r].style.top = rect[(r * 2) + 1] + 'px'
     }

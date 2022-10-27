@@ -4,6 +4,9 @@ import PropTypes from 'prop-types'
 import {
   FlexibleRange
 } from '../util/FlexibleRange.js'
+import {
+  TouchHandler
+} from '../util/TouchHandler.js'
 
 import '../styles/Selection.css'
 
@@ -28,10 +31,6 @@ class SelectionMixin extends React.Component {
     nativeManipulationInactivityDuration: 500,
     theme: 'dark'
   }
-
-  // WARN: This can be a problem if Apple releases a new product line. The problem is that Chrome uses Apple Webkit
-  /** Regex for detecting if the user's navigator agent is iOS */
-  static iosRegex = /iphone|ipod|ipad|mac/i
 
   /** The default height of a handle if it has no text range to base its height off of */
   static defaultHandleHeight = 18
@@ -66,8 +65,6 @@ class SelectionMixin extends React.Component {
     }
   }
 
-  /** The screen touches at their point of contact */
-  originTouches = []
   /** The selection range before the last resize was finalized */
   originRange = null
   /** The current selection range (live) */
@@ -87,17 +84,12 @@ class SelectionMixin extends React.Component {
   constructor (props) {
     super(props)
 
-    /** Whether the user device is running iOS or not */
-    this.isIOS = SelectionMixin.iosRegex.test(navigator.userAgent)
-
     this.initializeComponent = this.initializeComponent.bind(this)
-    this.registerTouch = this.registerTouch.bind(this)
     this.launchManipulator = this.launchManipulator.bind(this)
     this.manipulateSelection = this.manipulateSelection.bind(this)
     this.stopManipulation = this.stopManipulation.bind(this)
     this.copySelection = this.copySelection.bind(this)
     this.reselectRanges = this.reselectRanges.bind(this)
-    this.unregisterTouchForIOS = this.unregisterTouchForIOS.bind(this)
   }
 
   componentDidMount () {
@@ -108,10 +100,9 @@ class SelectionMixin extends React.Component {
 
   componentWillUnmount () {
     if (this.state.initialized) {
-      document.removeEventListener('touchstart', this.registerTouch)
       document.removeEventListener('selectionchange', this.launchManipulator)
 
-      if (this.isIOS) document.removeEventListener('touchend', this.unregisterTouchForIOS) // NOTE: IOS touch UUIDs
+      TouchHandler.unmount()
     } else document.removeEventListener('touchstart', this.initializeComponent)
   }
 
@@ -129,7 +120,7 @@ class SelectionMixin extends React.Component {
           onTouchMove={this.manipulateSelection}
           onTouchEnd={this.stopManipulation}
           onTouchCancel={this.stopManipulation}
-          onTouchEndCapture={this.isIOS ? this.reselectRanges : null} // NOTE: IOS clears selection
+          onTouchEndCapture={window.FLUENT_IS_IOS ? this.reselectRanges : null} // NOTE: IOS clears selection
           onDoubleClick={this.copySelection}
           ref={this.manipulator}
         />
@@ -150,30 +141,10 @@ class SelectionMixin extends React.Component {
         initialized: true
       })
 
-      document.addEventListener('touchstart', this.registerTouch, {
-        capture: true
-      })
+      TouchHandler.mount()
+
       document.addEventListener('selectionchange', this.launchManipulator)
-
-      if (this.isIOS) document.addEventListener('touchend', this.unregisterTouchForIOS)
     }
-  }
-
-  /**
-   * Register a touchstart touch into the origin touches
-   * @param {TouchEvent} e The touch event
-   * @fires document#touchstart
-   */
-  registerTouch (e) {
-    const [touch] = e.changedTouches
-    touch.timeStamp = e.timeStamp
-
-    if (this.isIOS) { // NOTE: IOS touch UUIDs
-      const firstNull = this.originTouches.indexOf(null)
-
-      if (firstNull !== -1) this.originTouches[firstNull] = touch
-      else this.originTouches[this.originTouches.length] = touch
-    } else this.originTouches[touch.identifier] = touch
   }
 
   /**
@@ -185,7 +156,7 @@ class SelectionMixin extends React.Component {
   launchManipulator (e) {
     if (!this.state.manipulating) {
       const selection = window.getSelection()
-      const selectionMatches = selection.rangeCount && (this.isIOS // NOTE: IOS selection range not a FlexibleRange instance
+      const selectionMatches = selection.rangeCount && (window.FLUENT_IS_IOS // NOTE: IOS selection range not a FlexibleRange instance
         ? this.compareRangesForIOS(selection.getRangeAt(0), this.selectRange)
         : selection.getRangeAt(0) === this.selectRange)
 
@@ -215,7 +186,7 @@ class SelectionMixin extends React.Component {
 
     if (!selection.rangeCount) return
 
-    const touches = this.formatTouches(e.targetTouches)
+    const touches = TouchHandler.formatTouches(e.targetTouches)
 
     if (!this.state.manipulating) { // First touch
       this.setState({
@@ -238,14 +209,14 @@ class SelectionMixin extends React.Component {
     ]
 
     const shifts = [
-      touches[1] && this.originTouches[1] ? touches[1].clientX - this.originTouches[1].clientX : 0, // Start X
-      touches[1] && this.originTouches[1] ? touches[1].clientY - this.originTouches[1].clientY : 0, // Start Y
-      touches[0] && this.originTouches[0] ? touches[0].clientX - this.originTouches[0].clientX : 0, // End X
-      touches[0] && this.originTouches[0] ? touches[0].clientY - this.originTouches[0].clientY : 0 // End Y
+      touches[1] && TouchHandler.originTouches[1] ? touches[1].clientX - TouchHandler.originTouches[1].clientX : 0, // Start X
+      touches[1] && TouchHandler.originTouches[1] ? touches[1].clientY - TouchHandler.originTouches[1].clientY : 0, // Start Y
+      touches[0] && TouchHandler.originTouches[0] ? touches[0].clientX - TouchHandler.originTouches[0].clientX : 0, // End X
+      touches[0] && TouchHandler.originTouches[0] ? touches[0].clientY - TouchHandler.originTouches[0].clientY : 0 // End Y
     ]
 
     const positions = []
-    for (let d = 0; d < rect.length; d++) positions.push(Math.max(0, rect[d] + shifts[d]))
+    for (let d = 0; d < rect.length; ++d) positions.push(Math.max(0, rect[d] + shifts[d]))
 
     // Range sizing
     this.manipulator.current.style.pointerEvents = 'none' // Allow range passthrough of manipulation pad
@@ -254,7 +225,7 @@ class SelectionMixin extends React.Component {
     this.manipulator.current.style.pointerEvents = null
 
     // NOTE: Safari selection behavior and Android tap selection behavior
-    if (this.isIOS || selection.isCollapsed) this.reselectRanges()
+    if (window.FLUENT_IS_IOS || selection.isCollapsed) this.reselectRanges()
 
     this.positionHandles(touches, this.selectRange.reversed, ...positions) // Position handles
 
@@ -267,7 +238,7 @@ class SelectionMixin extends React.Component {
    */
   stopManipulation (e) {
     for (const touch of e.changedTouches) {
-      const identifier = this.isIOS ? this.originTouches.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier // NOTE: IOS touch UUIDs
+      const identifier = TouchHandler.normalizeIdentifier(touch)
 
       if (identifier === 1) this.originRange.setStart(...this.selectRange._registeredStart)
       else if (!identifier) this.originRange.setEnd(...this.selectRange._registeredEnd)
@@ -275,11 +246,11 @@ class SelectionMixin extends React.Component {
 
     if (!e.targetTouches.length) {
       const [touch] = e.changedTouches
-      const identifier = this.isIOS ? this.originTouches.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier // NOTE: IOS touch UUIDs
+      const identifier = TouchHandler.normalizeIdentifier(touch)
 
       if (
-        touch.clientY - this.originTouches[identifier].clientY >= this.props.collapseSwipeDistance &&
-        e.timeStamp - this.originTouches[identifier].timeStamp <= this.props.collapseSwipeDuration
+        touch.clientY - TouchHandler.originTouches[identifier].clientY >= this.props.collapseSwipeDistance &&
+        e.timeStamp - TouchHandler.originTouches[identifier].FLUENT_TIMESTAMP <= this.props.collapseSwipeDuration
       ) window.getSelection().removeAllRanges() // Swipedown collapse gesture
 
       if (this.originRange.reversed) this.originRange.reverse()
@@ -299,10 +270,10 @@ class SelectionMixin extends React.Component {
   positionHandles (touches, reversed, ...positions) {
     const handles = document.getElementsByClassName('fluent handle')
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 2; ++i) {
       const handle = handles[i]
 
-      if (touches[1 - i]) handle.classList.add('manipulating')
+      if (touches[1 - i]) handle.classList.add('manipulating') // NOTE: Handle order reversed since the first touch is the last handle
       else handle.classList.remove('manipulating')
 
       handle.style.left = positions[i * 2] + 'px'
@@ -312,28 +283,11 @@ class SelectionMixin extends React.Component {
   }
 
   /**
-   * Format a TouchList into an array where the index is determined by the comparison of identifiers
-   * @param   {TouchList} list The list of touches
-   * @returns {Touch[]}        The formatted touches
-   */
-  formatTouches (list) {
-    const touches = []
-
-    for (const touch of list) {
-      const identifier = this.isIOS ? this.originTouches.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier // NOTE: IOS touch UUIDs
-
-      touches[identifier] = touch
-    }
-
-    return touches
-  }
-
-  /**
    * Send the active selection to the clipboard
    * @listens fluentselectionmanipulator#dblclick
    */
   copySelection () {
-    if (this.isIOS) this.reselectRanges() // NOTE: IOS clears selection
+    if (window.FLUENT_IS_IOS) this.reselectRanges() // NOTE: IOS clears selection
 
     const selection = window.getSelection()
 
@@ -359,18 +313,6 @@ class SelectionMixin extends React.Component {
   }
 
   // --- IOS METHODS ---
-
-  /**
-   * Remove a touch from the registry (needed for iOS)
-   * @param   {TouchEvent} e The touch event
-   * @listens document#touchend
-   * @listens document#touchcancel
-   */
-  unregisterTouchForIOS (e) {
-    setTimeout(() => {
-      for (const touch of e.changedTouches) this.originTouches[this.originTouches.findIndex((t) => t?.identifier === touch.identifier)] = null
-    }) // Negligible delay for listener to run last
-  }
 
   /**
    * Compare the values of two ranges to see if they are equal
