@@ -3,10 +3,13 @@
 /**
  * The class that normalizes and organizes touches
  * @desc This class is necessary due to some inconsistencies
- * between iOS and other platforms such as iOS's unique touch identifier behavior
- * and iOS's inability to cancel contextmenu events
+ * @desc between iOS and other platforms such as iOS's unique touch identifier behavior
+ * @desc and iOS's inability to cancel contextmenu events
  * */
 class TouchHandler {
+  /** The duration before a touch hold is triggered */
+  static touchHoldDuration = 250
+
   /**
    * @private
    * The number of agents mounting the handler
@@ -16,12 +19,25 @@ class TouchHandler {
   /** The active touches at their points of contact */
   static originTouches = []
 
+  /** The timeout for touch holds */
+  static touchHoldTimeout = null
+
   /** Mount the handler to append data to touch events */
   static mount () {
     if (!TouchHandler.mountCount) {
       document.addEventListener('touchstart', TouchHandler.registerTouchesFromEvent, true)
       document.addEventListener('touchend', TouchHandler.unregisterTouchesFromEvent, true)
       document.addEventListener('touchcancel', TouchHandler.unregisterTouchesFromEvent, true)
+
+      if (window.FLUENT_IS_IOS) {
+        document.addEventListener('touchmove', TouchHandler.cancelHold)
+
+        const style = document.createElement('style')
+        style.id = 'FLUENT_CALLOUT'
+        style.textContent = '* { -webkit-touch-callout: none; }'
+
+        document.head.appendChild(style)
+      }
     }
 
     ++TouchHandler.mountCount
@@ -35,6 +51,12 @@ class TouchHandler {
       document.removeEventListener('touchstart', TouchHandler.registerTouchesFromEvent)
       document.removeEventListener('touchend', TouchHandler.unregisterTouches)
       document.removeEventListener('touchcancel', TouchHandler.unregisterTouches)
+
+      if (window.FLUENT_IS_IOS) {
+        document.removeEventListener('touchmove', TouchHandler.cancelHold)
+
+        document.getElementById('FLUENT_CALLOUT')?.remove?.()
+      }
     }
   }
 
@@ -53,6 +75,28 @@ class TouchHandler {
         TouchHandler.originTouches[firstNull === -1 ? TouchHandler.originTouches.length : firstNull] = touch
       } else TouchHandler.originTouches[touch.identifier] = touch
     }
+
+    if (window.FLUENT_IS_IOS) {
+      if (!TouchHandler.touchHoldTimeout) {
+        if (e.changedTouches.length === 1) {
+          const [touch] = e.changedTouches
+
+          TouchHandler.touchHoldTimeout = setTimeout(() => {
+            const event = new MouseEvent('contextmenu', {
+              bubbles: true,
+              clientX: touch.clientX,
+              clientY: touch.clientY
+            })
+
+            touch.target.dispatchEvent(event)
+
+            TouchHandler.touchHoldTimeout = null
+
+            navigator?.vibrate?.(5)
+          }, TouchHandler.touchHoldDuration)
+        }
+      } else TouchHandler.cancelHold()
+    }
   }
 
   /**
@@ -65,6 +109,10 @@ class TouchHandler {
     setTimeout(() => {
       for (const touch of e.changedTouches) TouchHandler.originTouches[TouchHandler.normalizeIdentifier(touch)] = null
     }) // Negligible delay for listener to run last
+
+    if (window.FLUENT_IS_IOS) {
+      if (!TouchHandler.touchHoldTimeout) TouchHandler.touchHoldTimeout = clearTimeout(TouchHandler.touchHoldTimeout)
+    }
   }
 
   /**
@@ -87,6 +135,14 @@ class TouchHandler {
     for (const touch of list) touches[TouchHandler.normalizeIdentifier(touch)] = touch
 
     return touches
+  }
+
+  /**
+   * Cancel the touch hold timeout (used for iOS)
+   * @private
+   */
+  static cancelHold () {
+    TouchHandler.touchHoldTimeout = clearTimeout(TouchHandler.touchHoldTimeout)
   }
 }
 

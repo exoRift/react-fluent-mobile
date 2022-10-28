@@ -96,6 +96,8 @@ class SelectionMixin extends React.Component {
     document.addEventListener('touchstart', this.initializeComponent, {
       once: true
     })
+
+    TouchHandler.mount()
   }
 
   componentWillUnmount () {
@@ -140,8 +142,6 @@ class SelectionMixin extends React.Component {
       this.setState({
         initialized: true
       })
-
-      TouchHandler.mount()
 
       document.addEventListener('selectionchange', this.launchManipulator)
     }

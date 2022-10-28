@@ -2,6 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import {
+  TouchHandler
+} from '../util/TouchHandler.js'
+import {
   options as menuOptions,
   optionsForTag
 } from '../util/menu-options.jsx'
@@ -55,6 +58,8 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
     document.addEventListener('touchstart', this.initializeComponent, {
       once: true
     })
+
+    if (window.FLUENT_IS_IOS) TouchHandler.mount()
   }
 
   componentDidUpdate () {
@@ -71,6 +76,8 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
       document.removeEventListener('contextmenu', this.launchContextMenu)
       document.removeEventListener('touchmove', this.switchHovering)
       document.removeEventListener('touchend', this.closeContextMenu)
+
+      if (window.FLUENT_IS_IOS) TouchHandler.unmount()
     } else document.removeEventListener('touchstart', this.initializeComponent)
   }
 
@@ -159,7 +166,7 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
 
     document.addEventListener('touchmove', this.switchHovering)
 
-    document.addEventListener('touchend', this.closeContextMenu, {
+    document.addEventListener('touchend', this.closeContextMenu, { // TODO: make this a constant and support touchcancel (might be needed for iOS)
       once: true
     })
   }
@@ -167,9 +174,10 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
   /**
    * Switch the index of the context menu option the user is hovering
    * @param {TouchEvent} e The touch event
+   * @fires document#touchmove
    */
   switchHovering (e) {
-    const [touch] = e.touches
+    const [touch] = e.changedTouches
 
     const options = this.menu.current.querySelectorAll('.menuoption, .menudivider')
 
