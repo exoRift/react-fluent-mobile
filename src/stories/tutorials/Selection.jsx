@@ -91,13 +91,13 @@ export const Selection = () => {
     }
 
     function dismissStep () {
-      setTimeout(() => {
+      setImmediate(() => {
         if (pad.classList.contains('inactive')) {
           pad.removeEventListener('touchend', dismissStep)
 
           advanceStep(step, setStep)
         }
-      }, 50) // Negligible delay to allow pad's computation
+      }) // Wait for DOM to rerender
     }
 
     document.addEventListener('copy', displayCopied)

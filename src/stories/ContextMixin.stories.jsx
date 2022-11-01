@@ -7,6 +7,7 @@ import {
   FluentContextMixin
 } from '..'
 
+import icon from '../../assets/icon.png'
 import banner from '../../assets/banner.png'
 
 import './styles/index.css'
@@ -44,7 +45,7 @@ export const Playground = (args) => {
     <>
       <FluentContextMixin {...args}/>
 
-      <div className='anchors'>
+      <div className='story anchors'>
         <a href={window.location.href}>This is a leftward anchor</a>
 
         <a href={window.location.href}>This is a rightward anchor</a>
@@ -52,7 +53,12 @@ export const Playground = (args) => {
 
       <span>This is some sample text</span>
 
-      <img className='banner' alt='banner' src={banner}/>
+      <img className='story banner' alt='banner' src={banner}/>
+
+      <a href={window.location.href}>
+        <img className='story icon' alt='icon' src={icon}/>
+        Testing images in an anchor tag
+      </a>
     </>
   )
 }

@@ -98,7 +98,7 @@ const options = {
       <div className='fluent menuoption'>
         <div className='material-symbols-outlined icon'>share</div>
 
-        <span className='tag'>Share...</span>
+        <span className='tag'>Share Link</span>
       </div>
     ),
     action: (element) => navigator?.share?.({
@@ -114,6 +114,74 @@ const options = {
       </div>
     ),
     action: (element, contextMixin) => contextMixin.disable()
+  },
+  imageTab: {
+    Component: (
+      <div className='fluent menuoption'>
+        <div className='material-symbols-outlined icon'>add_box</div>
+
+        <span className='tag'>Open image in new tab</span>
+      </div>
+    ),
+    action: (element) => window.open(element.src)?.focus?.()
+  },
+  copyImage: {
+    Component: (
+      <div className='fluent menuoption'>
+        <div className='material-symbols-outlined icon'>filter</div>
+
+        <span className='tag'>Copy image</span>
+      </div>
+    ),
+    action: (element) => {
+      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(element.src)
+      else {
+        const selection = window.getSelection()
+
+        const tempElement = document.createElement('span')
+        tempElement.textContent = element.src
+        element.appendChild(tempElement)
+
+        selection.selectAllChildren(tempElement)
+        document.execCommand('copy')
+
+        selection.removeAllRanges()
+        tempElement.remove()
+      }
+    }
+  },
+  downloadImage: {
+    Component: (
+      <div className='fluent menuoption'>
+        <div className='material-symbols-outlined icon'>download</div>
+
+        <span className='tag'>Download image</span>
+      </div>
+    ),
+    action: (element) => {
+      const tempElement = document.createElement('a')
+      tempElement.href = element.src
+      element.setAttribute('download', '')
+      element.appendChild(tempElement)
+
+      element.click()
+
+      tempElement.remove()
+    }
+  },
+  shareImage: {
+    Component: (
+      <div className='fluent menuoption'>
+        <div className='material-symbols-outlined icon'>share</div>
+
+        <span className='tag'>Share Image</span>
+      </div>
+    ),
+    action: (element) => navigator?.share?.({
+      title: element.alt,
+      text: element.src,
+      url: element.src
+    })
   }
 }
 
@@ -126,6 +194,25 @@ const optionsForTag = {
     options.downloadLink,
     options.divider,
     options.share
+  ],
+  img: [
+    options.imageTab,
+    options.divider,
+    options.copyImage,
+    options.downloadImage,
+    options.divider,
+    options.shareImage
+  ],
+  aimg: [
+    options.tab,
+    options.imageTab,
+    options.divider,
+    options.copyAddress,
+    options.downloadLink,
+    options.downloadImage,
+    options.divider,
+    options.share,
+    options.shareImage
   ]
 }
 

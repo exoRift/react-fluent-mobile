@@ -36,10 +36,12 @@ export const Context = () => {
   const [step, setStep] = useState(0)
 
   useEffect(() => {
-    function launchStep () {
-      document.removeEventListener('contextmenu', launchStep)
+    function launchStep (e) {
+      if (menuRef.current.state.holdingTag) {
+        document.removeEventListener('contextmenu', launchStep)
 
-      advanceStep(step, setStep)
+        advanceStep(step, setStep)
+      }
     }
 
     function hoverStep () {
@@ -83,7 +85,7 @@ export const Context = () => {
 
   return (
     <div className='body'>
-      <FluentContextMixin ref={menuRef}/>
+      <FluentContextMixin ref={menuRef} theme='light'/>
 
       <div className='suggestion'>
         <img src={deviceToolbar} alt='device toolbar'/>

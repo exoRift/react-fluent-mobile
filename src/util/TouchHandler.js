@@ -106,13 +106,13 @@ class TouchHandler {
    * @fires document#touchcancel
    */
   static unregisterTouchesFromEvent (e) {
-    setTimeout(() => {
-      for (const touch of e.changedTouches) TouchHandler.originTouches[TouchHandler.normalizeIdentifier(touch)] = null
-    }) // Negligible delay for listener to run last
-
     if (window.FLUENT_IS_IOS) {
       if (!TouchHandler.touchHoldTimeout) TouchHandler.touchHoldTimeout = clearTimeout(TouchHandler.touchHoldTimeout)
     }
+
+    setImmediate(() => {
+      for (const touch of e.changedTouches) TouchHandler.originTouches[TouchHandler.normalizeIdentifier(touch)] = null
+    }) // Make listener run last
   }
 
   /**

@@ -114,12 +114,12 @@ export const Playground = (args) => {
         })]
       }))
 
-      setTimeout(() => {
+      setImmediate(() => {
         const pad = document.getElementById('fluentselectionmanipulator')
 
         pad.addEventListener('touchstart', positionDebugTouches)
         pad.addEventListener('touchmove', positionDebugTouches)
-      }) // Negligible delay to allow for DOM rerender
+      }) // Wait for DOM to rerender
 
       document.addEventListener('touchend', positionDebugRangeCallback)
 

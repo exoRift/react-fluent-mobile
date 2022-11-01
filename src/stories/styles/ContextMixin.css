@@ -1,9 +1,16 @@
-.anchors {
+.story.anchors {
   display: flex;
   justify-content: space-between;
 }
 
-.banner {
+.story.banner {
   display: block;
   width: 20vw;
+}
+
+.story.icon {
+  display: block;
+  width: 20vh;
+  margin-top: 2%;
+  border-radius: 10px;
 }

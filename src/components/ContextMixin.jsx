@@ -15,7 +15,7 @@ import '../styles/notification.css'
 /**
  * This is a mixin that augments the the experience of opening context menu for mobile users in a way that reduces the lift-count for actions
  */
-class ContextMixin extends React.Component { // TODO: Test touchcancel
+class ContextMixin extends React.Component {
   static propTypes = {
     /** The theme of the menus (dark, light) */
     theme: PropTypes.string
@@ -32,6 +32,8 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
     disabled: false,
     /** If the context menu is active and being held */
     holding: false,
+    /** The currently held tag */
+    holdingTag: null,
     /** Which side of the screen the touch origin is on */
     side: 'right'
   }
@@ -40,6 +42,10 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
   holdingElement = null
   /** The index of the tag option the user is hovering over */
   hoveringIndex = 0
+  /** How long the mixin should wait before checking for overflow */
+  overflowTimeoutDuration = 0
+  /** The timeout to check if the context menu is overflowing */
+  overflowTimeout = null
 
   /** A ref to the context menu element */
   menu = React.createRef()
@@ -48,27 +54,23 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
     super(props)
 
     this.initializeComponent = this.initializeComponent.bind(this)
+    this.prepareContextMenu = this.prepareContextMenu.bind(this)
     this.launchContextMenu = this.launchContextMenu.bind(this)
     this.closeContextMenu = this.closeContextMenu.bind(this)
+    this.cancelContextMenu = this.cancelContextMenu.bind(this)
     this.switchHovering = this.switchHovering.bind(this)
     this.disable = this.disable.bind(this)
+    this.rectifyOverflow = this.rectifyOverflow.bind(this)
   }
 
   componentDidMount () {
     document.addEventListener('touchstart', this.initializeComponent, {
       once: true
     })
+    document.addEventListener('touchstart', this.prepareContextMenu)
+    document.addEventListener('touchcancel', this.cancelContextMenu)
 
     if (window.FLUENT_IS_IOS) TouchHandler.mount()
-  }
-
-  componentDidUpdate () {
-    if (this.state.initialized && !this.state.disabled) {
-      const rect = this.menu.current.getElementsByClassName('menubody')[0].getBoundingClientRect()
-
-      this.menu.current.classList.toggle('stuckhorizontal', rect.right > window.innerWidth || rect.left < 0)
-      this.menu.current.classList.toggle('stuckvertical', rect.bottom > window.innerHeight)
-    }
   }
 
   componentWillUnmount () {
@@ -76,6 +78,8 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
       document.removeEventListener('contextmenu', this.launchContextMenu)
       document.removeEventListener('touchmove', this.switchHovering)
       document.removeEventListener('touchend', this.closeContextMenu)
+      document.removeEventListener('touchstart', this.prepareContextMenu)
+      document.removeEventListener('touchcancel', this.cancelContextMenu)
 
       if (window.FLUENT_IS_IOS) TouchHandler.unmount()
     } else document.removeEventListener('touchstart', this.initializeComponent)
@@ -103,7 +107,7 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
         >
           <div className='fluent menubody'>
             {menuOptions.empty.Component}
-            {optionsForTag[this.holdingElement?.tagName?.toLowerCase?.()]?.map?.((o, i) =>
+            {optionsForTag[this.state.holdingTag]?.map?.((o, i) =>
               <React.Fragment key={i}>{o.Component}</React.Fragment>
             )}
           </div>
@@ -124,7 +128,31 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
         initialized: true
       })
 
+      setImmediate(() => {
+        const style = window.getComputedStyle(this.menu.current.getElementsByClassName('menubody')[0])
+
+        this.overflowTimeoutDuration = parseFloat(style.transitionDuration) * 1000
+      })
+
       document.addEventListener('contextmenu', this.launchContextMenu)
+    }
+  }
+
+  /**
+   * Prepare the context menu elements to be revealed
+   * @param {TouchEvent} e The touch event
+   * @fires document#touchstart
+   */
+  prepareContextMenu (e) {
+    if (!this.state.holding) {
+      let tag = e.target.tagName.toLowerCase()
+      if (tag === 'img' && e.target.parentElement.tagName.toLowerCase() === 'a') tag = 'aimg'
+
+      if (tag in optionsForTag) {
+        this.setState({
+          holdingTag: tag
+        })
+      } else if (this.state.holdingTag) this.setState({ holdingTag: null })
     }
   }
 
@@ -134,41 +162,43 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
    * @fires document#contextmenu
    */
   launchContextMenu (e) {
-    if (!(e.target.tagName.toLowerCase() in optionsForTag)) return
+    if (this.state.holdingTag in optionsForTag) {
+      e.preventDefault()
 
-    e.preventDefault()
+      const side = e.clientX >= (window.innerWidth / 2) ? 'right' : 'left'
 
-    const side = e.clientX >= (window.innerWidth / 2) ? 'right' : 'left'
+      switch (side) {
+        case 'left':
+          this.menu.current.style.paddingRight = ''
+          this.menu.current.style.paddingLeft = e.clientX + 'px'
 
-    this.holdingElement = e.target
-    this.hoveringIndex = 0
-    this.setState({
-      holding: true,
-      side
-    })
+          break
+        case 'right':
+          this.menu.current.style.paddingRight = (window.innerWidth - e.clientX) + 'px'
+          this.menu.current.style.paddingLeft = ''
 
-    switch (side) {
-      case 'left':
-        this.menu.current.style.paddingRight = 'unset'
-        this.menu.current.style.paddingLeft = e.clientX + 'px'
+          break
+        default: break
+      }
+      this.menu.current.style.paddingTop = e.clientY + 'px'
 
-        break
-      case 'right':
-        this.menu.current.style.paddingRight = (window.innerWidth - e.clientX) + 'px'
-        this.menu.current.style.paddingLeft = 'unset'
+      this.holdingElement = e.target
+      this.hoveringIndex = 0
+      this.setState({
+        holding: true,
+        side
+      })
 
-        break
-      default: break
+      this.overflowTimeout = setTimeout(this.rectifyOverflow, this.overflowTimeoutDuration)
+
+      navigator?.vibrate?.(1)
+
+      document.addEventListener('touchmove', this.switchHovering)
+
+      document.addEventListener('touchend', this.closeContextMenu, {
+        once: true
+      })
     }
-    this.menu.current.style.paddingTop = e.clientY + 'px'
-
-    navigator?.vibrate?.(1)
-
-    document.addEventListener('touchmove', this.switchHovering)
-
-    document.addEventListener('touchend', this.closeContextMenu, { // TODO: make this a constant and support touchcancel (might be needed for iOS)
-      once: true
-    })
   }
 
   /**
@@ -206,9 +236,15 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
    * Close the context menu and execute the hovering option
    */
   closeContextMenu () {
-    const tagOptions = optionsForTag[this.holdingElement.tagName.toLowerCase()]
+    const tagOptions = optionsForTag[this.state.holdingTag]
+    const body = this.menu.current.getElementsByClassName('menubody')[0]
 
     document.removeEventListener('touchmove', this.switchHovering)
+
+    this.overflowTimeout = clearTimeout(this.rectifyOverflow)
+    body.style.marginLeft = ''
+    body.style.marginRight = ''
+    body.style.marginTop = ''
 
     this.menu.current.getElementsByClassName('menuoption hovering')[0]?.classList?.remove?.('hovering')
 
@@ -223,6 +259,15 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
   }
 
   /**
+   * Close the context menu without triggering any actions
+   */
+  cancelContextMenu () {
+    this.hoveringIndex = 0
+
+    this.closeContextMenu()
+  }
+
+  /**
    * Disable the context menu
    */
   disable () {
@@ -231,6 +276,16 @@ class ContextMixin extends React.Component { // TODO: Test touchcancel
     this.setState({
       disabled: true
     })
+  }
+
+  rectifyOverflow () {
+    const body = this.menu.current.getElementsByClassName('menubody')[0]
+    const rect = body.getBoundingClientRect()
+
+    if (rect.left < 0) body.style.marginRight = `${rect.left}px`
+    else if (rect.right > window.innerWidth) body.style.marginLeft = `${window.innerWidth - rect.right}px`
+
+    if (rect.bottom > window.innerHeight) body.style.marginTop = `${window.innerHeight - rect.bottom}px`
   }
 }
 

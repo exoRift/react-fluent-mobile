@@ -15,6 +15,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
+  touch-action: none;
   box-sizing: border-box;
 }
 
@@ -145,6 +146,7 @@
 }
 .fluent.menu.active:not(.inactive) {
   backdrop-filter: blur(5px);
+  pointer-events: all;
 }
 
 .fluent.menu.inactive .menubody {
@@ -188,21 +190,7 @@
 }
 /* Working states */
 
-/* Overflow prevention */
-.fluent.menu.left.stuckhorizontal .menubody {
-  position: fixed;
-  right: 0;
-}
-.fluent.menu.right.stuckhorizontal .menubody {
-  position: fixed;
-  left: 0;
-}
-.fluent.menu.left.stuckvertical .menubody {
-  position: fixed;
-  bottom: 0;
-}
-/* Overflow prevention */
-
+/* TODO: Make this a fluid bubble that snaps to options */
 .fluent.menu .menuoption.hovering .icon { /* TEMP */
   background: var(--highlight-color);
 }
