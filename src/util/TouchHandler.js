@@ -82,13 +82,18 @@ class TouchHandler {
           const [touch] = e.changedTouches
 
           TouchHandler.touchHoldTimeout = setTimeout(() => {
-            const event = new MouseEvent('contextmenu', {
+            const cancelTouchEvent = new TouchEvent('touchcancel', {
+              bubbles: false,
+              identifier: touch.identifier
+            }) // NOTE: Prevent text selection
+            const contextEvent = new MouseEvent('contextmenu', {
               bubbles: true,
               clientX: touch.clientX,
               clientY: touch.clientY
             })
 
-            touch.target.dispatchEvent(event)
+            document.dispatchEvent(cancelTouchEvent)
+            touch.target.dispatchEvent(contextEvent)
 
             TouchHandler.touchHoldTimeout = null
 
@@ -107,7 +112,7 @@ class TouchHandler {
    */
   static unregisterTouchesFromEvent (e) {
     if (window.FLUENT_IS_IOS) {
-      if (!TouchHandler.touchHoldTimeout) TouchHandler.touchHoldTimeout = clearTimeout(TouchHandler.touchHoldTimeout)
+      if (TouchHandler.touchHoldTimeout) TouchHandler.touchHoldTimeout = clearTimeout(TouchHandler.touchHoldTimeout)
     }
 
     setImmediate(() => {

@@ -45,6 +45,7 @@
 
 .fluent.menu .menubody .menuoption .tag {
   display: flex;
+  position: relative;
   align-items: center;
   padding: 0.2em 0.5em;
   overflow: hidden;
