@@ -26,6 +26,11 @@ export default {
       control: {
         type: 'radio'
       }
+    },
+    debug: {
+      control: {
+        type: 'boolean'
+      }
     }
   }
 }
@@ -42,7 +47,7 @@ export const Playground = (args) => {
   }, [args.STORYBOOK_BACKGROUND])
 
   return (
-    <>
+    <div debug={String(args.debug)}>
       <FluentContextMixin {...args}/>
 
       <div className='story anchors'>
@@ -59,10 +64,11 @@ export const Playground = (args) => {
         <img className='story icon' alt='icon' src={icon}/>
         Testing images in an anchor tag
       </a>
-    </>
+    </div>
   )
 }
 Playground.args = {
   STORYBOOK_BACKGROUND: '#ffffff',
-  theme: 'dark'
+  theme: 'dark',
+  debug: false
 }

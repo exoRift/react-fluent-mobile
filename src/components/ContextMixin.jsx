@@ -220,9 +220,17 @@ class ContextMixin extends React.Component {
         if (o !== this.hoveringIndex) {
           options[this.hoveringIndex]?.classList?.remove?.('hovering')
 
-          this.hoveringIndex = o
+          // Play blob animation
+          options[this.hoveringIndex]?.classList?.remove?.('blob')
+          setImmediate(() => options[this.hoveringIndex]?.classList?.add?.('blob'))
 
           options[o].classList.add('hovering')
+
+          // Play blob animation
+          options[o].classList.remove('blob')
+          setImmediate(() => options[o].classList.add('blob'))
+
+          this.hoveringIndex = o
 
           navigator.vibrate?.(20)
         }

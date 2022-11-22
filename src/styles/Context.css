@@ -33,13 +33,13 @@
   width: 100%;
 }
 
-.fluent.menu .menubody .menuoption * {
+.fluent.menu .menuoption * { /* No .menubody (apply to all menuoptions) */
   padding: 0.2em;
   background: var(--background-color);
   backdrop-filter: blur(2px);
 }
 
-.fluent.menu .menubody .menuoption .icon {
+.fluent.menu .menuoption .icon { /* No .menubody (apply to all menuoptions) */
   border-radius: 50%;
 }
 
@@ -87,11 +87,7 @@
   bottom: 0;
   margin: 2%;
 }
-
 .fluent.menu .menuoption.disable .icon {
-  background: var(--background-color);
-  padding: 0.2em;
-  border-radius: 50%;
   font-size: 2em;
 }
 /* Base definition */
@@ -126,10 +122,10 @@
   flex-direction: row-reverse;
 }
 
-.fluent.menu.right .menubody .menuoption .tag::before {
+.fluent.menu.right .menuoption .tag::before {
   right: 0;
 }
-.fluent.menu.left .menubody .menuoption .tag::before {
+.fluent.menu.left .menuoption .tag::before {
   left: 0;
 }
 
@@ -191,7 +187,53 @@
 }
 /* Working states */
 
-/* TODO: Make this a fluid bubble that snaps to options */
-.fluent.menu .menuoption.hovering .icon { /* TEMP */
-  background: var(--highlight-color);
+@supports selector(:has(div)) {
+  .fluent.menu .menuoption.blob .icon::before {
+    animation: blob 0.2s ease-in-out normal forwards;
+  }
+
+  .fluent.menu .menuoption .icon::before {
+    content: '';
+    transition: 0.1s ease-in-out;
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--highlight-color);
+    opacity: 0;
+    z-index: -1;
+  }
+
+  .fluent.menu .menuoption:has(~ .menuoption.hovering) .icon::before { /* Above */
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  .fluent.menu .menuoption.hovering .icon::before {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+  .fluent.menu .menuoption.hovering ~ .menuoption .icon::before { /* Below */
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  @keyframes blob {
+    0% {
+      scale: 1 1;
+    }
+    50% {
+      scale: 1 1.2;
+    }
+    100% {
+      scale: 1 1;
+    }
+  }
+}
+@supports not selector(:has(div)) {
+  .fluent.menu .menuoption.hovering .icon {
+    background: var(--highlight-color);
+  }
 }
