@@ -1,4 +1,5 @@
-.fluent#fluentselectionmanipulator {
+/* Base definition */
+.fluent.manipulator {
   transition: 0.2s;
   left: 0;
   bottom: 0;
@@ -13,41 +14,7 @@
   user-select: none;
 }
 
-.fluent#fluentselectionmanipulator.dark {
-  background-color: #080808;
-  background-image:
-    radial-gradient(#212121 20%, transparent 20%),
-    radial-gradient(black 20%, transparent 20%);
-}
-.fluent#fluentselectionmanipulator.light {
-  background-color: #fafafa;
-  background-image:
-    radial-gradient(#dedede 20%, transparent 20%),
-    radial-gradient(white 20%, transparent 20%);
-}
-
-.fluent#fluentselectionmanipulator.inactive {
-  opacity: 0;
-  pointer-events: none;
-}
-.fluent#fluentselectionmanipulator.active:not(.inactive) {
-  opacity: 1;
-}
-
-.fluent#fluentselectionmanipulator.dark.active:active {
-  background-color: #49b9ff;
-  background-image:
-    radial-gradient(#6bb8e7 20%, transparent 20%),
-    radial-gradient(#5a8cac 20%, transparent 20%);
-}
-.fluent#fluentselectionmanipulator.light.active:active {
-  background-color: #73c9ff;
-  background-image:
-    radial-gradient(#8dd3ff 20%, transparent 20%),
-    radial-gradient(#49a3da 20%, transparent 20%);
-}
-
-.fluent#fluentselectionmanipulator::before {
+.fluent.manipulator::before {
   content: '\e14d';
   display: flex;
   width: 100%;
@@ -57,17 +24,7 @@
   font-family: 'Material Symbols Outlined';
   font-size: 20vw;
   pointer-events: none;
-  animation: copy 1s normal forwards;
-}
-.fluent#fluentselectionmanipulator.refresh::before {
-  display: none;
-}
-
-.fluent#fluentselectionmanipulator.dark::before {
-  color: white;
-}
-.fluent#fluentselectionmanipulator.light::before {
-  color: black;
+  animation: copy 1s linear 1 normal forwards;
 }
 
 .fluent.handle {
@@ -77,6 +34,49 @@
   opacity: 0;
   pointer-events: none;
 }
+/* Base definition */
+
+/* Initial states */
+.fluent.manipulator.inactive {
+  opacity: 0;
+  pointer-events: none;
+}
+.fluent.manipulator.active:not(.inactive) {
+  opacity: 1;
+}
+
+.fluent.manipulator.dark {
+  background-color: #080808;
+  background-image:
+    radial-gradient(#212121 20%, transparent 20%),
+    radial-gradient(black 20%, transparent 20%);
+}
+.fluent.manipulator.dark::before {
+  color: white;
+}
+.fluent.manipulator.dark.active:active {
+  background-color: #49b9ff;
+  background-image:
+    radial-gradient(#6bb8e7 20%, transparent 20%),
+    radial-gradient(#5a8cac 20%, transparent 20%);
+}
+
+.fluent.manipulator.light {
+  background-color: #fafafa;
+  background-image:
+    radial-gradient(#dedede 20%, transparent 20%),
+    radial-gradient(white 20%, transparent 20%);
+}
+.fluent.manipulator.light::before {
+  color: black;
+}
+.fluent.manipulator.light.active:active {
+  background-color: #73c9ff;
+  background-image:
+    radial-gradient(#8dd3ff 20%, transparent 20%),
+    radial-gradient(#49a3da 20%, transparent 20%);
+}
+
 .fluent.handle.active {
   opacity: 1;
 }
@@ -84,6 +84,13 @@
   transition: all 0s, height 0.2s;
   transform: scale(1.3);
 }
+/* Initial states */
+
+/* Working states */
+.fluent.manipulator.refresh::before {
+  display: none;
+}
+/* Working states */
 
 @keyframes copy {
   from {

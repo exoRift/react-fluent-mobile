@@ -1,0 +1,46 @@
+.fluent.notification {
+  position: fixed;
+  top: 3vh;
+  left: 0;
+  max-width: 50%;
+  padding: 1% 0 1% 2%;
+  font-size: 1.3em;
+  border-radius: 0 10px 10px 0;
+  backdrop-filter: blur(2px);
+  animation: toast 5s ease-out 1 normal forwards;
+}
+
+.fluent.notification.light {
+  color: black;
+  background: rgba(234, 234, 234, 0.9);
+  border: 2px solid #fafafa;
+}
+
+.fluent.notification.dark {
+  color: white;
+  background: rgba(68, 68, 68, 0.9);
+  border: 2px solid black;
+}
+
+@keyframes toast {
+  0% {
+    margin-left: -100%;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+
+  10%, 50% {
+    margin-left: 0%;
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 0;
+  }
+
+  100% {
+    margin-left: -100%;
+  }
+}

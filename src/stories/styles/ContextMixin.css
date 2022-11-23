@@ -1,3 +1,28 @@
-.banner {
+.story.anchors {
+  display: flex;
+  justify-content: space-between;
+}
+
+.story.banner {
+  display: block;
   width: 20vw;
+}
+
+.story.icon {
+  display: block;
+  width: 20vh;
+  margin-top: 2%;
+  border-radius: 10px;
+}
+
+@supports selector(:has(div)) {
+  *[debug='true'] .fluent.menu .menuoption:has(~ .menuoption.hovering) .icon { /* Above */
+    background: red;
+  }
+  *[debug='true'] .fluent.menu .menuoption.hovering .icon {
+    background: blue;
+  }
+  *[debug='true'] .fluent.menu .menuoption.hovering ~ .menuoption .icon { /* Below */
+    background: green;
+  }
 }

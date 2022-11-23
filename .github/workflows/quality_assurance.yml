@@ -2,13 +2,7 @@ name: Quality Assurance
 
 on: 
   push:
-    branches:
-      - '*'
-      - '!gh-pages'
   pull_request:
-    branches:
-      - '*'
-      - '!gh-pages'
 
 jobs:
   lint:

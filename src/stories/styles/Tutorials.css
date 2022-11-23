@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+:root {
+  --success: #18bc9c;
+}
+
+.demonstration {
+  position: relative;
+  display: flex;
+}
+
+.demonstration .prototype {
+  flex: 4 1;
+}
+
+.demonstration #instructions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 3 1;
+  font-family: 'Roboto', sans-serif;
+  user-select: none;
+}
+
+.demonstration #instructions .instruction {
+  display: none;
+  position: absolute;
+  padding: 0 1rem;
+  animation: hide 1s ease-out 1 normal forwards;
+  z-index: 2;
+}
+.demonstration #instructions .instruction[active] {
+  display: block;
+}
+.demonstration #instructions .instruction[active='true'] {
+  animation: reveal 1s ease-out 1 normal forwards;
+}
+
+.demonstration #instructions .instruction .check {
+  margin: 0 auto;
+  padding: 0.5rem;
+  background-color: var(--success);
+  color: white;
+  text-align: center;
+  animation: success 0.3s ease-in 1 normal forwards;
+}
+
+.demonstration #instructions .instruction h4,
+.demonstration #instructions .instruction .storylink {
+  text-align: center;
+}
+
+.demonstration #instructions .instruction .gesture {
+  margin: 0 auto;
+}
+
+.demonstration #instructions .progress-bar {
+  position: absolute;
+  right: 0;
+  width: 0.3rem;
+  height: 75%;
+  background-color: lightgray;
+  border-radius: 5px;
+  z-index: 1;
+}
+.demonstration #instructions .progress-bar .progress {
+  transition: 1s ease-out;
+  background-color: dodgerblue;
+  border-radius: 5px;
+}
+.demonstration #instructions .progress-bar .progress[style*='height: 100%'] {
+  background-color: var(--success);
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  } to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* SELECTION TUTORIAL */
+.demonstration .prototype.selection h1 {
+  text-align: center;
+}
+.demonstration .prototype.selection p {
+  text-align: justify;
+  text-align-last: justify;
+}
+/* SELECTION TUTORTIAL */
+
+/* CONTEXT TUTORIAL */
+.demonstration .prototype.context h3,
+.demonstration .prototype.context h4 {
+  text-align: center;
+}
+
+.demonstration .prototype.context {
+  flex: 4 1;
+}
+.demonstration .prototype.context .demobanner {
+  width: 100%;
+}
+.demonstration .prototype.context ~ #instructions {
+  z-index: 101;
+}
+/* CONTEXT TUTORIAL */
+
+@keyframes hide {
+  from {
+    opacity: 1;
+    transform: none;
+  } to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes success {
+  from {
+    width: 0rem;
+    height: 0rem;
+    font-size: 0rem;
+    border-radius: 0%;
+  } to {
+    width: 4rem;
+    height: 4rem;
+    font-size: 3rem;
+    border-radius: 50%;
+  }
+}

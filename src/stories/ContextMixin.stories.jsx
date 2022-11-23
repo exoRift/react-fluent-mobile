@@ -1,9 +1,13 @@
-import React from 'react'
+import {
+  React,
+  useEffect
+} from 'react'
 
 import {
   FluentContextMixin
 } from '..'
 
+import icon from '../../assets/icon.png'
 import banner from '../../assets/banner.png'
 
 import './styles/index.css'
@@ -12,31 +16,59 @@ import './styles/ContextMixin.css'
 export default {
   component: FluentContextMixin,
   argTypes: {
-    holdDelay: {
+    STORYBOOK_BACKGROUND: {
       control: {
-        type: 'number'
+        type: 'color'
       }
     },
-    holdTime: {
+    theme: {
+      options: ['dark', 'light'],
       control: {
-        type: 'number'
+        type: 'radio'
+      }
+    },
+    debug: {
+      control: {
+        type: 'boolean'
       }
     }
   }
 }
 
-export const Playground = (args) => (
-  <div>
-    <FluentContextMixin {...args}/>
+export const Playground = (args) => {
+  useEffect(() => {
+    return () => {
+      document.body.style.backgroundColor = ''
+    }
+  })
 
-    <span>This is some sample text</span>
+  useEffect(() => {
+    document.body.style.backgroundColor = args.STORYBOOK_BACKGROUND
+  }, [args.STORYBOOK_BACKGROUND])
 
-    <a href='/'>This is clickable</a>
+  return (
+    <div debug={String(args.debug)}>
+      <FluentContextMixin {...args}/>
 
-    <img className='banner' alt='banner' src={banner}/>
-  </div>
-)
+      <div className='story anchors'>
+        <a href={window.location.href}>This is a leftward anchor</a>
+
+        <a href={window.location.href}>This is a rightward anchor</a>
+      </div>
+
+      <span>This is some sample text</span>
+
+      <img className='story banner' alt='banner' src={banner}/>
+
+      <a href={window.location.href}>
+        <img className='story icon' alt='icon' src={icon}/>
+        Testing images in an anchor tag
+      </a>
+    </div>
+  )
+}
 Playground.args = {
-  holdDelay: 100,
-  holdTime: 500
+  STORYBOOK_BACKGROUND: '#ffffff',
+  theme: 'dark',
+  debug: false
 }

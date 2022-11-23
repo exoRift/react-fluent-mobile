@@ -2,13 +2,6 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.body.dark {
-  color: black;
-}
-.body.light {
-  color: white;
-}
-
 .suggestion {
   display: flex;
   align-items: flex-end;
@@ -100,31 +93,50 @@
 
 .gesture.tap {
   border-color: var(--color-outer);
-  animation: gesturetap 1s ease-out infinite normal forwards;
+  animation: gesturetap 1s ease-out infinite normal;
 }
 
 .gesture.hold {
-  animation: gesturehold 2s linear infinite normal forwards;
+  animation: gesturehold 2s linear infinite normal;
+}
+
+.gesture.lift {
+  animation: gesturelift 1.5s ease-out infinite normal;
 }
 
 .gesture.swipe {
   animation:
-    gesturehold 1.5s linear infinite normal forwards,
-    gestureswipe 1.5s linear infinite normal forwards;
+    gesturehold 1.5s linear infinite normal,
+    gestureswipe 1.5s linear infinite normal;
 }
 .gesture.swipe.down {
   --destination-y: 100%;
 }
 
-.gesture.move:not(.start) {
+.gesture.move.sideways:not(.start) {
+  --start-x: 50%;
+  --end-x: -50%;
+
   animation:
-    gesturehold 2s linear infinite normal forwards,
-    gesturemove 2s linear infinite normal forwards;
+    gesturehold 2s linear infinite normal,
+    gesturemove 2s linear infinite normal;
 }
-.gesture.move.start {
+.gesture.move.sideways.start {
+  --start-x: -50%;
+  --end-x: 10%;
+
   animation:
-    gesturehold 2s linear infinite normal forwards,
-    gesturemovestart 2s linear infinite normal forwards;
+    gesturehold 2s linear infinite normal,
+    gesturemovestart 2s linear infinite normal;
+}
+
+.gesture.move.vertically:not(.start) {
+  --start-y: -50%;
+  --end-y: 50%;
+
+  animation:
+    gesturehold 2s linear infinite normal,
+    gesturemove 2s linear infinite normal;
 }
 
 .gesture.tap.double::before {
@@ -134,7 +146,7 @@
   height: 100%;
   background-image: radial-gradient(at center, var(--color-minor), var(--color-major), var(--color-minor));
   border-radius: 50%;
-  animation: gesturetap 1s ease-out infinite normal forwards;
+  animation: gesturetap 1s ease-out infinite normal;
 }
 
 @keyframes gesturetap {
@@ -169,6 +181,27 @@
   }
 }
 
+@keyframes gesturelift {
+  0% {
+    opacity: 0;
+    border-color: var(--color-outer-in);
+    scale: 1.2;
+  }
+  10%, 60% {
+    opacity: 1;
+    border-color: var(--color-outer-in);
+    scale: 1.2;
+  }
+  70% {
+    scale: 1.4;
+  }
+  90%, 100% {
+    opacity: 0;
+    border-color: var(--color-outer-out);
+    scale: 1.4;
+  }
+}
+
 @keyframes gestureswipe {
   0%, 10% {
     transform: translate(0%, 0%);
@@ -180,31 +213,31 @@
 
 @keyframes gesturemove {
   0%, 10% {
-    transform: translateX(0%);
+    transform: translate(0%, 0%);
   }
   20%, 25% {
-    transform: translateX(50%);
+    transform: translate(var(--start-x, 0%), var(--start-y, 0%));
   }
   35%, 40% {
-    transform: translateX(-50%);
+    transform: translate(var(--end-x, 0%), var(--end-y, 0%));
   }
   50%, 100% {
-    transform: translateX(0%);
+    transform: translate(0%, 0%);
   }
 }
 
 @keyframes gesturemovestart {
   0%, 10% {
-    transform: translateX(0%);
+    transform: translate(0%, 0%);
   }
   25%, 30% {
-    transform: translateX(-50%);
+    transform: translate(var(--start-x, 0%), var(--start-y, 0%));
   }
   40%, 45%{
-    transform: translateX(10%);
+    transform: translate(var(--end-x, 0%), var(--end-y, 0%));
   }
   60%, 100% {
-    transform: translateX(0%);
+    transform: translate(0%, 0%);
   }
 }
 

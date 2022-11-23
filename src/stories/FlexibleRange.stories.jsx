@@ -10,16 +10,22 @@ import {
 
 import './styles/index.css'
 
+const demoString = 'A flexible range allows you to set bounds of a selection regardless of whether the end comes before the start'
+
 export default {
   argTypes: {
     startOffset: {
       control: {
-        type: 'number'
+        type: 'range',
+        min: 0,
+        max: demoString.length
       }
     },
     endOffset: {
       control: {
-        type: 'number'
+        type: 'range',
+        min: 0,
+        max: demoString.length
       }
     }
   }
@@ -32,16 +38,17 @@ export const Playground = (args) => {
     const selection = window.getSelection()
     const node = document.createNodeIterator(document.getElementById('text'), NodeFilter.SHOW_TEXT).nextNode()
 
-    selection.removeAllRanges()
-    selection.addRange(range.current)
+    selection.removeAllRanges() // NOTE: IOS compat
 
-    range.current.setStart(node, Math.min(Math.max(0, args.startOffset), node.textContent.length))
-    range.current.setEnd(node, Math.min(Math.max(0, args.endOffset), node.textContent.length))
-  })
+    range.current.setStart(node, args.startOffset)
+    range.current.setEnd(node, args.endOffset)
+
+    selection.addRange(range.current) // NOTE: IOS compat
+  }, [args.startOffset, args.endOffset])
 
   return (
     <>
-      <h2 id='text'>A flexible range allows you to set bounds of a selection regardless of whether the end comes before the start</h2>
+      <h2 id='text'>{demoString}</h2>
     </>
   )
 }

@@ -10,7 +10,6 @@ import {
 } from '..'
 
 import './styles/index.css'
-import './styles/SelectionMixin.css'
 import './styles/debug.css'
 
 function positionDebugTouches (e) {
@@ -19,7 +18,7 @@ function positionDebugTouches (e) {
 
   const touchPixels = document.getElementsByClassName('fluent debug touch')
 
-  for (let p = 0; p < touchPixels.length; p++) {
+  for (let p = 0; p < touchPixels.length; ++p) {
     if (touches[p]) {
       touchPixels[p].style.left = touches[p].clientX + 'px'
       touchPixels[p].style.top = touches[p].clientY + 'px'
@@ -39,7 +38,7 @@ function positionDebugRange (mixin) {
 
     const rangeHandles = document.getElementsByClassName('fluent debug range')
 
-    for (let r = 0; r < rangeHandles.length; r++) {
+    for (let r = 0; r < rangeHandles.length; ++r) {
       rangeHandles[r].style.left = rect[r * 2] + 'px'
       rangeHandles[r].style.top = rect[(r * 2) + 1] + 'px'
     }
@@ -55,6 +54,11 @@ function displayCopied () {
 export default {
   component: FluentSelectionMixin,
   argTypes: {
+    STORYBOOK_BACKGROUND: {
+      control: {
+        type: 'color'
+      }
+    },
     collapseSwipeDistance: {
       control: {
         type: 'number'
@@ -92,12 +96,15 @@ export const Playground = (args) => {
   useEffect(() => {
     document.addEventListener('copy', displayCopied)
 
-    return () => document.removeEventListener('copy', displayCopied)
+    return () => {
+      document.removeEventListener('copy', displayCopied)
+
+      document.body.style.backgroundColor = ''
+    }
   }, [])
 
   useEffect(() => {
-    if (args.theme === 'dark') document.body.style.backgroundColor = 'white'
-    else document.body.style.backgroundColor = '#202124'
+    document.body.style.backgroundColor = args.STORYBOOK_BACKGROUND
 
     if (args.debug) {
       document.dispatchEvent(new TouchEvent('touchstart', {
@@ -107,12 +114,12 @@ export const Playground = (args) => {
         })]
       }))
 
-      setTimeout(() => {
+      setImmediate(() => {
         const pad = document.getElementById('fluentselectionmanipulator')
 
         pad.addEventListener('touchstart', positionDebugTouches)
         pad.addEventListener('touchmove', positionDebugTouches)
-      }) // Negligible delay to allow for DOM rerender
+      }) // Wait for DOM to rerender
 
       document.addEventListener('touchend', positionDebugRangeCallback)
 
@@ -124,10 +131,10 @@ export const Playground = (args) => {
         document.removeEventListener('touchend', positionDebugRangeCallback)
       }
     }
-  }, [args.debug, args.theme, positionDebugRangeCallback])
+  }, [args.STORYBOOK_BACKGROUND, args.debug, positionDebugRangeCallback])
 
   return (
-    <div className={`body ${args.theme}`}>
+    <>
       {args.debug
         ? (
           <>
@@ -156,10 +163,11 @@ export const Playground = (args) => {
       </footer>
 
       {args.debug ? navigator.userAgent : null}
-    </div>
+    </>
   )
 }
 Playground.args = {
+  STORYBOOK_BACKGROUND: '#ffffff',
   collapseSwipeDistance: 100,
   collapseSwipeDuration: 300,
   nativeManipulationInactivityDuration: 500,
