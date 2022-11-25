@@ -41,7 +41,9 @@ Context menus have been reimagined! Now, instead of holding and lifting your fin
 
 If the new context menu is not desired, there is an option located at the bottom corner of the screen to disable it.
 
-> NOTE: The *share* features are only available on HTTPS sites
+> *NOTE: Opening in new tab may trigger browser popup blockers*
+> *NOTE: The `share` features are only available on HTTPS sites*
+> *NOTE: Copying images to clipboard utilizes [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API) and therefore requires HTTPS.*
 
 ### Component Properties
 Name|Description
