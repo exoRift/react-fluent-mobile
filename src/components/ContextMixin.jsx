@@ -69,6 +69,7 @@ class ContextMixin extends React.Component {
     })
     document.addEventListener('touchstart', this.prepareContextMenu)
     document.addEventListener('touchcancel', this.cancelContextMenu)
+    document.addEventListener('click', this.cancelContextMenu)
 
     if (window.FLUENT_IS_IOS) TouchHandler.mount()
   }
@@ -80,6 +81,7 @@ class ContextMixin extends React.Component {
       document.removeEventListener('touchend', this.closeContextMenu)
       document.removeEventListener('touchstart', this.prepareContextMenu)
       document.removeEventListener('touchcancel', this.cancelContextMenu)
+      document.removeEventListener('click', this.cancelContextMenu)
 
       if (window.FLUENT_IS_IOS) TouchHandler.unmount()
     } else document.removeEventListener('touchstart', this.initializeComponent)
@@ -162,7 +164,7 @@ class ContextMixin extends React.Component {
    * @fires document#contextmenu
    */
   launchContextMenu (e) {
-    if (this.state.holdingTag in optionsForTag) {
+    if (e.pointerType === 'touch' && this.state.holdingTag in optionsForTag) {
       e.preventDefault()
 
       const side = e.clientX >= (window.innerWidth / 2) ? 'right' : 'left'

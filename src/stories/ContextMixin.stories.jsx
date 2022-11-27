@@ -40,7 +40,7 @@ export const Playground = (args) => {
     return () => {
       document.body.style.backgroundColor = ''
     }
-  })
+  }, [])
 
   useEffect(() => {
     document.body.style.backgroundColor = args.STORYBOOK_BACKGROUND

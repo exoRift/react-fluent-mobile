@@ -36,7 +36,8 @@ class SelectionMixin extends React.Component {
   static defaultHandleHeight = 18
 
   /**
-   * Get the range/caret position from a page coordinate X Y (Intended for multi-browser support)
+   * Get the range/caret position from a page coordinate X Y
+   * @note Intended for multi-browser support
    * @param   {Number}                       x The x coordinate
    * @param   {Number}                       y The y coordinate
    * @returns {[node: Node, offset: Number]}   The caret node and position
@@ -71,6 +72,8 @@ class SelectionMixin extends React.Component {
   selectRange = null
   /** A ref to the manipulation pad */
   manipulator = React.createRef()
+  /** Whether the next selectionchange is prompted by a touch or not */
+  anticipatingSelection = false
 
   state = {
     /** Whether a touch has been detected and the manipulator is mounted */
@@ -85,6 +88,8 @@ class SelectionMixin extends React.Component {
     super(props)
 
     this.initializeComponent = this.initializeComponent.bind(this)
+    this.anticipateSelection = this.anticipateSelection.bind(this)
+    this.unanticipateSelection = this.unanticipateSelection.bind(this)
     this.launchManipulator = this.launchManipulator.bind(this)
     this.manipulateSelection = this.manipulateSelection.bind(this)
     this.stopManipulation = this.stopManipulation.bind(this)
@@ -102,6 +107,8 @@ class SelectionMixin extends React.Component {
 
   componentWillUnmount () {
     if (this.state.initialized) {
+      document.removeEventListener('touchstart', this.anticipateSelection)
+      document.removeEventListener('click', this.unanticipateSelection)
       document.removeEventListener('selectionchange', this.launchManipulator)
 
       TouchHandler.unmount()
@@ -143,7 +150,36 @@ class SelectionMixin extends React.Component {
         initialized: true
       })
 
+      document.addEventListener('touchstart', this.anticipateSelection)
+      document.addEventListener('click', this.unanticipateSelection)
       document.addEventListener('selectionchange', this.launchManipulator)
+
+      this.anticipateSelection()
+    }
+  }
+
+  /**
+   * Anticipate a selection from a touch
+   * @fires document#touchstart
+   */
+  anticipateSelection () {
+    this.anticipatingSelection = true
+  }
+
+  /**
+   * Cancel the anticipation of a selection
+   * @note Necessary for automatic touch adjustment on Android and switching back to mouse
+   * @param {Event}   e                             The event that triggered the unanticipation
+   * @param {Boolean} [perpetuateManipulator=false] Whether to keep the manipulation pad active or not
+   * @fires document#click
+   */
+  unanticipateSelection (e, perpetuateManipulator = false) {
+    this.anticipatingSelection = false
+
+    if (!perpetuateManipulator) {
+      this.setState({
+        selecting: false
+      })
     }
   }
 
@@ -152,9 +188,8 @@ class SelectionMixin extends React.Component {
    * @param {TouchEvent} e The touch event
    * @fires document#selectionchange
    */
-  // TODO: Support inputs and textareas
   launchManipulator (e) {
-    if (!this.state.manipulating) {
+    if (this.anticipatingSelection && !this.state.manipulating) {
       const selection = window.getSelection()
       const selectionMatches = selection.rangeCount && (window.FLUENT_IS_IOS // NOTE: IOS selection range not a FlexibleRange instance
         ? this.compareRangesForIOS(selection.getRangeAt(0), this.selectRange)
@@ -172,6 +207,8 @@ class SelectionMixin extends React.Component {
       this.setState({
         selecting
       })
+
+      this.unanticipateSelection(e, true)
     }
   }
 

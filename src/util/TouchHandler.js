@@ -143,7 +143,8 @@ class TouchHandler {
   }
 
   /**
-   * Cancel the touch hold timeout (used for iOS)
+   * Cancel the touch hold timeout
+   * @note Used for iOS
    * @private
    */
   static cancelHold () {
