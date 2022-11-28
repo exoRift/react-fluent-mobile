@@ -89,7 +89,6 @@ class SelectionMixin extends React.Component {
 
     this.initializeComponent = this.initializeComponent.bind(this)
     this.anticipateSelection = this.anticipateSelection.bind(this)
-    this.unanticipateSelection = this.unanticipateSelection.bind(this)
     this.launchManipulator = this.launchManipulator.bind(this)
     this.manipulateSelection = this.manipulateSelection.bind(this)
     this.stopManipulation = this.stopManipulation.bind(this)
@@ -107,8 +106,7 @@ class SelectionMixin extends React.Component {
 
   componentWillUnmount () {
     if (this.state.initialized) {
-      document.removeEventListener('touchstart', this.anticipateSelection)
-      document.removeEventListener('click', this.unanticipateSelection)
+      document.removeEventListener('pointerdown', this.anticipateSelection)
       document.removeEventListener('selectionchange', this.launchManipulator)
 
       TouchHandler.unmount()
@@ -150,33 +148,23 @@ class SelectionMixin extends React.Component {
         initialized: true
       })
 
-      document.addEventListener('touchstart', this.anticipateSelection)
-      document.addEventListener('click', this.unanticipateSelection)
+      document.addEventListener('pointerdown', this.anticipateSelection)
       document.addEventListener('selectionchange', this.launchManipulator)
 
-      this.anticipateSelection()
+      this.anticipatingSelection = true
     }
   }
 
   /**
-   * Anticipate a selection from a touch
-   * @fires document#touchstart
+   * Anticipate a selection from a touch or unanticipate it from a click
+   * @param {Event} [e] The event responsible
+   * @fires document#pointerdown
    */
-  anticipateSelection () {
-    this.anticipatingSelection = true
-  }
+  anticipateSelection (e) {
+    if (e?.pointerType === 'touch') this.anticipatingSelection = true
+    else {
+      this.anticipatingSelection = false
 
-  /**
-   * Cancel the anticipation of a selection
-   * @note Necessary for automatic touch adjustment on Android and switching back to mouse
-   * @param {Event}   e                             The event that triggered the unanticipation
-   * @param {Boolean} [perpetuateManipulator=false] Whether to keep the manipulation pad active or not
-   * @fires document#click
-   */
-  unanticipateSelection (e, perpetuateManipulator = false) {
-    this.anticipatingSelection = false
-
-    if (!perpetuateManipulator) {
       this.setState({
         selecting: false
       })
@@ -208,7 +196,7 @@ class SelectionMixin extends React.Component {
         selecting
       })
 
-      this.unanticipateSelection(e, true)
+      this.anticipatingSelection = false
     }
   }
 
