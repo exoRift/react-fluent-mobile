@@ -115,7 +115,7 @@ class TouchHandler {
       if (TouchHandler.touchHoldTimeout) TouchHandler.touchHoldTimeout = clearTimeout(TouchHandler.touchHoldTimeout)
     }
 
-    setImmediate(() => {
+    setTimeout(() => {
       for (const touch of e.changedTouches) TouchHandler.originTouches[TouchHandler.normalizeIdentifier(touch)] = null
     }) // Make listener run last
   }

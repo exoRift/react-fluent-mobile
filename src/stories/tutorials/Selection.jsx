@@ -91,7 +91,7 @@ export const Selection = () => {
     }
 
     function dismissStep () {
-      setImmediate(() => {
+      setTimeout(() => {
         if (pad.classList.contains('inactive')) {
           pad.removeEventListener('touchend', dismissStep)
 

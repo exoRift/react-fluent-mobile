@@ -130,7 +130,7 @@ class ContextMixin extends React.Component {
         initialized: true
       })
 
-      setImmediate(() => {
+      setTimeout(() => {
         const style = window.getComputedStyle(this.menu.current.getElementsByClassName('menubody')[0])
 
         this.overflowTimeoutDuration = parseFloat(style.transitionDuration) * 1000
@@ -224,13 +224,13 @@ class ContextMixin extends React.Component {
 
           // Play blob animation
           options[this.hoveringIndex]?.classList?.remove?.('blob')
-          setImmediate(() => options[this.hoveringIndex]?.classList?.add?.('blob'))
+          setTimeout(() => options[this.hoveringIndex]?.classList?.add?.('blob'))
 
           options[o].classList.add('hovering')
 
           // Play blob animation
           options[o].classList.remove('blob')
-          setImmediate(() => options[o].classList.add('blob'))
+          setTimeout(() => options[o].classList.add('blob'))
 
           this.hoveringIndex = o
 

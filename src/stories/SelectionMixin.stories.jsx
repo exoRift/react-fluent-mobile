@@ -114,7 +114,7 @@ export const Playground = (args) => {
         })]
       }))
 
-      setImmediate(() => {
+      setTimeout(() => {
         const pad = document.getElementById('fluentselectionmanipulator')
 
         pad.addEventListener('touchstart', positionDebugTouches)

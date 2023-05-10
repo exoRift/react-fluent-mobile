@@ -317,7 +317,7 @@ class SelectionMixin extends React.Component {
     const selection = window.getSelection()
 
     this.manipulator.current.classList.add('refresh')
-    setImmediate(() => this.manipulator.current.classList.remove('refresh')) // Wait for DOM to rerender
+    setTimeout(() => this.manipulator.current.classList.remove('refresh')) // Wait for DOM to rerender
 
     navigator.vibrate?.([50, 0, 50])
 
