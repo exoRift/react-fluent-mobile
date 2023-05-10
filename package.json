@@ -9,8 +9,8 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook -o storybook",
+    "storybook": "sb dev -p 6006",
+    "build-storybook": "sb build -o storybook",
     "lint": "eslint ./"
   },
   "repository": {
@@ -36,8 +36,8 @@
     ]
   },
   "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=16.0.0"
+    "npm": ">=8.0.0",
+    "node": ">=18.0.0"
   },
   "keywords": [
     "react",
@@ -59,18 +59,22 @@
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-node-resolve": "^13.3.0",
-    "@storybook/addon-actions": "^6.5.9",
-    "@storybook/addon-console": "^1.2.3",
-    "@storybook/addon-essentials": "^6.5.9",
-    "@storybook/addon-links": "^6.5.9",
-    "@storybook/addon-postcss": "^2.0.0",
-    "@storybook/react": "^6.5.9",
+    "@storybook-extras/console": "^0.0.68",
+    "@storybook/addon-actions": "^7.0.10",
+    "@storybook/addon-essentials": "^7.0.10",
+    "@storybook/addon-links": "^7.0.10",
+    "@storybook/addon-styling": "^1.0.6",
+    "@storybook/react": "^7.0.10",
+    "@storybook/react-webpack5": "^7.0.10",
     "autoprefixer": "^10.4.8",
     "eslint": "^8.19.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-config-standard": "^17.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "rollup": "^2.76.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-postcss": "^4.0.2"
+    "rollup-plugin-postcss": "^4.0.2",
+    "storybook": "^7.0.10"
   }
 }

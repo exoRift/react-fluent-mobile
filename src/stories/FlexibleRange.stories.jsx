@@ -13,6 +13,7 @@ import './styles/index.css'
 const demoString = 'A flexible range allows you to set bounds of a selection regardless of whether the end comes before the start'
 
 export default {
+  component: FlexibleRange,
   argTypes: {
     startOffset: {
       control: {

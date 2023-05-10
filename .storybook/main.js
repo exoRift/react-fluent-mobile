@@ -1,17 +1,22 @@
 module.exports = {
-  stories: [
-    '../src/**/*.stories.mdx',
-    '../src/**/*.stories.@(js|jsx|ts|tsx)'
-  ],
+  stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: [
-    '@storybook/addon-postcss',
     '@storybook/addon-links',
     '@storybook/addon-essentials',
-    '@storybook/addon-console'
+    '@storybook-extras/console',
+    {
+      name: '@storybook/addon-styling',
+      options: {
+        postCss: true
+      }
+    }
   ],
-  framework: '@storybook/react',
-  staticDirs: [
-    '../src/stories/assets',
-    '../assets'
-  ]
+  framework: {
+    name: '@storybook/react-webpack5',
+    options: {}
+  },
+  staticDirs: ['../src/stories/assets', '../assets'],
+  docs: {
+    autodocs: false
+  }
 }
