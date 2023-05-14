@@ -5,6 +5,7 @@ import {
 } from '@rollup/plugin-babel'
 import commonjs from '@rollup/plugin-commonjs'
 import postcss from 'rollup-plugin-postcss'
+import typescript from '@rollup/plugin-typescript'
 
 const packageJson = require('./package.json')
 
@@ -23,6 +24,7 @@ export default {
     }
   ],
   plugins: [
+    typescript(),
     peerDepsExternal(),
     resolve(),
     babel({

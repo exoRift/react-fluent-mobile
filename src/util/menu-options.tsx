@@ -1,6 +1,4 @@
-import React from 'react'
-
-const options = {
+export const options = {
   empty: {
     Component: (
       <div className='fluent menuoption'>
@@ -19,7 +17,7 @@ const options = {
         <div className='material-symbols-outlined icon'>mobile_off</div>
       </div>
     ),
-    action: (element, contextMixin) => contextMixin.disable()
+    action: (_element: Element, contextMixin: ContextMixin) => contextMixin.disable()
   },
   tab: {
     Component: (
@@ -29,7 +27,7 @@ const options = {
         <span className='tag'>Open link in new tab</span>
       </div>
     ),
-    action: (element) => window.open(element.href ?? element.parentElement.href)?.focus?.()
+    action: (element: HTMLAnchorElement) => window.open(element?.href ?? (element.parentElement as HTMLAnchorElement)?.href)?.focus?.()
   },
   // incognitoTab: {
   //   Component: (
@@ -48,10 +46,10 @@ const options = {
         <span className='tag'>Copy link address</span>
       </div>
     ),
-    action: (element) => {
-      const anchor = element.href ? element : element.parentElement
+    action: (element: Element) => {
+      const anchor = ('href' in element ? element : element.parentElement) as HTMLAnchorElement
 
-      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(anchor.href)
+      if (navigator.clipboard?.writeText) void navigator.clipboard.writeText(anchor?.href ?? '')
       else {
         const selection = window.getSelection()
 
@@ -59,10 +57,10 @@ const options = {
         tempElement.textContent = anchor.href
         element.appendChild(tempElement)
 
-        selection.selectAllChildren(tempElement)
+        selection?.selectAllChildren(tempElement)
         document.execCommand('copy')
 
-        selection.removeAllRanges()
+        selection?.removeAllRanges()
         tempElement.remove()
       }
     }
@@ -75,15 +73,15 @@ const options = {
         <span className='tag'>Copy link text</span>
       </div>
     ),
-    action: (element) => {
-      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(element.textContent)
+    action: (element: Element) => {
+      if (navigator.clipboard?.writeText) void navigator.clipboard.writeText(element?.textContent ?? '')
       else {
         const selection = window.getSelection()
 
-        selection.selectAllChildren(element)
+        selection?.selectAllChildren(element)
         document.execCommand('copy')
 
-        selection.removeAllRanges()
+        selection?.removeAllRanges()
       }
     }
   },
@@ -95,8 +93,8 @@ const options = {
         <span className='tag'>Download link file</span>
       </div>
     ),
-    action: (element) => {
-      const anchor = element.href ? element : element.parentElement
+    action: (element: Element) => {
+      const anchor = ('href' in element ? element : element.parentElement) as HTMLAnchorElement
 
       if (anchor.getAttribute('download')) anchor.click()
       else {
@@ -116,13 +114,13 @@ const options = {
         <span className='tag'>Share Link</span>
       </div>
     ),
-    action: (element) => {
-      const anchor = element.href ? element : element.parentElement
+    action: (element: Element) => {
+      const anchor = ('href' in element ? element : element.parentElement) as HTMLAnchorElement
 
-      navigator?.share?.({
-        title: element.textContent || element.getAttribute('alt'),
-        text: anchor.href,
-        url: anchor.href
+      void navigator?.share?.({
+        title: element.textContent ?? element.getAttribute('alt') ?? undefined,
+        text: anchor?.href,
+        url: anchor?.href
       })
     }
   },
@@ -134,7 +132,7 @@ const options = {
         <span className='tag'>Open image in new tab</span>
       </div>
     ),
-    action: (element) => window.open(element.src)?.focus?.()
+    action: (element: HTMLImageElement) => window.open(element.src)?.focus?.()
   },
   copyImage: {
     Component: (
@@ -144,7 +142,7 @@ const options = {
         <span className='tag'>Copy image</span>
       </div>
     ),
-    action: (element) => {
+    action: (element: HTMLImageElement) => {
       return fetch(element.src)
         .then((img) => img.blob())
         .then((blob) => navigator?.clipboard?.write([new ClipboardItem({ [blob.type]: blob })])) // eslint-disable-line no-undef
@@ -158,8 +156,8 @@ const options = {
         <span className='tag'>Copy image address</span>
       </div>
     ),
-    action: (element) => {
-      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(element.src)
+    action: (element: HTMLImageElement) => {
+      if (navigator.clipboard?.writeText) void navigator.clipboard.writeText(element.src)
       else {
         const selection = window.getSelection()
 
@@ -167,10 +165,10 @@ const options = {
         tempElement.textContent = element.src
         element.appendChild(tempElement)
 
-        selection.selectAllChildren(tempElement)
+        selection?.selectAllChildren(tempElement)
         document.execCommand('copy')
 
-        selection.removeAllRanges()
+        selection?.removeAllRanges()
         tempElement.remove()
       }
     }
@@ -183,7 +181,7 @@ const options = {
         <span className='tag'>Download image</span>
       </div>
     ),
-    action: (element) => {
+    action: (element: HTMLImageElement) => {
       const tempElement = document.createElement('a')
       tempElement.href = element.src
       tempElement.setAttribute('download', '')
@@ -202,7 +200,7 @@ const options = {
         <span className='tag'>Share Image</span>
       </div>
     ),
-    action: (element) => navigator?.share?.({
+    action: (element: HTMLImageElement) => navigator?.share?.({
       title: element.alt,
       text: element.src,
       url: element.src
@@ -210,7 +208,7 @@ const options = {
   }
 }
 
-const optionsForTag = {
+export const optionsForTag = {
   a: [
     options.tab,
     options.divider,
@@ -242,9 +240,4 @@ const optionsForTag = {
     options.share,
     options.shareImage
   ]
-}
-
-export {
-  options,
-  optionsForTag
 }
