@@ -3,7 +3,7 @@ const touchHoldDuration = 250
 /** The number of agents mounting the handler */
 let mountCount = 0
 /** The active touches at their points of contact */
-const originTouches: Array<Touch | null> = []
+export const originTouches: Array<Touch | React.Touch | null> = []
 /** The timeout for touch holds */
 let touchHoldTimeout: NodeJS.Timeout | null = null
 
@@ -50,7 +50,7 @@ export function unmount (): void {
  * @param e The touch event
  * @fires document#touchstart
  */
-export function registerTouchesFromEvent (e: TouchEvent): void {
+export function registerTouchesFromEvent (e: TouchEvent | React.TouchEvent<HTMLDivElement>): void {
   for (const touch of e.changedTouches) {
     touch.FLUENT_TIMESTAMP = e.timeStamp
 
@@ -98,7 +98,7 @@ export function registerTouchesFromEvent (e: TouchEvent): void {
  * @fires document#touchend
  * @fires document#touchcancel
  */
-export function unregisterTouchesFromEvent (e: TouchEvent): void {
+export function unregisterTouchesFromEvent (e: TouchEvent | React.TouchEvent<HTMLDivElement>): void {
   if (window.FLUENT_IS_IOS) {
     if (touchHoldTimeout) {
       clearTimeout(touchHoldTimeout)
@@ -117,7 +117,7 @@ export function unregisterTouchesFromEvent (e: TouchEvent): void {
  * @param   touch The touch instance
  * @returns       The identifier corresponding to the position in the touch registry
  */
-export function normalizeIdentifier (touch: Touch): number {
+export function normalizeIdentifier (touch: Touch | React.Touch): number {
   return window.FLUENT_IS_IOS ? originTouches.findIndex((t) => t?.identifier === touch.identifier) : touch.identifier
 }
 
@@ -126,7 +126,7 @@ export function normalizeIdentifier (touch: Touch): number {
  * @param   list The list of touches
  * @returns      The formatted touches
  */
-export function formatTouches (list: TouchList): Touch[] {
+export function formatTouches (list: TouchList | React.TouchList): Array<Touch | React.Touch> {
   const touches = []
 
   for (const touch of list) touches[normalizeIdentifier(touch)] = touch

@@ -220,7 +220,7 @@ export const Selection = () => {
           </div>
 
           <div className='progress-bar'>
-            <div className='progress' style={{ height: (step * 100 / 5) + '%' }}/>
+            <div className='progress' style={{ height: (step * 100 / 5).toString() + '%' }}/>
           </div>
         </div>
       </div>

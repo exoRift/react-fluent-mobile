@@ -17,10 +17,8 @@ export {
 // Utility
 export {
   FlexibleRange
-} from './util/FlexibleRange'
-export {
-  TouchHandler
-} from './util/TouchHandler'
+} from './util/flexible-range'
+export * as TouchHandler from './util/touch-handler'
 export {
   options as contextMenuOptions,
   optionsForTag as contextMenuOptionsForTag

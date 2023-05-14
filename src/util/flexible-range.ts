@@ -10,29 +10,35 @@ export interface Coordinate {
  */
 export class FlexibleRange extends Range {
   /** The start that was registered via the method */
-  private _registeredStart: [Node?, number?] = []
+  _registeredStart: [Node?, number?] = []
   /** The end that was registered via the method */
-  private _registeredEnd: [Node?, number?] = []
+  _registeredEnd: [Node?, number?] = []
 
   /** The viewport coordinates of the start of the selection */
-  startCoords?: Coordinate
+  startCoords!: Coordinate
   /** The viewport coordinates of the end of the selection */
-  endCoords?: Coordinate
+  endCoords!: Coordinate
 
   /** Is this range in a reversed state? */
   reversed = false
 
   /** Construct a FlexibleRange */
-  constructor (original?: Range | FlexibleRange) {
+  constructor (original?: Range) {
     super()
 
     if (original) {
       this.setStart(original.startContainer, original.startOffset)
       this.setEnd(original.endContainer, original.endOffset)
+    } else {
+      this.startCoords = this.endCoords = {
+        x: 0,
+        y: 0,
+        height: 0
+      }
     }
   }
 
-  setStart (node: Node, offset: number): void {
+  setStart (node?: Node, offset: number = 0): void {
     if (!node) return
 
     this._registeredStart = [node, offset]
@@ -57,7 +63,7 @@ export class FlexibleRange extends Range {
     }
   }
 
-  setEnd (node: Node, offset: number): void {
+  setEnd (node?: Node, offset: number = 0): void {
     if (!node) return
 
     this._registeredEnd = [node, offset]
