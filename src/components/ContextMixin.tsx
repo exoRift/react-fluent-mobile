@@ -1,13 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
-import {
-  TouchHandler
-} from '../util/TouchHandler.js'
+import * as TouchHandler from '../util/touch-handler'
 import {
   options as menuOptions,
   optionsForTag
-} from '../util/menu-options.jsx'
+} from '../util/menu-options'
 
 import '../styles/Context.css'
 import '../styles/notification.css'
@@ -16,11 +13,6 @@ import '../styles/notification.css'
  * This is a mixin that augments the the experience of opening context menu for mobile users in a way that reduces the lift-count for actions
  */
 class ContextMixin extends React.Component {
-  static propTypes = {
-    /** The theme of the menus (dark, light) */
-    theme: PropTypes.string
-  }
-
   static defaultProps = {
     theme: 'dark'
   }

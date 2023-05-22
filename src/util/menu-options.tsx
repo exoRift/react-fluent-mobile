@@ -1,3 +1,5 @@
+import type ContextMixin from '../components/ContextMixin'
+
 export const options = {
   empty: {
     Component: (

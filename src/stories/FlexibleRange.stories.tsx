@@ -1,8 +1,8 @@
 import {
-  React,
   useRef,
   useEffect
 } from 'react'
+import { type StoryFn } from '@storybook/react'
 
 import {
   FlexibleRange
@@ -32,24 +32,33 @@ export default {
   }
 }
 
-export const Playground = (args) => {
+interface PlaygroundArgs {
+  startOffset: number
+  endOffset: number
+}
+
+export const Playground: StoryFn<PlaygroundArgs> = (args) => {
   const range = useRef(new FlexibleRange())
+  const text = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (!text.current) return
     const selection = window.getSelection()
-    const node = document.createNodeIterator(document.getElementById('text'), NodeFilter.SHOW_TEXT).nextNode()
+    const node = document.createNodeIterator(text.current, NodeFilter.SHOW_TEXT).nextNode()
 
-    selection.removeAllRanges() // NOTE: IOS compat
+    selection?.removeAllRanges() // NOTE: IOS compat
+
+    if (!node) return
 
     range.current.setStart(node, args.startOffset)
     range.current.setEnd(node, args.endOffset)
 
-    selection.addRange(range.current) // NOTE: IOS compat
+    selection?.addRange(range.current) // NOTE: IOS compat
   }, [args.startOffset, args.endOffset])
 
   return (
     <>
-      <h2 id='text'>{demoString}</h2>
+      <h2 id='text' ref={text}>{demoString}</h2>
     </>
   )
 }

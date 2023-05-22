@@ -1,5 +1,3 @@
-import './types/globals'
-
 import './styles/index.css'
 
 // WARN: This can be a problem if Apple releases a new product line. The problem is that Chrome uses Apple Webkit

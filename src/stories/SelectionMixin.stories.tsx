@@ -1,54 +1,55 @@
 import {
-  React,
   useCallback,
   useRef,
   useEffect
 } from 'react'
+import { type StoryFn } from '@storybook/react'
 
 import {
+  FlexibleRange,
   FluentSelectionMixin
-} from '..'
+} from '../'
 
 import './styles/index.css'
 import './styles/debug.css'
 
-function positionDebugTouches (e) {
+function positionDebugTouches (e: TouchEvent): void {
   const touches = []
   for (const touch of e.touches) touches[touch.identifier] = touch
 
-  const touchPixels = document.getElementsByClassName('fluent debug touch')
+  const touchPixels = document.getElementsByClassName('fluent debug touch') as HTMLCollectionOf<HTMLDivElement>
 
   for (let p = 0; p < touchPixels.length; ++p) {
     if (touches[p]) {
-      touchPixels[p].style.left = touches[p].clientX + 'px'
-      touchPixels[p].style.top = touches[p].clientY + 'px'
+      touchPixels[p].style.left = touches[p].clientX.toString() + 'px'
+      touchPixels[p].style.top = touches[p].clientY.toString() + 'px'
     }
   }
 }
 
-function positionDebugRange (mixin) {
-  if (mixin?.originRange) {
-    const rects = mixin.originRange.getClientRects()
-    const rect = [
-      rects[0]?.left + 6,
-      rects[0]?.top,
-      rects[rects.length - 1]?.right - 6,
-      rects[rects.length - 1]?.top
-    ]
+function positionDebugRange (originRange: FlexibleRange): void {
+  const rects = originRange.getClientRects()
+  const rect = [
+    rects[0]?.left + 6,
+    rects[0]?.top,
+    rects[rects.length - 1]?.right - 6,
+    rects[rects.length - 1]?.top
+  ]
 
-    const rangeHandles = document.getElementsByClassName('fluent debug range')
+  const rangeHandles = document.getElementsByClassName('fluent debug range') as HTMLCollectionOf<HTMLDivElement>
 
-    for (let r = 0; r < rangeHandles.length; ++r) {
-      rangeHandles[r].style.left = rect[r * 2] + 'px'
-      rangeHandles[r].style.top = rect[(r * 2) + 1] + 'px'
-    }
+  for (let r = 0; r < rangeHandles.length; ++r) {
+    rangeHandles[r].style.left = rect[r * 2].toString() + 'px'
+    rangeHandles[r].style.top = rect[(r * 2) + 1].toString() + 'px'
   }
 }
 
-function displayCopied () {
+function displayCopied (): void {
   const display = document.getElementById('copied')
 
-  display.textContent = window.getSelection().toString()
+  if (!display) return
+
+  display.textContent = window.getSelection()?.toString() ?? null
 }
 
 export default {
@@ -88,10 +89,18 @@ export default {
   }
 }
 
-export const Playground = (args) => {
-  const mixin = useRef(null)
+interface PlaygroundArgs {
+  STORYBOOK_BACKGROUND: string
+  collapseSwipeDistance: number
+  collapseSwipeDuration: number
+  nativeManipulationInactivityDuration: number
+  theme: string
+  debug: boolean
+}
 
-  const positionDebugRangeCallback = useCallback(() => positionDebugRange(mixin.current), [])
+export const Playground: StoryFn<PlaygroundArgs> = (args) => {
+  const originRange = useRef<FlexibleRange>(new FlexibleRange())
+  const positionDebugRangeCallback = useCallback(() => positionDebugRange(originRange.current), [])
 
   useEffect(() => {
     document.addEventListener('copy', displayCopied)
@@ -117,8 +126,8 @@ export const Playground = (args) => {
       setTimeout(() => {
         const pad = document.getElementById('fluentselectionmanipulator')
 
-        pad.addEventListener('touchstart', positionDebugTouches)
-        pad.addEventListener('touchmove', positionDebugTouches)
+        pad?.addEventListener('touchstart', positionDebugTouches)
+        pad?.addEventListener('touchmove', positionDebugTouches)
       }) // Wait for DOM to rerender
 
       document.addEventListener('touchend', positionDebugRangeCallback)
@@ -147,7 +156,7 @@ export const Playground = (args) => {
           )
         : null}
 
-      <FluentSelectionMixin {...args} ref={mixin}/>
+      <FluentSelectionMixin {...args} debug={{ originRange }}/>
 
       <div>
         standalone text

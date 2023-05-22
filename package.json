@@ -9,8 +9,8 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "storybook": "sb dev -p 6006",
-    "build-storybook": "sb build -o storybook",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build -o storybook",
     "lint": "eslint ./"
   },
   "repository": {
@@ -51,7 +51,6 @@
     "selection"
   ],
   "peerDependencies": {
-    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -61,12 +60,12 @@
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-typescript": "^11.1.0",
     "@storybook-extras/console": "^0.0.68",
-    "@storybook/addon-actions": "^7.0.10",
-    "@storybook/addon-essentials": "^7.0.10",
-    "@storybook/addon-links": "^7.0.10",
+    "@storybook/addon-actions": "^7.0.12",
+    "@storybook/addon-essentials": "^7.0.12",
+    "@storybook/addon-links": "^7.0.12",
     "@storybook/addon-styling": "^1.0.6",
-    "@storybook/react": "^7.0.10",
-    "@storybook/react-webpack5": "^7.0.10",
+    "@storybook/react": "^7.0.12",
+    "@storybook/react-webpack5": "^7.0.12",
     "@types/node": "^20.1.3",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
@@ -77,12 +76,10 @@
     "eslint-config-react-app": "^7.0.1",
     "eslint-config-standard": "^17.0.0",
     "eslint-config-standard-with-typescript": "^34.0.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "rollup": "^2.76.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
-    "storybook": "^7.0.10",
+    "storybook": "^7.0.12",
     "typescript": "^5.0.4"
   }
 }

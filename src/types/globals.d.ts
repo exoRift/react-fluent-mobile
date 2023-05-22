@@ -26,6 +26,9 @@ declare global {
       [Symbol.iterator](): Iterator<Touch>
     }
   }
+
+  module '*.webp'
+  module '*.png'
 }
 
 export {}

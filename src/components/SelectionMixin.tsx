@@ -1,4 +1,5 @@
 import {
+  type MutableRefObject,
   useEffect,
   useRef,
   useState
@@ -11,12 +12,18 @@ import * as TouchHandler from '../util/touch-handler'
 
 import '../styles/Selection.css'
 
+export interface SelectionDebugExport {
+  originRange?: MutableRefObject<FlexibleRange>
+  selectRange?: MutableRefObject<FlexibleRange>
+}
+
 export interface SelectionMixinProps {
-  collapseSwipeDistance: number
-  collapseSwipeDuration: number
-  nativeManipulationInactivityDuration: number
-  theme: string
+  collapseSwipeDistance?: number
+  collapseSwipeDuration?: number
+  nativeManipulationInactivityDuration?: number
+  theme?: string
   children?: React.ReactNode
+  debug?: SelectionDebugExport
 }
 
 /**
@@ -89,7 +96,14 @@ function positionHandles (touches: Array<Touch | React.Touch>, selection: Flexib
   }
 }
 
-const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = (props) => {
+const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = ({
+  collapseSwipeDistance = 100,
+  collapseSwipeDuration = 300,
+  nativeManipulationInactivityDuration = 500,
+  theme = 'dark',
+  children,
+  debug
+}) => {
   // States
   const [initialized, setInitialized] = useState(false)
   const [selecting, setSelecting] = useState(false)
@@ -98,8 +112,8 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = (props) => 
   // Refs
   const manipulator = useRef<HTMLDivElement>(null)
   const anticipatingSelection = useRef(false)
-  const selectRange = useRef(new FlexibleRange())
-  const originRange = useRef(new FlexibleRange())
+  const selectRange = debug?.selectRange ?? useRef(new FlexibleRange())
+  const originRange = debug?.originRange ?? useRef(new FlexibleRange())
   const enableTouchTimeout = useRef<NodeJS.Timeout | undefined>(undefined)
 
   /**
@@ -124,7 +138,7 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = (props) => 
         clearTimeout(enableTouchTimeout.current)
         enableTouchTimeout.current = setTimeout(
           () => manipulator.current?.classList.remove('inactive'),
-          props.nativeManipulationInactivityDuration
+          nativeManipulationInactivityDuration
         )
       }
 
@@ -217,8 +231,8 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = (props) => 
       const identifier = TouchHandler.normalizeIdentifier(touch)
 
       if (
-        touch.clientY - (TouchHandler.originTouches[identifier]?.clientY ?? 0) >= props.collapseSwipeDistance &&
-        e.timeStamp - (TouchHandler.originTouches[identifier]?.FLUENT_TIMESTAMP ?? 0) <= props.collapseSwipeDuration
+        touch.clientY - (TouchHandler.originTouches[identifier]?.clientY ?? 0) >= collapseSwipeDistance &&
+        e.timeStamp - (TouchHandler.originTouches[identifier]?.FLUENT_TIMESTAMP ?? 0) <= collapseSwipeDuration
       ) window.getSelection()?.removeAllRanges() // Swipedown collapse gesture
 
       if (originRange.current.reversed) originRange.current.reverse()
@@ -263,10 +277,10 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = (props) => 
 
   return (
     <>
-      {props.children}
+      {children}
 
       <div
-        className={`fluent manipulator ${props.theme} ${selecting ? 'active' : 'inactive'}`}
+        className={`fluent manipulator ${theme} ${selecting ? 'active' : 'inactive'}`}
         id='fluentselectionmanipulator'
         onTouchStart={manipulateSelection.current}
         onTouchMove={manipulateSelection.current}
@@ -281,12 +295,6 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = (props) => 
       <div className={`fluent handle ${manipulating ? 'active' : 'inactive'}`} id='fluentselectionhandleend'/>
     </>
   )
-}
-SelectionMixin.defaultProps = {
-  collapseSwipeDistance: 100,
-  collapseSwipeDuration: 300,
-  nativeManipulationInactivityDuration: 500,
-  theme: 'dark'
 }
 
 export default SelectionMixin

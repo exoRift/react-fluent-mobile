@@ -1,104 +1,102 @@
 import {
-  React,
   useEffect,
-  useState,
-  useRef
+  useRef,
+  useReducer
 } from 'react'
+import { type StoryFn } from '@storybook/react'
 import {
   linkTo
 } from '@storybook/addon-links'
 
 import {
-  FluentSelectionMixin,
-  TouchHandler
+  FluentSelectionMixin
 } from '../../'
 
 import deviceToolbar from '../assets/device_toolbar.webp'
 
-function advanceStep (step, setStep) {
+function stepReducer (state: number): number {
   if (document.getElementById('fluentselectionmanipulator')) {
     const list = document.getElementById('instructions')
 
-    list.children.item(step).setAttribute('active', 'false')
-    list.children.item(step + 1).setAttribute('active', 'true')
-
-    setStep(step + 1)
+    list?.children?.item(state)?.setAttribute('data-active', 'false')
+    list?.children?.item(state + 1)?.setAttribute('data-active', 'true')
   }
+
+  return state + 1
 }
 
-function displayCopied () {
+function displayCopied (): void {
   const display = document.getElementById('copied')
 
-  display.textContent = window.getSelection().toString()
+  if (display) display.textContent = window.getSelection()?.toString() ?? ''
 }
 
-function controlSelection (padRef, e) {
-  const instructionRect = document.getElementById('instructions').getBoundingClientRect()
-  const touches = TouchHandler.formatTouches(e.targetTouches)
-
-  const comparator = new TouchEvent('touchmove', {
-    target: e.target,
-    targetTouches: touches.map((touch, i) => {
-      const originX = padRef.originRange[i ? 'startCoords' : 'endCoords'][0]
-      const x = originX + (touches[i].clientX - TouchHandler.originTouches[i].clientX)
-
-      return new Touch({
-        identifier: touch.identifier,
-        clientX: x >= instructionRect.x ? TouchHandler.originTouches[i].clientX + (instructionRect.x - originX - 1) : touch.clientX,
-        clientY: touch.clientY,
-        target: touch.target
-      })
-    })
-  })
-
-  if (touches.some((t, i) => t.clientX !== comparator.targetTouches[i].clientX)) {
-    e.preventDefault()
-    e.stopPropagation()
-
-    padRef.manipulateSelection(comparator)
-  }
-}
-
-export const Selection = () => {
-  const padRef = useRef(null)
-  const [step, setStep] = useState(0)
+export const Selection: StoryFn = () => {
+  const pad = useRef<HTMLDivElement>(null)
+  const [step, advanceStep] = useReducer(stepReducer, 0)
 
   useEffect(() => {
-    const pad = document.getElementById('fluentselectionmanipulator')
-
-    function selectStep () {
-      if (!window.getSelection().isCollapsed) {
+    function selectStep (): void {
+      if (!window.getSelection()?.isCollapsed) {
         document.removeEventListener('selectionchange', selectStep)
 
-        advanceStep(step, setStep)
+        advanceStep()
       }
     }
 
-    function moveEndStep () {
-      advanceStep(step, setStep)
+    function moveEndStep (): void {
+      advanceStep()
     }
 
-    function moveStartStep (e) {
+    function moveStartStep (e: TouchEvent): void {
       if (e.targetTouches.length >= 2) {
-        pad.removeEventListener('touchmove', moveStartStep)
+        pad.current?.removeEventListener('touchmove', moveStartStep)
 
-        advanceStep(step, setStep)
+        advanceStep()
       }
     }
 
-    function copyStep () {
-      advanceStep(step, setStep)
+    function copyStep (): void {
+      advanceStep()
     }
 
-    function dismissStep () {
+    function dismissStep (): void {
       setTimeout(() => {
-        if (pad.classList.contains('inactive')) {
-          pad.removeEventListener('touchend', dismissStep)
+        if (pad.current?.classList.contains('inactive')) {
+          pad.current?.removeEventListener('touchend', dismissStep)
 
-          advanceStep(step, setStep)
+          advanceStep()
         }
       }) // Wait for DOM to rerender
     }
+
+    // const controlSelection = useRef((e: TouchEvent) => {
+    //   const instructionRect = document.getElementById('instructions')?.getBoundingClientRect()
+    //   if (!instructionRect) return
+
+    //   const touches = TouchHandler.formatTouches(e.targetTouches)
+
+    //   const comparator = new TouchEvent('touchmove', {
+    //     targetTouches: touches.map((touch, i) => {
+    //       const originX = pad.current?.originRange[i ? 'startCoords' : 'endCoords'][0]
+    //       const x = originX + (touches[i].clientX - TouchHandler.originTouches[i].clientX)
+
+    //       return new Touch({
+    //         identifier: touch.identifier,
+    //         clientX: x >= instructionRect.x ? TouchHandler.originTouches[i].clientX + (instructionRect.x - originX - 1) : touch.clientX,
+    //         clientY: touch.clientY,
+    //         target: touch.target
+    //       })
+    //     })
+    //   })
+
+    //   if (touches.some((t, i) => t.clientX !== comparator.targetTouches[i].clientX)) {
+    //     e.preventDefault()
+    //     e.stopPropagation()
+
+    //     pad.current.manipulateSelection(comparator)
+    //   }
+    // })
 
     document.addEventListener('copy', displayCopied)
 
@@ -108,25 +106,25 @@ export const Selection = () => {
 
         break
       case 1:
-        pad.addEventListener('touchmove', moveEndStep, {
+        pad.current?.addEventListener('touchmove', moveEndStep, {
           once: true
         })
 
-        pad.addEventListener('touchmove', controlSelection.bind(this, padRef.current), true) // Prevent selection overflow into instructions
+        // pad.current?.addEventListener('touchmove', controlSelection, true) // Prevent selection overflow into instructions
 
         break
       case 2:
-        pad.addEventListener('touchmove', moveStartStep)
+        pad.current?.addEventListener('touchmove', moveStartStep)
 
         break
       case 3:
-        pad.addEventListener('dblclick', copyStep, {
+        pad.current?.addEventListener('dblclick', copyStep, {
           once: true
         })
 
         break
       case 4:
-        pad.addEventListener('touchend', dismissStep)
+        pad.current?.addEventListener('touchend', dismissStep)
 
         break
       default: break
@@ -141,7 +139,7 @@ export const Selection = () => {
 
   return (
     <div className='body'>
-      <FluentSelectionMixin ref={padRef}/>
+      <FluentSelectionMixin/>
 
       <div className='suggestion'>
         <img src={deviceToolbar} alt='device toolbar'/>
@@ -159,7 +157,7 @@ export const Selection = () => {
         </div>
 
         <div id='instructions'>
-          <div className='instruction' active={String(!step)}>
+          <div className='instruction' data-active={String(!step)}>
             <h3>Try selecting some text!</h3>
             <p>
               Hold down on the header or, if you're on Android, tap some of the body text
