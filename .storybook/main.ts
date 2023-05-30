@@ -5,7 +5,7 @@ const config: StorybookConfig = {
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
-    '@storybook-extras/console',
+    '@storybook/addon-actions',
     {
       name: '@storybook/addon-styling',
       options: {
