@@ -1,4 +1,4 @@
-import {
+import React, {
   useEffect,
   useRef,
   useReducer
@@ -145,7 +145,7 @@ export const Selection: StoryFn = () => {
         <img src={deviceToolbar} alt='device toolbar'/>
 
         <h5>
-          If you're on PC, try pressing <strong>Ctrl+Shift+I</strong> and clicking the <i>Device Toolbar</i> button.
+          If you&apos;re on PC, try pressing <strong>Ctrl+Shift+I</strong> and clicking the <i>Device Toolbar</i> button.
         </h5>
       </div>
 
@@ -160,7 +160,7 @@ export const Selection: StoryFn = () => {
           <div className='instruction' data-active={String(!step)}>
             <h3>Try selecting some text!</h3>
             <p>
-              Hold down on the header or, if you're on Android, tap some of the body text
+              Hold down on the header or, if you&apos;re on Android, tap some of the body text
             </p>
 
             <div className='gesture hold'/>

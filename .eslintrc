@@ -1,39 +1,40 @@
 {
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx"],
-      "extends": "standard-with-typescript",
-      "parserOptions": {
-        "project": "./tsconfig.json"
-      },
-      "rules": {
-        "array-bracket-spacing": "error",
-        "no-lonely-if": "warn",
-        "arrow-parens": "error",
-        "no-var": "error",
-        "prefer-const": "error",
-        "max-len": [
-          "warn",
-          {
-            "code": 155,
-            "tabWidth": 2,
-            "ignoreComments": true
-          }
-        ],
-        "quote-props": "warn",
-        "@typescript-eslint/no-namespace": "off",
-        "@typescript-eslint/strict-boolean-expressions": "off",
-        "@typescript-eslint/promise-function-async": "off",
-        "@typescript-eslint/array-type": "warn",
-        "@typescript-eslint/no-confusing-void-expression": "off",
-        "@typescript-eslint/no-invalid-void-type": "off",
-        "@typescript-eslint/no-unused-vars": "warn",
-        "@typescript-eslint/explicit-function-return-type": "warn",
-        "@typescript-eslint/method-signature-style": "off",
-        "@typescript-eslint/no-non-null-assertion": "warn"
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "extends": ["standard-with-typescript", "plugin:react/recommended", "plugin:react-hooks/recommended", "plugin:storybook/recommended"],
+  "rules": {
+    "array-bracket-spacing": "error",
+    "no-lonely-if": "warn",
+    "arrow-parens": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "max-len": [
+      "warn",
+      {
+        "code": 155,
+        "tabWidth": 2,
+        "ignoreComments": true
       }
-    }
-  ]
+    ],
+    "quote-props": "warn",
+    "@typescript-eslint/no-namespace": "off",
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/promise-function-async": "off",
+    "@typescript-eslint/array-type": "warn",
+    "@typescript-eslint/no-confusing-void-expression": "off",
+    "@typescript-eslint/no-invalid-void-type": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/explicit-function-return-type": "warn",
+    "@typescript-eslint/method-signature-style": "off",
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "react/prop-types": [
+      "warn",
+      {
+        "ignore": ["children"]
+      }
+    ]
+  }
 }

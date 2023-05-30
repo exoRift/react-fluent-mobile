@@ -1,7 +1,7 @@
-import {
+import React, {
   useCallback,
-  useRef,
-  useEffect
+  useEffect,
+  useState
 } from 'react'
 import { type StoryFn } from '@storybook/react'
 
@@ -99,8 +99,8 @@ interface PlaygroundArgs {
 }
 
 export const Playground: StoryFn<PlaygroundArgs> = (args) => {
-  const originRange = useRef<FlexibleRange>(new FlexibleRange())
-  const positionDebugRangeCallback = useCallback(() => positionDebugRange(originRange.current), [])
+  const [originRange, setOriginRange] = useState<FlexibleRange>(new FlexibleRange())
+  const positionDebugRangeCallback = useCallback(() => positionDebugRange(originRange), [originRange])
 
   useEffect(() => {
     document.addEventListener('copy', displayCopied)
@@ -156,7 +156,7 @@ export const Playground: StoryFn<PlaygroundArgs> = (args) => {
           )
         : null}
 
-      <FluentSelectionMixin {...args} debug={{ originRange }}/>
+      <FluentSelectionMixin {...args} getDebugData={({ originRange: range }) => setOriginRange(range)}/>
 
       <div>
         standalone text

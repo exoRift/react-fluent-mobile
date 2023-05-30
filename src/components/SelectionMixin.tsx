@@ -1,9 +1,10 @@
-import {
-  type MutableRefObject,
+import React, {
   useEffect,
   useRef,
-  useState
+  useState,
+  useCallback
 } from 'react'
+import * as PropTypes from 'prop-types'
 
 import {
   FlexibleRange
@@ -13,8 +14,8 @@ import * as TouchHandler from '../util/touch-handler'
 import '../styles/Selection.css'
 
 export interface SelectionDebugExport {
-  originRange?: MutableRefObject<FlexibleRange>
-  selectRange?: MutableRefObject<FlexibleRange>
+  originRange: FlexibleRange
+  selectRange: FlexibleRange
 }
 
 export interface SelectionMixinProps {
@@ -23,7 +24,7 @@ export interface SelectionMixinProps {
   nativeManipulationInactivityDuration?: number
   theme?: string
   children?: React.ReactNode
-  debug?: SelectionDebugExport
+  getDebugData?: (data: SelectionDebugExport) => void
 }
 
 /**
@@ -102,7 +103,7 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = ({
   nativeManipulationInactivityDuration = 500,
   theme = 'dark',
   children,
-  debug
+  getDebugData
 }) => {
   // States
   const [initialized, setInitialized] = useState(false)
@@ -112,15 +113,14 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = ({
   // Refs
   const manipulator = useRef<HTMLDivElement>(null)
   const anticipatingSelection = useRef(false)
-  const selectRange = debug?.selectRange ?? useRef(new FlexibleRange())
-  const originRange = debug?.originRange ?? useRef(new FlexibleRange())
+  const selectRange = useRef(new FlexibleRange())
+  const originRange = useRef(new FlexibleRange())
   const enableTouchTimeout = useRef<NodeJS.Timeout | undefined>(undefined)
 
-  /**
-   * Display the manipulation pad
-   * @fires document#selectionchange
-   */
-  const launchManipulator = useRef((): void => {
+  // Debug
+  useEffect(() => getDebugData?.({ originRange: originRange.current, selectRange: selectRange.current }), [getDebugData, originRange, selectRange])
+
+  const launchManipulator = useCallback((): void => {
     if (anticipatingSelection.current && !manipulating) {
       const selection = window.getSelection()
       const selectionMatches = (
@@ -133,39 +133,39 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = ({
       const shouldSelect = (!selection?.isCollapsed && selection?.rangeCount) ?? selectionMatches
 
       if (selecting && shouldSelect && !selectionMatches) { // Disable pad when selection is being manipulated natively
-        manipulator.current?.classList.add('inactive')
+        manipulator.current?.setAttribute('data-active', 'false')
 
         clearTimeout(enableTouchTimeout.current)
         enableTouchTimeout.current = setTimeout(
-          () => manipulator.current?.classList.remove('inactive'),
+          () => manipulator.current?.setAttribute('data-active', 'true'),
           nativeManipulationInactivityDuration
         )
       }
 
-      setSelecting(shouldSelect as boolean)
+      setSelecting(Boolean(shouldSelect))
 
       anticipatingSelection.current = false
     }
-  })
-  const anticipateSelection = useRef((e?: PointerEvent): void => {
+  }, [manipulating, selecting, nativeManipulationInactivityDuration])
+  const anticipateSelection = useCallback((e?: PointerEvent): void => {
     if (e?.pointerType === 'touch') anticipatingSelection.current = true
     else {
       anticipatingSelection.current = false
 
       setSelecting(false)
     }
-  })
-  const initializeComponent = useRef(() => {
+  }, [])
+  const initializeComponent = useCallback(() => {
     if (!initialized) {
       setInitialized(true)
 
-      document.addEventListener('pointerdown', anticipateSelection.current)
-      document.addEventListener('selectionchange', launchManipulator.current)
+      document.addEventListener('pointerdown', anticipateSelection)
+      document.addEventListener('selectionchange', launchManipulator)
 
       anticipatingSelection.current = true
     }
-  })
-  const manipulateSelection = useRef<React.TouchEventHandler<HTMLDivElement>>((e) => {
+  }, [initialized, anticipateSelection, launchManipulator])
+  const manipulateSelection = useCallback<React.TouchEventHandler<HTMLDivElement>>((e) => {
     const selection = window.getSelection()
 
     if (
@@ -217,8 +217,8 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = ({
     positionHandles(touches, selectRange.current, ...positions) // Position handles
 
     if (selectRange.current.startOffset !== oldStartOffset || selectRange.current.endOffset !== oldEndOffset) navigator.vibrate?.(1)
-  })
-  const stopManipulation = useRef<React.TouchEventHandler<HTMLDivElement>>((e) => {
+  }, [manipulating])
+  const stopManipulation = useCallback<React.TouchEventHandler<HTMLDivElement>>((e) => {
     for (const touch of e.changedTouches) {
       const identifier = TouchHandler.normalizeIdentifier(touch)
 
@@ -238,11 +238,11 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = ({
       if (originRange.current.reversed) originRange.current.reverse()
     }
 
-    manipulateSelection.current(e) // Correct handle positions to stick to range
+    manipulateSelection(e) // Correct handle positions to stick to range
 
     if (!e.targetTouches.length) setManipulating(false)
-  })
-  const copySelection = useRef<React.MouseEventHandler<HTMLDivElement>>(() => {
+  }, [collapseSwipeDuration, collapseSwipeDistance, manipulateSelection])
+  const copySelection = useCallback<React.MouseEventHandler<HTMLDivElement>>(() => {
     if (window.FLUENT_IS_IOS) reselectRange(selectRange.current) // NOTE: IOS clears selection
 
     const selection = window.getSelection()
@@ -254,10 +254,10 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = ({
 
     if (navigator.clipboard?.writeText) void navigator.clipboard.writeText(selection?.toString() ?? '')
     else document.execCommand('copy')
-  })
+  }, [])
 
   useEffect(() => {
-    document.addEventListener('touchstart', initializeComponent.current, {
+    document.addEventListener('touchstart', initializeComponent, {
       once: true
     })
 
@@ -265,13 +265,13 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = ({
 
     return () => { // On unmount
       if (initialized) {
-        document.removeEventListener('pointerdown', anticipateSelection.current)
-        document.removeEventListener('selectionchange', launchManipulator.current)
+        document.removeEventListener('pointerdown', anticipateSelection)
+        document.removeEventListener('selectionchange', launchManipulator)
 
         TouchHandler.unmount()
-      } else document.removeEventListener('touchstart', initializeComponent.current)
+      } else document.removeEventListener('touchstart', initializeComponent)
     }
-  }, [])
+  }, [initialized, anticipateSelection, initializeComponent, launchManipulator])
 
   if (!initialized) return null
 
@@ -280,21 +280,29 @@ const SelectionMixin: React.FunctionComponent<SelectionMixinProps> = ({
       {children}
 
       <div
-        className={`fluent manipulator ${theme} ${selecting ? 'active' : 'inactive'}`}
+        className={`fluent manipulator ${theme}`}
         id='fluentselectionmanipulator'
-        onTouchStart={manipulateSelection.current}
-        onTouchMove={manipulateSelection.current}
-        onTouchEnd={stopManipulation.current}
-        onTouchCancel={stopManipulation.current}
+        data-active={selecting}
+        onTouchStart={manipulateSelection}
+        onTouchMove={manipulateSelection}
+        onTouchEnd={stopManipulation}
+        onTouchCancel={stopManipulation}
         onTouchEndCapture={window.FLUENT_IS_IOS ? () => reselectRange(selectRange.current) : undefined} // NOTE: IOS clears selection
-        onDoubleClick={copySelection.current}
+        onDoubleClick={copySelection}
         ref={manipulator}
       />
 
-      <div className={`fluent handle ${manipulating ? 'active' : 'inactive'}`} id='fluentselectionhandlestart'/>
-      <div className={`fluent handle ${manipulating ? 'active' : 'inactive'}`} id='fluentselectionhandleend'/>
+      <div className='fluent handle' data-active={manipulating} id='fluentselectionhandlestart'/>
+      <div className='fluent handle' data-active={manipulating} id='fluentselectionhandleend'/>
     </>
   )
+}
+SelectionMixin.propTypes = {
+  collapseSwipeDistance: PropTypes.number,
+  collapseSwipeDuration: PropTypes.number,
+  nativeManipulationInactivityDuration: PropTypes.number,
+  theme: PropTypes.oneOf(['dark', 'light']),
+  getDebugData: PropTypes.func
 }
 
 export default SelectionMixin

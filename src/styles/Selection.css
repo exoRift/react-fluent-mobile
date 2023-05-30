@@ -37,11 +37,11 @@
 /* Base definition */
 
 /* Initial states */
-.fluent.manipulator.inactive {
+.fluent.manipulator[data-active='false'] {
   opacity: 0;
   pointer-events: none;
 }
-.fluent.manipulator.active:not(.inactive) {
+.fluent.manipulator[data-active='true'] {
   opacity: 1;
 }
 
@@ -54,7 +54,7 @@
 .fluent.manipulator.dark::before {
   color: white;
 }
-.fluent.manipulator.dark.active:active {
+.fluent.manipulator[data-active='true']:active.dark {
   background-color: #49b9ff;
   background-image:
     radial-gradient(#6bb8e7 20%, transparent 20%),
@@ -70,17 +70,17 @@
 .fluent.manipulator.light::before {
   color: black;
 }
-.fluent.manipulator.light.active:active {
+.fluent.manipulator[data-active='true']:active.light {
   background-color: #73c9ff;
   background-image:
     radial-gradient(#8dd3ff 20%, transparent 20%),
     radial-gradient(#49a3da 20%, transparent 20%);
 }
 
-.fluent.handle.active {
+.fluent.handle[data-active='true'] {
   opacity: 1;
 }
-.fluent.handle.active.manipulating {
+.fluent.handle[data-active='true'].manipulating {
   transition: all 0s, height 0.2s;
   transform: scale(1.3);
 }
