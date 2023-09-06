@@ -1,12 +1,11 @@
 import React, {
-  useCallback,
   useEffect,
-  useState
+  useRef
 } from 'react'
 import { type StoryFn } from '@storybook/react'
 
 import {
-  FlexibleRange,
+  type FlexibleRange,
   FluentSelectionMixin
 } from '../'
 
@@ -99,8 +98,7 @@ interface PlaygroundArgs {
 }
 
 export const Playground: StoryFn<PlaygroundArgs> = (args) => {
-  const [originRange, setOriginRange] = useState<FlexibleRange>(new FlexibleRange())
-  const positionDebugRangeCallback = useCallback(() => positionDebugRange(originRange), [originRange])
+  const mixin = useRef<FluentSelectionMixin>()
 
   useEffect(() => {
     document.addEventListener('copy', displayCopied)
@@ -116,6 +114,8 @@ export const Playground: StoryFn<PlaygroundArgs> = (args) => {
     document.body.style.backgroundColor = args.STORYBOOK_BACKGROUND
 
     if (args.debug) {
+      const positionDebugRangeCallback = (): void => positionDebugRange(mixin.current)
+
       document.dispatchEvent(new TouchEvent('touchstart', {
         changedTouches: [new Touch({
           identifier: 0,
@@ -140,7 +140,7 @@ export const Playground: StoryFn<PlaygroundArgs> = (args) => {
         document.removeEventListener('touchend', positionDebugRangeCallback)
       }
     }
-  }, [args.STORYBOOK_BACKGROUND, args.debug, positionDebugRangeCallback])
+  }, [args.STORYBOOK_BACKGROUND, args.debug])
 
   return (
     <>
@@ -156,7 +156,7 @@ export const Playground: StoryFn<PlaygroundArgs> = (args) => {
           )
         : null}
 
-      <FluentSelectionMixin {...args} getDebugData={({ originRange: range }) => setOriginRange(range)}/>
+      <FluentSelectionMixin {...args} ref={mixin} />
 
       <div>
         standalone text

@@ -1,3 +1,4 @@
+import React from 'react'
 import type ContextMixin from '../components/ContextMixin'
 
 export const options = {

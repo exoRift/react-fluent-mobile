@@ -17,6 +17,10 @@ declare global {
     FLUENT_TIMESTAMP?: number
   }
 
+  interface TouchList {
+    [Symbol.iterator](): Iterator<Touch>
+  }
+
   module React {
     interface Touch {
       FLUENT_TIMESTAMP?: number

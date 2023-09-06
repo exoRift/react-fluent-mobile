@@ -5,14 +5,20 @@ export interface Coordinate {
   height: number
 }
 
+const CoordinateTemplate = {
+  x: 0,
+  y: 0,
+  height: 0
+}
+
 /**
  * A range that automatically reverses of the end bound comes before the start bound or vice-versa
  */
 export class FlexibleRange extends Range {
   /** The start that was registered via the method */
-  _registeredStart: [Node?, number?] = []
+  _registeredStart?: [Node, number]
   /** The end that was registered via the method */
-  _registeredEnd: [Node?, number?] = []
+  _registeredEnd?: [Node, number]
 
   /** The viewport coordinates of the start of the selection */
   startCoords!: Coordinate
@@ -30,11 +36,8 @@ export class FlexibleRange extends Range {
       this.setStart(original.startContainer, original.startOffset)
       this.setEnd(original.endContainer, original.endOffset)
     } else {
-      this.startCoords = this.endCoords = {
-        x: 0,
-        y: 0,
-        height: 0
-      }
+      this.startCoords = Object.create(CoordinateTemplate)
+      this.endCoords = Object.create(CoordinateTemplate)
     }
   }
 
@@ -48,9 +51,9 @@ export class FlexibleRange extends Range {
 
     if (!this._registeredEnd) this._registeredEnd = [this.endContainer, this.endOffset]
 
-    if (this.collapsed && this._registeredStart.some((v, i) => v !== this._registeredEnd[i])) {
-      if (this.reversed) super.setEnd(this.endContainer, this.endOffset)
-      else super.setStart(this.endContainer, this.endOffset)
+    if (this.collapsed && this._registeredStart.some((v, i) => v !== this._registeredEnd![i])) {
+      if (this.reversed) super.setEnd(...this._registeredEnd)
+      else super.setStart(...this._registeredEnd)
 
       this.reversed = !this.reversed
     }
@@ -73,9 +76,9 @@ export class FlexibleRange extends Range {
 
     if (!this._registeredStart) this._registeredStart = [this.startContainer, this.startOffset]
 
-    if (this.collapsed && this._registeredEnd.some((v, i) => v !== this._registeredStart[i])) {
-      if (this.reversed) super.setStart(this.startContainer, this.startOffset)
-      else super.setEnd(this.startContainer, this.startOffset)
+    if (this.collapsed && this._registeredEnd.some((v, i) => v !== this._registeredStart![i])) {
+      if (this.reversed) super.setStart(...this._registeredStart)
+      else super.setEnd(...this._registeredStart)
 
       this.reversed = !this.reversed
     }

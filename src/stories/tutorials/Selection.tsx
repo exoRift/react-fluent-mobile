@@ -14,6 +14,14 @@ import {
 
 import deviceToolbar from '../assets/device_toolbar.webp'
 
+enum SelectionSteps {
+  SELECT,
+  MOVE_END,
+  MOVE_START,
+  COPY,
+  DISMISS
+}
+
 function stepReducer (state: number): number {
   if (document.getElementById('fluentselectionmanipulator')) {
     const list = document.getElementById('instructions')
@@ -139,7 +147,7 @@ export const Selection: StoryFn = () => {
 
   return (
     <div className='body'>
-      <FluentSelectionMixin/>
+      <FluentSelectionMixin />
 
       <div className='suggestion'>
         <img src={deviceToolbar} alt='device toolbar'/>
