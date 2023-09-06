@@ -29,10 +29,8 @@
   animation: hide 1s ease-out 1 normal forwards;
   z-index: 2;
 }
-.demonstration #instructions .instruction[active] {
+.demonstration #instructions .instruction[data-active='true'] {
   display: block;
-}
-.demonstration #instructions .instruction[active='true'] {
   animation: reveal 1s ease-out 1 normal forwards;
 }
 

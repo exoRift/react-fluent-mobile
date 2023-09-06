@@ -9,12 +9,12 @@ import {
 } from '@storybook/addon-links'
 
 import {
-  FluentSelectionMixin
+  FluentSelectionMixin, TouchHandler
 } from '../../'
 
 import deviceToolbar from '../assets/device_toolbar.webp'
 
-enum SelectionSteps {
+enum SelectionStep {
   SELECT,
   MOVE_END,
   MOVE_START,
@@ -22,7 +22,7 @@ enum SelectionSteps {
   DISMISS
 }
 
-function stepReducer (state: number): number {
+function stepReducer (state: SelectionStep): number {
   if (document.getElementById('fluentselectionmanipulator')) {
     const list = document.getElementById('instructions')
 
@@ -40,10 +40,12 @@ function displayCopied (): void {
 }
 
 export const Selection: StoryFn = () => {
-  const pad = useRef<HTMLDivElement>(null)
+  const mixinRef = useRef<FluentSelectionMixin>(null)
   const [step, advanceStep] = useReducer(stepReducer, 0)
 
   useEffect(() => {
+    const mixin = mixinRef.current as FluentSelectionMixin
+
     function selectStep (): void {
       if (!window.getSelection()?.isCollapsed) {
         document.removeEventListener('selectionchange', selectStep)
@@ -58,7 +60,7 @@ export const Selection: StoryFn = () => {
 
     function moveStartStep (e: TouchEvent): void {
       if (e.targetTouches.length >= 2) {
-        pad.current?.removeEventListener('touchmove', moveStartStep)
+        mixin.manipulator.current?.removeEventListener('touchmove', moveStartStep)
 
         advanceStep()
       }
@@ -70,69 +72,71 @@ export const Selection: StoryFn = () => {
 
     function dismissStep (): void {
       setTimeout(() => {
-        if (pad.current?.classList.contains('inactive')) {
-          pad.current?.removeEventListener('touchend', dismissStep)
+        if (mixin.state.selecting) {
+          mixin.manipulator.current?.removeEventListener('touchend', dismissStep)
 
           advanceStep()
         }
       }) // Wait for DOM to rerender
     }
 
-    // const controlSelection = useRef((e: TouchEvent) => {
-    //   const instructionRect = document.getElementById('instructions')?.getBoundingClientRect()
-    //   if (!instructionRect) return
+    function controlSelection (e: TouchEvent): void {
+      const instructionRect = document.getElementById('instructions')?.getBoundingClientRect()
+      if (!instructionRect) return
 
-    //   const touches = TouchHandler.formatTouches(e.targetTouches)
+      const touches = TouchHandler.formatTouches(e.targetTouches)
 
-    //   const comparator = new TouchEvent('touchmove', {
-    //     targetTouches: touches.map((touch, i) => {
-    //       const originX = pad.current?.originRange[i ? 'startCoords' : 'endCoords'][0]
-    //       const x = originX + (touches[i].clientX - TouchHandler.originTouches[i].clientX)
+      const comparator = new TouchEvent('touchmove', {
+        targetTouches: touches.filter((t) => t).map((touch, i) => {
+          const originX = mixin.originRange[i ? 'startCoords' : 'endCoords'].x
+          const deltaX = originX + (touches[i].clientX - (TouchHandler.originTouches[i]?.clientX ?? 0))
 
-    //       return new Touch({
-    //         identifier: touch.identifier,
-    //         clientX: x >= instructionRect.x ? TouchHandler.originTouches[i].clientX + (instructionRect.x - originX - 1) : touch.clientX,
-    //         clientY: touch.clientY,
-    //         target: touch.target
-    //       })
-    //     })
-    //   })
+          return new Touch({
+            identifier: touch.identifier,
+            clientX: deltaX >= instructionRect.x ? (TouchHandler.originTouches[i]?.clientX ?? 0) + (instructionRect.x - originX - 1) : touch.clientX,
+            clientY: touch.clientY,
+            target: touch.target
+          })
+        })
+      })
 
-    //   if (touches.some((t, i) => t.clientX !== comparator.targetTouches[i].clientX)) {
-    //     e.preventDefault()
-    //     e.stopPropagation()
+      if (touches.some((t, i) => t.clientX !== comparator.targetTouches[i].clientX)) {
+        e.preventDefault()
+        e.stopPropagation()
 
-    //     pad.current.manipulateSelection(comparator)
-    //   }
-    // })
+        mixin.manipulateSelection(comparator)
+      }
+    }
 
-    document.addEventListener('copy', displayCopied)
+    document.addEventListener('copy', displayCopied, { passive: true })
 
     switch (step) {
-      case 0:
-        document.addEventListener('selectionchange', selectStep)
+      case SelectionStep.SELECT:
+        document.addEventListener('selectionchange', selectStep, { passive: true })
 
         break
-      case 1:
-        pad.current?.addEventListener('touchmove', moveEndStep, {
-          once: true
+      case SelectionStep.MOVE_END:
+        mixin.manipulator.current?.addEventListener('touchmove', moveEndStep, {
+          once: true,
+          passive: true
         })
 
-        // pad.current?.addEventListener('touchmove', controlSelection, true) // Prevent selection overflow into instructions
+        mixin.manipulator.current?.addEventListener('touchmove', controlSelection, { capture: true }) // Prevent selection overflow into instructions
 
         break
-      case 2:
-        pad.current?.addEventListener('touchmove', moveStartStep)
+      case SelectionStep.MOVE_START:
+        mixin.manipulator.current?.addEventListener('touchmove', moveStartStep, { passive: true })
 
         break
-      case 3:
-        pad.current?.addEventListener('dblclick', copyStep, {
-          once: true
+      case SelectionStep.COPY:
+        mixin.manipulator.current?.addEventListener('dblclick', copyStep, {
+          once: true,
+          passive: true
         })
 
         break
-      case 4:
-        pad.current?.addEventListener('touchend', dismissStep)
+      case SelectionStep.DISMISS:
+        mixin.manipulator.current?.addEventListener('touchend', dismissStep, { passive: true })
 
         break
       default: break
@@ -147,7 +151,7 @@ export const Selection: StoryFn = () => {
 
   return (
     <div className='body'>
-      <FluentSelectionMixin />
+      <FluentSelectionMixin ref={mixinRef} />
 
       <div className='suggestion'>
         <img src={deviceToolbar} alt='device toolbar' />
