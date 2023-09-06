@@ -150,7 +150,7 @@ export const Selection: StoryFn = () => {
       <FluentSelectionMixin />
 
       <div className='suggestion'>
-        <img src={deviceToolbar} alt='device toolbar'/>
+        <img src={deviceToolbar} alt='device toolbar' />
 
         <h5>
           If you&apos;re on PC, try pressing <strong>Ctrl+Shift+I</strong> and clicking the <i>Device Toolbar</i> button.
@@ -171,7 +171,7 @@ export const Selection: StoryFn = () => {
               Hold down on the header or, if you&apos;re on Android, tap some of the body text
             </p>
 
-            <div className='gesture hold'/>
+            <div className='gesture hold' />
           </div>
 
           <div className='instruction'>
@@ -180,7 +180,7 @@ export const Selection: StoryFn = () => {
               Tap and drag on the manipulation pad to move the end of your selection
             </p>
 
-            <div className='gesture move sideways'/>
+            <div className='gesture move sideways' />
           </div>
 
           <div className='instruction'>
@@ -190,8 +190,8 @@ export const Selection: StoryFn = () => {
             </p>
 
             <div className='gesture-series'>
-              <div className='gesture move sideways start'/>
-              <div className='gesture move sideways'/>
+              <div className='gesture move sideways start' />
+              <div className='gesture move sideways' />
             </div>
           </div>
 
@@ -201,7 +201,7 @@ export const Selection: StoryFn = () => {
               Double-tap on the selection manipulation pad to copy your selected text
             </p>
 
-            <div className='gesture double tap'/>
+            <div className='gesture double tap' />
           </div>
 
           <div className='instruction'>
@@ -210,7 +210,7 @@ export const Selection: StoryFn = () => {
               Swipe down on the selection manipulation pad to dismiss your selection
             </p>
 
-            <div className='gesture swipe down'/>
+            <div className='gesture swipe down' />
           </div>
 
           <div className='instruction'>
@@ -226,14 +226,14 @@ export const Selection: StoryFn = () => {
           </div>
 
           <div className='progress-bar'>
-            <div className='progress' style={{ height: (step * 100 / 5).toString() + '%' }}/>
+            <div className='progress' style={{ height: (step * 100 / 5).toString() + '%' }} />
           </div>
         </div>
       </div>
 
       <footer>
         <strong>Copied text: </strong>
-        <span id='copied'/>
+        <span id='copied' />
       </footer>
     </div>
   )

@@ -48,7 +48,7 @@ export const Playground = (args) => {
 
   return (
     <div debug={String(args.debug)}>
-      <FluentContextMixin {...args}/>
+      <FluentContextMixin {...args} />
 
       <div className='story anchors'>
         <a href={window.location.href}>This is a leftward anchor</a>
@@ -58,10 +58,10 @@ export const Playground = (args) => {
 
       <span>This is some sample text</span>
 
-      <img className='story banner' alt='banner' src={banner}/>
+      <img className='story banner' alt='banner' src={banner} />
 
       <a href={window.location.href}>
-        <img className='story icon' alt='icon' src={icon}/>
+        <img className='story icon' alt='icon' src={icon} />
         Testing images in an anchor tag
       </a>
     </div>

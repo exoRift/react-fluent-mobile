@@ -11,7 +11,7 @@ export const options = {
   },
   divider: {
     Component: (
-      <div className='fluent menudivider'/>
+      <div className='fluent menudivider' />
     )
   },
   disable: {

@@ -16,7 +16,7 @@
 **react-fluent-mobile** allows you to take your mobile browser's native features and augment them, improving gloss and agility without compromising on ability.
 
 ## Selecting text
-<img alt='selectionvideo' src='assets/selection.gif' width='150'/>
+<img alt='selectionvideo' src='assets/selection.gif' width='150' />
 
 Fluent takes selecting text on mobile to a whole new level by adding the *selection manipulation pad*. When text is selected by the user, whether selected through normal means, selected by the website, or tap-selected on Android, the *selection manipulation pad* appears. Users can touch and drag on the pad to shift the bounds of their selection in any direction they'd like, transforming their selection. Once the selection is fit to the user's liking, they can tap on the pad to instantly copy their selection to their clipboard.
 
@@ -35,7 +35,7 @@ nativeManipulationInactivityDuration|The interval the manipulation pad is inacti
 theme|The theme of the pad (dark, light)
 
 ## Context menus
-<img alt='contextvideo' src='assets/context.gif' width='150'/>
+<img alt='contextvideo' src='assets/context.gif' width='150' />
 
 Context menus have been reimagined! Now, instead of holding and lifting your finger four times, holding down on a link or image will launch a cleaner context menu in which you can drag you finger to the desired option and lift your finger to select it. No more tapping!
 
@@ -67,8 +67,8 @@ import {
 function Component (props) {
   return (
     <>
-      <FluentContextMixin/>
-      <FluentSelectionMixin/>
+      <FluentContextMixin />
+      <FluentSelectionMixin />
 
       <div ...>
         ...
@@ -81,7 +81,7 @@ function Component (props) {
 ## *Snappy, fluid, deliberate interactions*
 *INSERT GIF*
 
-<br/>
+<br />
 
 ***
 ## Known bugs

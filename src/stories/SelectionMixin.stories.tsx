@@ -93,12 +93,12 @@ interface PlaygroundArgs {
   collapseSwipeDistance: number
   collapseSwipeDuration: number
   nativeManipulationInactivityDuration: number
-  theme: string
+  theme: 'light' | 'dark'
   debug: boolean
 }
 
 export const Playground: StoryFn<PlaygroundArgs> = (args) => {
-  const mixin = useRef<FluentSelectionMixin>()
+  const mixinRef = useRef<FluentSelectionMixin>(null)
 
   useEffect(() => {
     document.addEventListener('copy', displayCopied)
@@ -106,7 +106,7 @@ export const Playground: StoryFn<PlaygroundArgs> = (args) => {
     return () => {
       document.removeEventListener('copy', displayCopied)
 
-      document.body.style.backgroundColor = ''
+      document.body.style.backgroundColor = '' // Reset background from arg
     }
   }, [])
 
@@ -114,7 +114,9 @@ export const Playground: StoryFn<PlaygroundArgs> = (args) => {
     document.body.style.backgroundColor = args.STORYBOOK_BACKGROUND
 
     if (args.debug) {
-      const positionDebugRangeCallback = (): void => positionDebugRange(mixin.current)
+      const mixin = mixinRef.current as FluentSelectionMixin
+
+      const positionDebugRangeCallback = (): void => positionDebugRange(mixin.originRange)
 
       document.dispatchEvent(new TouchEvent('touchstart', {
         changedTouches: [new Touch({
@@ -124,19 +126,15 @@ export const Playground: StoryFn<PlaygroundArgs> = (args) => {
       }))
 
       setTimeout(() => {
-        const pad = document.getElementById('fluentselectionmanipulator')
-
-        pad?.addEventListener('touchstart', positionDebugTouches)
-        pad?.addEventListener('touchmove', positionDebugTouches)
+        mixin.manipulator.current?.addEventListener('touchstart', positionDebugTouches)
+        mixin.manipulator.current?.addEventListener('touchmove', positionDebugTouches)
       }) // Wait for DOM to rerender
 
       document.addEventListener('touchend', positionDebugRangeCallback)
 
       return () => {
-        const pad = document.getElementById('fluentselectionmanipulator')
-
-        pad?.removeEventListener?.('touchstart', positionDebugTouches)
-        pad?.removeEventListener?.('touchmove', positionDebugTouches)
+        mixin.manipulator.current?.removeEventListener?.('touchstart', positionDebugTouches)
+        mixin.manipulator.current?.removeEventListener?.('touchmove', positionDebugTouches)
         document.removeEventListener('touchend', positionDebugRangeCallback)
       }
     }
@@ -144,31 +142,31 @@ export const Playground: StoryFn<PlaygroundArgs> = (args) => {
 
   return (
     <>
+      <FluentSelectionMixin {...args} ref={mixinRef} />
+
       {args.debug
         ? (
           <>
-            <div className='fluent debug touch first'/>
-            <div className='fluent debug touch second'/>
+            <div className='fluent debug touch first' />
+            <div className='fluent debug touch second' />
 
-            <div className='fluent debug range first'/>
-            <div className='fluent debug range second'/>
+            <div className='fluent debug range first' />
+            <div className='fluent debug range second' />
           </>
           )
         : null}
 
-      <FluentSelectionMixin {...args} ref={mixin} />
-
       <div>
         standalone text
         <p>p text. this denotes a paragraph which makes good selecting material</p>
-        <input defaultValue='this is an input'/>
+        <input defaultValue='this is an input' />
         <span>this is a span</span>
         <h2>header</h2>
       </div>
 
       <footer>
         <strong>Copied text: </strong>
-        <span id='copied'/>
+        <span id='copied' />
       </footer>
 
       {args.debug ? navigator.userAgent : null}

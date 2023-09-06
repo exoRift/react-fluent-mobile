@@ -85,10 +85,10 @@ export const Context = () => {
 
   return (
     <div className='body'>
-      <FluentContextMixin ref={menuRef} theme='light'/>
+      <FluentContextMixin ref={menuRef} theme='light' />
 
       <div className='suggestion'>
-        <img src={deviceToolbar} alt='device toolbar'/>
+        <img src={deviceToolbar} alt='device toolbar' />
 
         <h5>
           If you're on PC, try pressing <strong>Ctrl+Shift+I</strong> and clicking the <i>Device Toolbar</i> button.
@@ -115,7 +115,7 @@ export const Context = () => {
                 Hold down on an image or link
               </p>
 
-            <div className='gesture hold'/>
+            <div className='gesture hold' />
           </div>
 
           <div className='instruction'>
@@ -124,7 +124,7 @@ export const Context = () => {
               Drag your finger to the elevation of an option to hover it
             </p>
 
-            <div className='gesture move vertically'/>
+            <div className='gesture move vertically' />
           </div>
 
           <div className='instruction'>
@@ -133,7 +133,7 @@ export const Context = () => {
               Release your finger to trigger the action of the currently hovered option
             </p>
 
-            <div className='gesture lift'/>
+            <div className='gesture lift' />
           </div>
 
           <div className='instruction'>
@@ -149,14 +149,14 @@ export const Context = () => {
           </div>
 
           <div className='progress-bar'>
-            <div className='progress' style={{ height: (step * 100 / 3) + '%' }}/>
+            <div className='progress' style={{ height: (step * 100 / 3) + '%' }} />
           </div>
         </div>
       </div>
 
       <footer>
         <strong>Copied text: </strong>
-        <span id='copied'/>
+        <span id='copied' />
       </footer>
     </div>
   )
