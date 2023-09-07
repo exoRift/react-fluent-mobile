@@ -29,7 +29,7 @@
   animation: hide 1s ease-out 1 normal forwards;
   z-index: 2;
 }
-.demonstration #instructions .instruction[data-active='true'] {
+.demonstration #instructions .instruction[data-active=true] {
   display: block;
   animation: reveal 1s ease-out 1 normal forwards;
 }

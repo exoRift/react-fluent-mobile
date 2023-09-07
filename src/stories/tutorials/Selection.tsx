@@ -22,7 +22,7 @@ enum SelectionStep {
   DISMISS
 }
 
-function stepReducer (state: SelectionStep): number {
+function stepReducer (state: SelectionStep): SelectionStep {
   if (document.getElementById('fluentselectionmanipulator')) {
     const list = document.getElementById('instructions')
 

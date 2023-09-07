@@ -53,7 +53,7 @@ export const Playground: StoryFn<PlaygroundArgs> = (args) => {
   }, [args.STORYBOOK_BACKGROUND])
 
   return (
-    <div>
+    <div data-debug={args.debug}>
       <FluentContextMixin {...args} />
 
       <div className='story anchors'>

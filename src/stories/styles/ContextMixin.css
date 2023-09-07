@@ -16,13 +16,13 @@
 }
 
 @supports selector(:has(div)) {
-  *[debug='true'] .fluent.menu .menuoption:has(~ .menuoption.hovering) .icon { /* Above */
+  *[data-debug='true'] .fluent.menu .menuoption:has(~ .menuoption.hovering) .icon { /* Above */
     background: red;
   }
-  *[debug='true'] .fluent.menu .menuoption.hovering .icon {
+  *[data-debug='true'] .fluent.menu .menuoption.hovering .icon {
     background: blue;
   }
-  *[debug='true'] .fluent.menu .menuoption.hovering ~ .menuoption .icon { /* Below */
+  *[data-debug='true'] .fluent.menu .menuoption.hovering ~ .menuoption .icon { /* Below */
     background: green;
   }
 }
