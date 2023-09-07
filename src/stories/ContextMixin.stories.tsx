@@ -1,7 +1,7 @@
-import {
-  React,
+import React, {
   useEffect
 } from 'react'
+import { type StoryFn } from '@storybook/react'
 
 import {
   FluentContextMixin
@@ -35,7 +35,13 @@ export default {
   }
 }
 
-export const Playground = (args) => {
+interface PlaygroundArgs {
+  STORYBOOK_BACKGROUND: string
+  theme: 'light' | 'dark'
+  debug: boolean
+}
+
+export const Playground: StoryFn<PlaygroundArgs> = (args) => {
   useEffect(() => {
     return () => {
       document.body.style.backgroundColor = ''
@@ -47,7 +53,7 @@ export const Playground = (args) => {
   }, [args.STORYBOOK_BACKGROUND])
 
   return (
-    <div debug={String(args.debug)}>
+    <div>
       <FluentContextMixin {...args} />
 
       <div className='story anchors'>

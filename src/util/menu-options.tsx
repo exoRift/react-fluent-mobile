@@ -209,7 +209,7 @@ export const options = {
       url: element.src
     })
   }
-}
+} as const
 
 export const optionsForTag = {
   a: [
@@ -243,4 +243,4 @@ export const optionsForTag = {
     options.share,
     options.shareImage
   ]
-}
+} as const

@@ -37,50 +37,50 @@
 /* Base definition */
 
 /* Initial states */
-.fluent.manipulator[data-active='false'] {
+.fluent.manipulator[data-active=false] {
   opacity: 0;
   pointer-events: none;
 }
-.fluent.manipulator[data-active='true'] {
+.fluent.manipulator[data-active=true] {
   opacity: 1;
 }
 
-.fluent.manipulator.dark {
+.fluent.manipulator[data-theme=dark] {
   background-color: #080808;
   background-image:
     radial-gradient(#212121 20%, transparent 20%),
     radial-gradient(black 20%, transparent 20%);
 }
-.fluent.manipulator.dark::before {
+.fluent.manipulator[data-theme=dark]::before {
   color: white;
 }
-.fluent.manipulator[data-active='true']:active.dark {
+.fluent.manipulator[data-theme=dark][data-active=true]:active {
   background-color: #49b9ff;
   background-image:
     radial-gradient(#6bb8e7 20%, transparent 20%),
     radial-gradient(#5a8cac 20%, transparent 20%);
 }
 
-.fluent.manipulator.light {
+.fluent.manipulator[data-theme=light] {
   background-color: #fafafa;
   background-image:
     radial-gradient(#dedede 20%, transparent 20%),
     radial-gradient(white 20%, transparent 20%);
 }
-.fluent.manipulator.light::before {
+.fluent.manipulator[data-theme=light]::before {
   color: black;
 }
-.fluent.manipulator[data-active='true']:active.light {
+.fluent.manipulator[data-theme=light][data-active=true]:active {
   background-color: #73c9ff;
   background-image:
     radial-gradient(#8dd3ff 20%, transparent 20%),
     radial-gradient(#49a3da 20%, transparent 20%);
 }
 
-.fluent.handle[data-active='true'] {
+.fluent.handle[data-active=true] {
   opacity: 1;
 }
-.fluent.handle[data-active='true'][data-manipulating='true'] {
+.fluent.handle[data-active=true][data-manipulating=true] {
   transition: all 0s, opacity 0.8s, height 0.2s;
   transform: scale(1.3);
 }

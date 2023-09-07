@@ -16,7 +16,7 @@ export interface SelectionMixinProps {
   /** The interval the manipulation pad is inactive for when the selection is natively manipulated */
   nativeManipulationInactivityDuration?: number
   /** The theme of the pad */
-  theme?: 'dark' | 'light'
+  theme?: 'light' | 'dark'
 }
 
 /**
@@ -27,7 +27,7 @@ class SelectionMixin extends React.Component<Required<SelectionMixinProps> & Rea
     collapseSwipeDistance: PropTypes.number,
     collapseSwipeDuration: PropTypes.number,
     nativeManipulationInactivityDuration: PropTypes.number,
-    theme: PropTypes.oneOf(['dark', 'light'])
+    theme: PropTypes.oneOf(['light', 'dark'])
   }
 
   static defaultProps = {
@@ -138,7 +138,7 @@ class SelectionMixin extends React.Component<Required<SelectionMixinProps> & Rea
     } else document.removeEventListener('touchstart', this.initializeComponent)
   }
 
-  render (): JSX.Element | null {
+  render (): React.ReactNode {
     if (!this.state.initialized) return null
 
     return (
@@ -146,8 +146,9 @@ class SelectionMixin extends React.Component<Required<SelectionMixinProps> & Rea
         {this.props.children}
 
         <div
-          className={`fluent manipulator ${this.props.theme}`}
+          className='fluent manipulator'
           id='fluentselectionmanipulator'
+          data-theme={this.props.theme}
           data-active={this.state.selecting}
           onTouchStart={this.manipulateSelection}
           onTouchMove={this.manipulateSelection}
