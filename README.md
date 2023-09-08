@@ -6,7 +6,7 @@
 [![Roadmap](https://img.shields.io/badge/ROADMAP-GITHUB%20PROJECT-2d85e3?style=for-the-badge&logo=trello)](https://github.com/users/exoRift/projects/2/views/4)
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/a6122e76dcb42d834772/maintainability)](https://codeclimate.com/github/exoRift/react-fluent-mobile/maintainability)
-[![Quality Assurance](https://img.shields.io/github/workflow/status/exoRift/react-fluent-mobile/Quality%20Assurance/master?label=Quality%20Assurance&logo=github)](https://github.com/exoRift/react-fluent-mobile/actions/workflows/quality_assurance.yml)
+[![Quality Assurance](https://img.shields.io/github/actions/workflow/status/exoRift/react-fluent-mobile/quality_assurance.yml?branch=master&label=Quality%20Assurance&logo=github)](https://github.com/exoRift/react-fluent-mobile/actions/workflows/quality_assurance.yml)
 
 # *What's the problem with mobile browsers?*
 ### Mobile web browsers are an adaptation of the PC browsing experience for your mobile device. As a result, many features found on desktop browsers are sloppily implemented in ways that just aren't meant for phones, degrading your browsing experience.
