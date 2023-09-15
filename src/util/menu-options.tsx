@@ -1,6 +1,7 @@
 import React from 'react'
+import type ContextMixin from '../components/ContextMixin'
 
-const options = {
+export const options = {
   empty: {
     Component: (
       <div className='fluent menuoption'>
@@ -10,8 +11,16 @@ const options = {
   },
   divider: {
     Component: (
-      <div className='fluent menudivider'/>
+      <div className='fluent menudivider' />
     )
+  },
+  disable: {
+    Component: (
+      <div className='fluent menuoption disable'>
+        <div className='material-symbols-outlined icon'>mobile_off</div>
+      </div>
+    ),
+    action: (_element: Element, contextMixin: ContextMixin) => contextMixin.disable()
   },
   tab: {
     Component: (
@@ -21,7 +30,7 @@ const options = {
         <span className='tag'>Open link in new tab</span>
       </div>
     ),
-    action: (element) => window.open(element.href)?.focus?.()
+    action: (element: HTMLAnchorElement) => window.open(element?.href ?? (element.parentElement as HTMLAnchorElement)?.href)?.focus?.()
   },
   // incognitoTab: {
   //   Component: (
@@ -40,19 +49,21 @@ const options = {
         <span className='tag'>Copy link address</span>
       </div>
     ),
-    action: (element) => {
-      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(element.href)
+    action: (element: Element) => {
+      const anchor = ('href' in element ? element : element.parentElement) as HTMLAnchorElement
+
+      if (navigator.clipboard?.writeText) void navigator.clipboard.writeText(anchor?.href ?? '')
       else {
         const selection = window.getSelection()
 
         const tempElement = document.createElement('span')
-        tempElement.textContent = element.href
+        tempElement.textContent = anchor.href
         element.appendChild(tempElement)
 
-        selection.selectAllChildren(tempElement)
+        selection?.selectAllChildren(tempElement)
         document.execCommand('copy')
 
-        selection.removeAllRanges()
+        selection?.removeAllRanges()
         tempElement.remove()
       }
     }
@@ -65,15 +76,15 @@ const options = {
         <span className='tag'>Copy link text</span>
       </div>
     ),
-    action: (element) => {
-      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(element.textContent)
+    action: (element: Element) => {
+      if (navigator.clipboard?.writeText) void navigator.clipboard.writeText(element?.textContent ?? '')
       else {
         const selection = window.getSelection()
 
-        selection.selectAllChildren(element)
+        selection?.selectAllChildren(element)
         document.execCommand('copy')
 
-        selection.removeAllRanges()
+        selection?.removeAllRanges()
       }
     }
   },
@@ -85,12 +96,17 @@ const options = {
         <span className='tag'>Download link file</span>
       </div>
     ),
-    action: (element) => {
-      element.setAttribute('download', '')
+    action: (element: Element) => {
+      const anchor = ('href' in element ? element : element.parentElement) as HTMLAnchorElement
 
-      element.click()
+      if (anchor.getAttribute('download')) anchor.click()
+      else {
+        anchor.setAttribute('download', '')
 
-      element.removeAttribute('download')
+        anchor.click()
+
+        anchor.removeAttribute('download')
+      }
     }
   },
   share: {
@@ -101,40 +117,50 @@ const options = {
         <span className='tag'>Share Link</span>
       </div>
     ),
-    action: (element) => navigator?.share?.({
-      title: element.textContent,
-      text: element.href,
-      url: element.href
-    })
-  },
-  disable: {
-    Component: (
-      <div className='fluent menuoption disable'>
-        <div className='material-symbols-outlined icon'>mobile_off</div>
-      </div>
-    ),
-    action: (element, contextMixin) => contextMixin.disable()
+    action: (element: Element) => {
+      const anchor = ('href' in element ? element : element.parentElement) as HTMLAnchorElement
+
+      void navigator?.share?.({
+        title: element.textContent ?? element.getAttribute('alt') ?? undefined,
+        text: anchor?.href,
+        url: anchor?.href
+      })
+    }
   },
   imageTab: {
     Component: (
       <div className='fluent menuoption'>
-        <div className='material-symbols-outlined icon'>add_box</div>
+        <div className='material-symbols-outlined icon'>add_photo_alternate</div>
 
         <span className='tag'>Open image in new tab</span>
       </div>
     ),
-    action: (element) => window.open(element.src)?.focus?.()
+    action: (element: HTMLImageElement) => window.open(element.src)?.focus?.()
   },
   copyImage: {
     Component: (
       <div className='fluent menuoption'>
-        <div className='material-symbols-outlined icon'>filter</div>
+        <div className='material-symbols-outlined icon'>photo_library</div>
 
         <span className='tag'>Copy image</span>
       </div>
     ),
-    action: (element) => {
-      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(element.src)
+    action: (element: HTMLImageElement) => {
+      return fetch(element.src)
+        .then((img) => img.blob())
+        .then((blob) => navigator?.clipboard?.write([new ClipboardItem({ [blob.type]: blob })])) // eslint-disable-line no-undef
+    }
+  },
+  copyImageAddress: {
+    Component: (
+      <div className='fluent menuoption'>
+        <div className='material-symbols-outlined icon'>media_link</div>
+
+        <span className='tag'>Copy image address</span>
+      </div>
+    ),
+    action: (element: HTMLImageElement) => {
+      if (navigator.clipboard?.writeText) void navigator.clipboard.writeText(element.src)
       else {
         const selection = window.getSelection()
 
@@ -142,10 +168,10 @@ const options = {
         tempElement.textContent = element.src
         element.appendChild(tempElement)
 
-        selection.selectAllChildren(tempElement)
+        selection?.selectAllChildren(tempElement)
         document.execCommand('copy')
 
-        selection.removeAllRanges()
+        selection?.removeAllRanges()
         tempElement.remove()
       }
     }
@@ -153,18 +179,18 @@ const options = {
   downloadImage: {
     Component: (
       <div className='fluent menuoption'>
-        <div className='material-symbols-outlined icon'>download</div>
+        <div className='material-symbols-outlined icon'>system_update_alt</div>
 
         <span className='tag'>Download image</span>
       </div>
     ),
-    action: (element) => {
+    action: (element: HTMLImageElement) => {
       const tempElement = document.createElement('a')
       tempElement.href = element.src
-      element.setAttribute('download', '')
+      tempElement.setAttribute('download', '')
       element.appendChild(tempElement)
 
-      element.click()
+      tempElement.click()
 
       tempElement.remove()
     }
@@ -172,20 +198,20 @@ const options = {
   shareImage: {
     Component: (
       <div className='fluent menuoption'>
-        <div className='material-symbols-outlined icon'>share</div>
+        <div className='material-symbols-outlined icon'>ios_share</div>
 
         <span className='tag'>Share Image</span>
       </div>
     ),
-    action: (element) => navigator?.share?.({
+    action: (element: HTMLImageElement) => navigator?.share?.({
       title: element.alt,
       text: element.src,
       url: element.src
     })
   }
-}
+} as const
 
-const optionsForTag = {
+export const optionsForTag = {
   a: [
     options.tab,
     options.divider,
@@ -198,6 +224,7 @@ const optionsForTag = {
   img: [
     options.imageTab,
     options.divider,
+    options.copyImageAddress,
     options.copyImage,
     options.downloadImage,
     options.divider,
@@ -208,15 +235,12 @@ const optionsForTag = {
     options.imageTab,
     options.divider,
     options.copyAddress,
+    options.copyImageAddress,
+    options.copyImage,
     options.downloadLink,
     options.downloadImage,
     options.divider,
     options.share,
     options.shareImage
   ]
-}
-
-export {
-  options,
-  optionsForTag
-}
+} as const

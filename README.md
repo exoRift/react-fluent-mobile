@@ -6,7 +6,7 @@
 [![Roadmap](https://img.shields.io/badge/ROADMAP-GITHUB%20PROJECT-2d85e3?style=for-the-badge&logo=trello)](https://github.com/users/exoRift/projects/2/views/4)
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/a6122e76dcb42d834772/maintainability)](https://codeclimate.com/github/exoRift/react-fluent-mobile/maintainability)
-[![Quality Assurance](https://img.shields.io/github/workflow/status/exoRift/react-fluent-mobile/Quality%20Assurance/master?label=Quality%20Assurance&logo=github)](https://github.com/exoRift/react-fluent-mobile/actions/workflows/quality_assurance.yml)
+[![Quality Assurance](https://img.shields.io/github/actions/workflow/status/exoRift/react-fluent-mobile/quality_assurance.yml?branch=master&label=Quality%20Assurance&logo=github)](https://github.com/exoRift/react-fluent-mobile/actions/workflows/quality_assurance.yml)
 
 # *What's the problem with mobile browsers?*
 ### Mobile web browsers are an adaptation of the PC browsing experience for your mobile device. As a result, many features found on desktop browsers are sloppily implemented in ways that just aren't meant for phones, degrading your browsing experience.
@@ -16,7 +16,7 @@
 **react-fluent-mobile** allows you to take your mobile browser's native features and augment them, improving gloss and agility without compromising on ability.
 
 ## Selecting text
-<img alt='selectionvideo' src='assets/selection.gif' width='150'/>
+<img alt='selectionvideo' src='assets/selection.gif' width='150' />
 
 Fluent takes selecting text on mobile to a whole new level by adding the *selection manipulation pad*. When text is selected by the user, whether selected through normal means, selected by the website, or tap-selected on Android, the *selection manipulation pad* appears. Users can touch and drag on the pad to shift the bounds of their selection in any direction they'd like, transforming their selection. Once the selection is fit to the user's liking, they can tap on the pad to instantly copy their selection to their clipboard.
 
@@ -35,13 +35,15 @@ nativeManipulationInactivityDuration|The interval the manipulation pad is inacti
 theme|The theme of the pad (dark, light)
 
 ## Context menus
-<img alt='contextvideo' src='assets/context.gif' width='150'/>
+<img alt='contextvideo' src='assets/context.gif' width='150' />
 
 Context menus have been reimagined! Now, instead of holding and lifting your finger four times, holding down on a link or image will launch a cleaner context menu in which you can drag you finger to the desired option and lift your finger to select it. No more tapping!
 
 If the new context menu is not desired, there is an option located at the bottom corner of the screen to disable it.
 
-> NOTE: The *share* features are only available on HTTPS sites
+> *NOTE: Opening in new tab may trigger browser popup blockers*
+> *NOTE: The `share` features are only available on HTTPS sites*
+> *NOTE: Copying images to clipboard utilizes [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API) and therefore requires HTTPS.*
 
 ### Component Properties
 Name|Description
@@ -65,8 +67,8 @@ import {
 function Component (props) {
   return (
     <>
-      <FluentContextMixin/>
-      <FluentSelectionMixin/>
+      <FluentContextMixin />
+      <FluentSelectionMixin />
 
       <div ...>
         ...
@@ -79,7 +81,7 @@ function Component (props) {
 ## *Snappy, fluid, deliberate interactions*
 *INSERT GIF*
 
-<br/>
+<br />
 
 ***
 ## Known bugs

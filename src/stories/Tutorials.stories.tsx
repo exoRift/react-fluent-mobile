@@ -7,7 +7,7 @@ export default {
 
 export {
   Selection
-} from './tutorials/Selection.jsx'
+} from './tutorials/Selection'
 export {
   Context
-} from './tutorials/Context.jsx'
+} from './tutorials/Context'

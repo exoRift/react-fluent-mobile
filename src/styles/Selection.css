@@ -28,7 +28,7 @@
 }
 
 .fluent.handle {
-  transition: 0.2s, opacity 1s;
+  transition: 0.2s, opacity 0.5s;
   width: 3px;
   background-color: #1ea7fd;
   opacity: 0;
@@ -37,51 +37,51 @@
 /* Base definition */
 
 /* Initial states */
-.fluent.manipulator.inactive {
+.fluent.manipulator[data-active=false] {
   opacity: 0;
   pointer-events: none;
 }
-.fluent.manipulator.active:not(.inactive) {
+.fluent.manipulator[data-active=true] {
   opacity: 1;
 }
 
-.fluent.manipulator.dark {
+.fluent.manipulator[data-theme=dark] {
   background-color: #080808;
   background-image:
     radial-gradient(#212121 20%, transparent 20%),
     radial-gradient(black 20%, transparent 20%);
 }
-.fluent.manipulator.dark::before {
+.fluent.manipulator[data-theme=dark]::before {
   color: white;
 }
-.fluent.manipulator.dark.active:active {
+.fluent.manipulator[data-theme=dark][data-active=true]:active {
   background-color: #49b9ff;
   background-image:
     radial-gradient(#6bb8e7 20%, transparent 20%),
     radial-gradient(#5a8cac 20%, transparent 20%);
 }
 
-.fluent.manipulator.light {
+.fluent.manipulator[data-theme=light] {
   background-color: #fafafa;
   background-image:
     radial-gradient(#dedede 20%, transparent 20%),
     radial-gradient(white 20%, transparent 20%);
 }
-.fluent.manipulator.light::before {
+.fluent.manipulator[data-theme=light]::before {
   color: black;
 }
-.fluent.manipulator.light.active:active {
+.fluent.manipulator[data-theme=light][data-active=true]:active {
   background-color: #73c9ff;
   background-image:
     radial-gradient(#8dd3ff 20%, transparent 20%),
     radial-gradient(#49a3da 20%, transparent 20%);
 }
 
-.fluent.handle.active {
+.fluent.handle[data-active=true] {
   opacity: 1;
 }
-.fluent.handle.active.manipulating {
-  transition: all 0s, height 0.2s;
+.fluent.handle[data-active=true][data-manipulating=true] {
+  transition: all 0s, opacity 0.8s, height 0.2s;
   transform: scale(1.3);
 }
 /* Initial states */

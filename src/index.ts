@@ -7,19 +7,17 @@ window.FLUENT_IS_IOS = iosRegex.test(navigator.userAgent)
 // Components
 export {
   default as FluentContextMixin
-} from './components/ContextMixin.jsx'
+} from './components/ContextMixin'
 export {
   default as FluentSelectionMixin
-} from './components/SelectionMixin.jsx'
+} from './components/SelectionMixin'
 
 // Utility
 export {
   FlexibleRange
-} from './util/FlexibleRange.js'
-export {
-  TouchHandler
-} from './util/TouchHandler.js'
+} from './util/flexible-range'
+export * as TouchHandler from './util/touch-handler'
 export {
   options as contextMenuOptions,
   optionsForTag as contextMenuOptionsForTag
-} from './util/menu-options.jsx'
+} from './util/menu-options'

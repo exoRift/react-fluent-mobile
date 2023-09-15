@@ -1,5 +1,10 @@
 {
-  "extends": ["standard", "react-app"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "extends": ["standard-with-typescript", "plugin:react/recommended", "plugin:react-hooks/recommended", "plugin:storybook/recommended"],
   "rules": {
     "array-bracket-spacing": "error",
     "no-lonely-if": "warn",
@@ -15,9 +20,21 @@
       }
     ],
     "quote-props": "warn",
-    "import/no-anonymous-default-export": [
-      "error", {
-        "allowObject": true
-    }]
+    "@typescript-eslint/no-namespace": "off",
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/promise-function-async": "off",
+    "@typescript-eslint/array-type": "warn",
+    "@typescript-eslint/no-confusing-void-expression": "off",
+    "@typescript-eslint/no-invalid-void-type": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/explicit-function-return-type": "warn",
+    "@typescript-eslint/method-signature-style": "off",
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "react/prop-types": [
+      "warn",
+      {
+        "ignore": ["children"]
+      }
+    ]
   }
 }

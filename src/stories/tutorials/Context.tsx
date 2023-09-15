@@ -1,9 +1,9 @@
-import {
-  React,
+import React, {
   useEffect,
-  useState,
-  useRef
+  useRef,
+  useReducer
 } from 'react'
+import { type StoryFn } from '@storybook/react'
 import {
   linkTo
 } from '@storybook/addon-links'
@@ -14,48 +14,56 @@ import {
 
 import deviceToolbar from '../assets/device_toolbar.webp'
 
-function advanceStep (step, setStep) {
+enum ContextStep {
+  LAUNCH,
+  HOVER,
+  TRIGGER
+}
+
+function stepReducer (state: ContextStep): ContextStep {
   if (document.getElementById('fluentmenu')) {
     const list = document.getElementById('instructions')
 
-    list.children.item(step).setAttribute('active', 'false')
-    list.children.item(step + 1).setAttribute('active', 'true')
-
-    setStep(step + 1)
+    list?.children?.item(state)?.setAttribute('data-active', 'false')
+    list?.children?.item(state + 1)?.setAttribute('data-active', 'true')
   }
+
+  return state + 1
 }
 
-function displayCopied () {
-  const display = document.getElementById('copied')
+function displayCopied (): void {
+  const display = document.getElementById('copied') as HTMLDivElement
 
-  display.textContent = window.getSelection().toString()
+  display.textContent = window.getSelection()?.toString() ?? null
 }
 
-export const Context = () => {
-  const menuRef = useRef(null)
-  const [step, setStep] = useState(0)
+export const Context: StoryFn = () => {
+  const menuRef = useRef<FluentContextMixin>(null)
+  const [step, advanceStep] = useReducer(stepReducer, 0)
 
   useEffect(() => {
-    function launchStep (e) {
-      if (menuRef.current.state.holdingTag) {
+    const menu = menuRef.current!
+
+    function launchStep (): void {
+      if (menu.state.holdingTag) {
         document.removeEventListener('contextmenu', launchStep)
 
-        advanceStep(step, setStep)
+        advanceStep()
       }
     }
 
-    function hoverStep () {
-      if (menuRef.current.hoveringIndex) {
+    function hoverStep (): void {
+      if (menu.hoveringIndex) {
         document.removeEventListener('touchmove', hoverStep)
 
-        advanceStep(step, setStep)
+        advanceStep()
       }
     }
 
-    function triggerStep (e) {
+    function triggerStep (): void {
       document.removeEventListener('touchend', triggerStep)
 
-      advanceStep(step, setStep)
+      advanceStep()
     }
 
     document.addEventListener('copy', displayCopied)
@@ -85,13 +93,13 @@ export const Context = () => {
 
   return (
     <div className='body'>
-      <FluentContextMixin ref={menuRef} theme='light'/>
+      <FluentContextMixin ref={menuRef} theme='light' />
 
       <div className='suggestion'>
-        <img src={deviceToolbar} alt='device toolbar'/>
+        <img src={deviceToolbar} alt='device toolbar' />
 
         <h5>
-          If you're on PC, try pressing <strong>Ctrl+Shift+I</strong> and clicking the <i>Device Toolbar</i> button.
+          If you&apos;re on PC, try pressing <strong>Ctrl+Shift+I</strong> and clicking the <i>Device Toolbar</i> button.
         </h5>
       </div>
 
@@ -103,19 +111,19 @@ export const Context = () => {
 
           <img
             className='demobanner'
-            src={`https://picsum.photos/${parseInt(window.innerWidth / 2)}/${parseInt(window.innerHeight / 3)}`}
+            src={`https://picsum.photos/${Math.floor(window.innerWidth / 2)}/${Math.floor(window.innerHeight / 3)}`}
             alt='random portrait'
           />
         </div>
 
         <div id='instructions'>
-          <div className='instruction' active={String(!step)}>
+          <div className='instruction' data-active={String(!step)}>
             <h3>Try opening a context menu!</h3>
               <p>
                 Hold down on an image or link
               </p>
 
-            <div className='gesture hold'/>
+            <div className='gesture hold' />
           </div>
 
           <div className='instruction'>
@@ -124,7 +132,7 @@ export const Context = () => {
               Drag your finger to the elevation of an option to hover it
             </p>
 
-            <div className='gesture move vertically'/>
+            <div className='gesture move vertically' />
           </div>
 
           <div className='instruction'>
@@ -133,7 +141,7 @@ export const Context = () => {
               Release your finger to trigger the action of the currently hovered option
             </p>
 
-            <div className='gesture lift'/>
+            <div className='gesture lift' />
           </div>
 
           <div className='instruction'>
@@ -149,14 +157,14 @@ export const Context = () => {
           </div>
 
           <div className='progress-bar'>
-            <div className='progress' style={{ height: (step * 100 / 3) + '%' }}/>
+            <div className='progress' style={{ height: (step * 100 / 3).toString() + '%' }} />
           </div>
         </div>
       </div>
 
       <footer>
         <strong>Copied text: </strong>
-        <span id='copied'/>
+        <span id='copied' />
       </footer>
     </div>
   )

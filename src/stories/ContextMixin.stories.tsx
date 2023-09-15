@@ -1,7 +1,7 @@
-import {
-  React,
+import React, {
   useEffect
 } from 'react'
+import { type StoryFn } from '@storybook/react'
 
 import {
   FluentContextMixin
@@ -35,20 +35,26 @@ export default {
   }
 }
 
-export const Playground = (args) => {
+interface PlaygroundArgs {
+  STORYBOOK_BACKGROUND: string
+  theme: 'light' | 'dark'
+  debug: boolean
+}
+
+export const Playground: StoryFn<PlaygroundArgs> = (args) => {
   useEffect(() => {
     return () => {
       document.body.style.backgroundColor = ''
     }
-  })
+  }, [])
 
   useEffect(() => {
     document.body.style.backgroundColor = args.STORYBOOK_BACKGROUND
   }, [args.STORYBOOK_BACKGROUND])
 
   return (
-    <div debug={String(args.debug)}>
-      <FluentContextMixin {...args}/>
+    <div data-debug={args.debug}>
+      <FluentContextMixin {...args} />
 
       <div className='story anchors'>
         <a href={window.location.href}>This is a leftward anchor</a>
@@ -58,10 +64,10 @@ export const Playground = (args) => {
 
       <span>This is some sample text</span>
 
-      <img className='story banner' alt='banner' src={banner}/>
+      <img className='story banner' alt='banner' src={banner} />
 
       <a href={window.location.href}>
-        <img className='story icon' alt='icon' src={icon}/>
+        <img className='story icon' alt='icon' src={icon} />
         Testing images in an anchor tag
       </a>
     </div>
