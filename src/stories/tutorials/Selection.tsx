@@ -72,12 +72,12 @@ export const Selection: StoryFn = () => {
 
     function dismissStep (): void {
       setTimeout(() => {
-        if (mixin.state.selecting) {
+        if (!mixin.state.selecting) {
           mixin.manipulator.current?.removeEventListener('touchend', dismissStep)
 
           advanceStep()
         }
-      }) // Wait for DOM to rerender
+      }, 50) // Wait for DOM to rerender
     }
 
     function controlSelection (e: TouchEvent): void {
