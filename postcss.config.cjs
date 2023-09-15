@@ -1,5 +1,5 @@
 /** @type {import('rollup-plugin-postcss').PostCSSPluginConf} */
-export default {
+module.exports = {
   plugins: [
     require('autoprefixer')
   ]
